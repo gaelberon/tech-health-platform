@@ -67,6 +67,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       // Même en cas d'erreur, on rafraîchit la session
       await refetch();
     }
+    // Note: La réinitialisation de l'onglet actif est gérée dans App.tsx via useEffect
   };
 
   return (

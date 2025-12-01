@@ -1,17 +1,46 @@
 // Fichier : /client/src/App.tsx
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CollectorStepper from './components/CollectorStepper';
 import Login from './pages/Login';
-import AdminPermissions from './pages/AdminPermissions';
+import AccountSelection from './pages/AccountSelection';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import About from './pages/About';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
-
-type TabType = 'collector' | 'admin' | 'dashboard';
+import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions';
+import { usePagePermissions } from './hooks/usePagePermissions';
 
 const AppShell: React.FC = () => {
   const { isAuthenticated, loading, user, refetch } = useSession();
   const [activeTab, setActiveTab] = useState<TabType>('collector');
+  const [availableAccounts, setAvailableAccounts] = useState<any[] | null>(null);
+  
+  // Charger les permissions d'accès aux pages depuis la base de données
+  const { permissions: pagePermissions, loading: permissionsLoading } = usePagePermissions(user?.role);
+
+  // Vérifier les permissions et rediriger si nécessaire
+  useEffect(() => {
+    if (isAuthenticated && user && !permissionsLoading) {
+      // Si l'utilisateur n'a pas accès à l'onglet actuel, rediriger vers un onglet autorisé
+      if (!hasAccessToTab(user.role, activeTab, pagePermissions)) {
+        const defaultTab = getDefaultTab(user.role, pagePermissions);
+        console.warn(`[SECURITY] Utilisateur ${user.role} n'a pas accès à l'onglet ${activeTab}. Redirection vers ${defaultTab}`);
+        setActiveTab(defaultTab);
+      }
+    } else if (!isAuthenticated) {
+      // Réinitialiser l'onglet lors de la déconnexion
+      setActiveTab('collector');
+    }
+  }, [isAuthenticated, user?.role, activeTab, pagePermissions, permissionsLoading]);
+
+  // Lors de la connexion, rediriger vers un onglet autorisé
+  useEffect(() => {
+    if (isAuthenticated && user && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions)) {
+      const defaultTab = getDefaultTab(user.role, pagePermissions);
+      setActiveTab(defaultTab);
+    }
+  }, [isAuthenticated, user?.role, pagePermissions, permissionsLoading]); // S'exécute quand l'utilisateur change
 
   if (loading) {
     return (
@@ -21,11 +50,51 @@ const AppShell: React.FC = () => {
     );
   }
 
+  // Si des comptes sont disponibles pour sélection, afficher la page de sélection
+  if (availableAccounts && availableAccounts.length > 0) {
+    return (
+      <AccountSelection
+        accounts={availableAccounts}
+        onAccountSelected={() => {
+          setAvailableAccounts(null);
+          // Réinitialiser l'onglet actif lors de la sélection de compte
+          setActiveTab('collector');
+          refetch();
+        }}
+      />
+    );
+  }
+
   if (!isAuthenticated) {
-    return <Login onLoggedIn={refetch} />;
+    return (
+      <Login
+        onLoggedIn={() => {
+          // Réinitialiser l'onglet actif lors de la connexion
+          setActiveTab('collector');
+          refetch();
+        }}
+        onAccountSelectionRequired={(accounts) => {
+          setAvailableAccounts(accounts);
+        }}
+      />
+    );
   }
 
   const renderContent = () => {
+    // Double vérification de sécurité avant de rendre le contenu
+    if (!user || (!permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
+      return (
+        <div className="space-y-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-700 font-semibold">Accès refusé</p>
+            <p className="text-red-600 text-sm mt-2">
+              Vous n'avez pas les permissions nécessaires pour accéder à cette page.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'collector':
         return (
@@ -42,19 +111,20 @@ const AppShell: React.FC = () => {
           </div>
         );
       case 'admin':
-        return (
-          <div className="space-y-6">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Administration des Permissions
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Configurez les permissions par rôle pour les mutations GraphQL
-              </p>
+        // Vérification supplémentaire pour la page admin
+        if (user.role !== 'Admin') {
+          return (
+            <div className="space-y-6">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <p className="text-red-700 font-semibold">Accès refusé</p>
+                <p className="text-red-600 text-sm mt-2">
+                  Seuls les administrateurs peuvent accéder à cette page.
+                </p>
+              </div>
             </div>
-            <AdminPermissions />
-          </div>
-        );
+          );
+        }
+        return <AdminDashboard />;
       case 'dashboard':
         return (
           <div className="space-y-6">
@@ -71,6 +141,8 @@ const AppShell: React.FC = () => {
             </div>
           </div>
         );
+      case 'about':
+        return <About />;
       default:
         return null;
     }

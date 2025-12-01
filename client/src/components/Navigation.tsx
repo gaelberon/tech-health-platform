@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSession } from '../session/SessionContext';
-
-type TabType = 'collector' | 'admin' | 'dashboard';
+import { TAB_METADATA, hasAccessToTab, type TabType } from '../utils/permissions';
+import { usePagePermissions } from '../hooks/usePagePermissions';
 
 interface NavigationProps {
   activeTab: TabType;
@@ -11,14 +11,25 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useSession();
+  
+  // Charger les permissions depuis la base de données
+  const { permissions: pagePermissions } = usePagePermissions(user?.role);
 
-  const tabs = [
-    { id: 'collector' as TabType, label: 'Collecteur P1', icon: '📋', available: true },
-    { id: 'admin' as TabType, label: 'Administration', icon: '⚙️', available: user?.role === 'Admin' },
-    { id: 'dashboard' as TabType, label: 'Tableau de bord', icon: '📊', available: false }, // Pour plus tard
-  ];
+  // Utiliser le système de permissions pour déterminer les onglets disponibles
+  const allTabs: TabType[] = ['collector', 'admin', 'dashboard', 'about'];
+  const tabs = allTabs
+    .filter((tab) => {
+      // Dashboard est temporairement désactivé
+      if (tab === 'dashboard') return false;
+      return hasAccessToTab(user?.role, tab, pagePermissions);
+    })
+    .map((tab) => ({
+      id: tab,
+      label: TAB_METADATA[tab].label,
+      icon: TAB_METADATA[tab].icon,
+    }));
 
-  const availableTabs = tabs.filter(tab => tab.available);
+  const availableTabs = tabs;
 
   return (
     <>
@@ -35,20 +46,32 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
 
             {/* Onglets de navigation */}
             <div className="flex items-center space-x-1">
-              {availableTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  <span className="mr-2">{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
+              {availableTabs.map((tab) => {
+                const canAccess = hasAccessToTab(user?.role, tab.id, pagePermissions);
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      if (canAccess) {
+                        onTabChange(tab.id);
+                      } else {
+                        console.warn(`[SECURITY] Tentative d'accès non autorisé à l'onglet ${tab.id}`);
+                      }
+                    }}
+                    disabled={!canAccess}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                        : canAccess
+                        ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        : 'text-gray-400 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <span className="mr-2">{tab.icon}</span>
+                    {tab.label}
+                  </button>
+                );
+              })}
             </div>
 
             {/* User info & Logout */}
@@ -98,23 +121,33 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
         {isMenuOpen && (
           <div className="border-t border-gray-200 bg-white">
             <div className="px-4 py-2 space-y-1">
-              {availableTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    onTabChange(tab.id);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="mr-2">{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
+              {availableTabs.map((tab) => {
+                const canAccess = hasAccessToTab(user?.role, tab.id, pagePermissions);
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      if (canAccess) {
+                        onTabChange(tab.id);
+                        setIsMenuOpen(false);
+                      } else {
+                        console.warn(`[SECURITY] Tentative d'accès non autorisé à l'onglet ${tab.id}`);
+                      }
+                    }}
+                    disabled={!canAccess}
+                    className={`w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-blue-100 text-blue-700'
+                        : canAccess
+                        ? 'text-gray-700 hover:bg-gray-100'
+                        : 'text-gray-400 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <span className="mr-2">{tab.icon}</span>
+                    {tab.label}
+                  </button>
+                );
+              })}
               <div className="border-t border-gray-200 pt-2 mt-2">
                 <div className="px-4 py-2 text-xs text-gray-600">
                   <div className="font-medium">{user?.email}</div>
