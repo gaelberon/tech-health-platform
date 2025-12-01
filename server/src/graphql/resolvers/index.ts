@@ -27,6 +27,8 @@ import DocumentResolver from './DocumentResolver.js';
 import DevelopmentTeamResolver from './DevelopmentTeamResolver.js';
 import { AuthResolver } from './AuthResolver.js';
 import PermissionResolver from './PermissionResolver.js';
+import LookupResolver from './LookupResolver.js';
+import UserResolver from './UserResolver.js';
 
 
 // ------------------ FONCTION D'AGREGATION ------------------
@@ -90,6 +92,8 @@ const allResolvers = combineResolvers([
     DevelopmentTeamResolver,
     AuthResolver,
     PermissionResolver,
+    LookupResolver,
+    UserResolver,
 ]);
 
 export default allResolvers;
