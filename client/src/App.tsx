@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import AccountSelection from './pages/AccountSelection';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import About from './pages/About';
+import HostingView from './pages/HostingView';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
 import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions';
@@ -141,6 +142,8 @@ const AppShell: React.FC = () => {
             </div>
           </div>
         );
+      case 'hosting':
+        return <HostingView />;
       case 'about':
         return <About />;
       default:

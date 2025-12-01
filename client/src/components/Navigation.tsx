@@ -16,7 +16,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
   const { permissions: pagePermissions } = usePagePermissions(user?.role);
 
   // Utiliser le système de permissions pour déterminer les onglets disponibles
-  const allTabs: TabType[] = ['collector', 'admin', 'dashboard', 'about'];
+  const allTabs: TabType[] = ['collector', 'admin', 'dashboard', 'hosting', 'about'];
   const tabs = allTabs
     .filter((tab) => {
       // Dashboard est temporairement désactivé
