@@ -13,6 +13,7 @@ const LIST_USERS = gql`
       role
       associatedEditorId
       associatedEditorIds
+      profilePicture
       archived
       archivedAt
       archivedBy
@@ -34,6 +35,7 @@ const CREATE_USER = gql`
       role
       associatedEditorId
       associatedEditorIds
+      profilePicture
     }
   }
 `;
@@ -49,6 +51,7 @@ const UPDATE_USER = gql`
       role
       associatedEditorId
       associatedEditorIds
+      profilePicture
     }
   }
 `;
@@ -187,6 +190,7 @@ const AdminUsers: React.FC = () => {
     firstName: '',
     lastName: '',
     phone: '',
+    profilePicture: '',
     role: 'Editor' as UserRole,
     associatedEditorId: '', // Pour Editor/EntityDirector
     associatedEditorIds: [] as string[], // Pour Supervisor
@@ -199,6 +203,7 @@ const AdminUsers: React.FC = () => {
       firstName: '',
       lastName: '',
       phone: '',
+      profilePicture: '',
       role: 'Editor',
       associatedEditorId: '',
       associatedEditorIds: [],
@@ -215,6 +220,7 @@ const AdminUsers: React.FC = () => {
         firstName: formData.firstName || null,
         lastName: formData.lastName || null,
         phone: formData.phone || null,
+        profilePicture: formData.profilePicture || null,
         role: formData.role,
       };
 
@@ -247,6 +253,7 @@ const AdminUsers: React.FC = () => {
         firstName: formData.firstName || null,
         lastName: formData.lastName || null,
         phone: formData.phone || null,
+        profilePicture: formData.profilePicture || null,
         role: formData.role,
         password: formData.password || undefined, // Optionnel
       };
@@ -327,6 +334,7 @@ const AdminUsers: React.FC = () => {
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       phone: user.phone || '',
+      profilePicture: user.profilePicture || '',
       role: user.role,
       associatedEditorId: user.associatedEditorId || '',
       associatedEditorIds: user.associatedEditorIds || [],
@@ -572,6 +580,60 @@ const AdminUsers: React.FC = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="+33 6 12 34 56 78"
               />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Photo de profil
+              </label>
+              <div className="space-y-2">
+                {formData.profilePicture && (
+                  <div className="mb-2">
+                    <img
+                      src={formData.profilePicture}
+                      alt="Preview"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+                    />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      // Vérifier la taille du fichier (max 2MB)
+                      if (file.size > 2 * 1024 * 1024) {
+                        alert('La taille du fichier ne doit pas dépasser 2MB');
+                        return;
+                      }
+                      // Convertir l'image en base64
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        const base64String = reader.result as string;
+                        setFormData({ ...formData, profilePicture: base64String });
+                      };
+                      reader.onerror = () => {
+                        alert('Erreur lors de la lecture du fichier');
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                />
+                <p className="text-xs text-gray-500">
+                  Formats acceptés : JPG, PNG, GIF. Taille recommandée : 200x200px. Max 2MB.
+                </p>
+                {formData.profilePicture && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, profilePicture: '' })}
+                    className="text-xs text-red-600 hover:text-red-800"
+                  >
+                    Supprimer la photo
+                  </button>
+                )}
+              </div>
             </div>
 
             <div>

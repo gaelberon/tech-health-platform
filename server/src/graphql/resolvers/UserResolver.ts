@@ -83,7 +83,7 @@ const UserResolver = {
       // Seuls Admin peuvent créer des utilisateurs
       assertAuthorized(ctx, 'createUser');
       
-      const { email, password, firstName, lastName, phone, role, associatedEditorId, associatedEditorIds } = input;
+      const { email, password, firstName, lastName, phone, role, associatedEditorId, associatedEditorIds, profilePicture } = input;
       
       // Vérifier que la combinaison email + rôle n'existe pas déjà
       const normalizedEmail = email.toLowerCase().trim();
@@ -112,6 +112,7 @@ const UserResolver = {
         role,
         associatedEditorId: associatedEditorId || null,
         associatedEditorIds: associatedEditorIds || null,
+        profilePicture: profilePicture || null,
         archived: false,
       });
 
@@ -138,7 +139,7 @@ const UserResolver = {
       // Seuls Admin peuvent modifier les utilisateurs
       assertAuthorized(ctx, 'updateUser');
       
-      const { userId, email, firstName, lastName, phone, role, associatedEditorId, associatedEditorIds, password } = input;
+      const { userId, email, firstName, lastName, phone, role, associatedEditorId, associatedEditorIds, profilePicture, password } = input;
       
       const user = await UserModel.findOne({ userId });
       if (!user) {
@@ -176,6 +177,7 @@ const UserResolver = {
       if (role !== undefined) updateData.role = role;
       if (associatedEditorId !== undefined) updateData.associatedEditorId = associatedEditorId || null;
       if (associatedEditorIds !== undefined) updateData.associatedEditorIds = associatedEditorIds || null;
+      if (profilePicture !== undefined) updateData.profilePicture = profilePicture || null;
       
       // Si un nouveau mot de passe est fourni, le hasher
       if (password) {

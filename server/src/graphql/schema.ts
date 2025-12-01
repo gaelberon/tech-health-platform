@@ -337,6 +337,7 @@ const typeDefs = gql`
         role: UserRole!
         associatedEditorId: ID # Pour Editor/EntityDirector (un seul éditeur)
         associatedEditorIds: [ID!] # Pour Supervisor (portefeuille d'éditeurs)
+        profilePicture: String # Photo de profil (base64 ou URL)
         archived: Boolean
         archivedAt: String
         archivedBy: ID
@@ -733,6 +734,7 @@ const typeDefs = gql`
         role: UserRole!
         associatedEditorId: ID # Pour Editor/EntityDirector
         associatedEditorIds: [ID!] # Pour Supervisor (portefeuille)
+        profilePicture: String # Photo de profil (base64 ou URL)
     }
 
     input UpdateUserInput {
@@ -744,6 +746,7 @@ const typeDefs = gql`
         role: UserRole
         associatedEditorId: ID # Pour Editor/EntityDirector
         associatedEditorIds: [ID!] # Pour Supervisor (portefeuille)
+        profilePicture: String # Photo de profil (base64 ou URL)
         password: String # Optionnel, pour changer le mot de passe
     }
 

@@ -13,6 +13,7 @@ export interface IUser extends Document {
   role: UserRole;
   associatedEditorId?: string; // Pour Editor/EntityDirector (un seul éditeur)
   associatedEditorIds?: string[]; // Pour Supervisor (plusieurs éditeurs dans le portefeuille)
+  profilePicture?: string; // Photo de profil en base64 ou URL
   archived?: boolean;
   archivedAt?: Date;
   archivedBy?: string; // userId de l'admin qui a archivé
@@ -37,6 +38,7 @@ const UserSchema = new Schema<IUser>(
     phone: { type: String, required: false },
     associatedEditorId: { type: String, required: false }, // Pour Editor/EntityDirector
     associatedEditorIds: [{ type: String }], // Pour Supervisor (portefeuille d'éditeurs)
+    profilePicture: { type: String, required: false }, // Photo de profil (base64 ou URL)
     archived: { type: Boolean, default: false, index: true },
     archivedAt: { type: Date, required: false },
     archivedBy: { type: String, required: false },

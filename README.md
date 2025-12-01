@@ -44,14 +44,17 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Support de plusieurs comptes par email (sélection de compte)
 - ✅ Gestion complète des utilisateurs (création, édition, archivage, restauration)
 - ✅ Contrôle d'accès basé sur les rôles (RBAC)
+- ✅ Photos de profil utilisateur (stockage base64 dans MongoDB)
+- ✅ Menu contextuel utilisateur style Google Workspace avec accès rapide aux fonctionnalités
 
 #### Administration Modulaire
 - ✅ **Gestion des Permissions** : Configuration des permissions par rôle et opération
 - ✅ **Gestion des Listes de Valeurs** : Administration dynamique des menus déroulants (lookups)
-- ✅ **Gestion des Utilisateurs** : CRUD complet avec archivage
+- ✅ **Gestion des Utilisateurs** : CRUD complet avec archivage, photos de profil
 - ✅ **Droits d'accès aux pages** : Configuration des permissions d'accès par rôle et page
 - ✅ **Pistes d'audit** : Consultation des logs d'audit avec filtres avancés
 - ✅ **Gestion des Données** : Interface d'administration pour créer et mettre à jour les éditeurs manuellement
+- ✅ **Menu utilisateur contextuel** : Accès rapide à l'administration et aux fonctionnalités du profil depuis le header
 
 #### Système de Pistes d'Audit
 - ✅ Enregistrement automatique de toutes les modifications (CREATE, UPDATE, DELETE, ARCHIVE, RESTORE)
@@ -127,7 +130,7 @@ Le modèle de données fusionne l'inventaire CIEC avec des entités spécifiques
 - **`User`** : Utilisateurs avec rôles et permissions
   - Format d'ID : `user-XXXX` (générique, sans indication du rôle)
   - Unicité : Combinaison `email + role` (un même email peut avoir plusieurs rôles)
-  - Champs : email, firstName, lastName, phone, role, associatedEditorId, archived, lastLoginAt
+  - Champs : email, firstName, lastName, phone, profilePicture (base64), role, associatedEditorId, archived, lastLoginAt
 - **`Lookup`** : Listes de valeurs dynamiques pour les menus déroulants
   - Organisation par entité et criticité (P1, P2, etc.)
   - Recherche par nom de formulaire, clé technique, description

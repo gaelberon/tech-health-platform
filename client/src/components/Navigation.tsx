@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSession } from '../session/SessionContext';
 import { TAB_METADATA, hasAccessToTab, type TabType } from '../utils/permissions';
 import { usePagePermissions } from '../hooks/usePagePermissions';
+import UserMenu from './UserMenu';
 
 interface NavigationProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  onNavigate?: (tab: string) => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
+const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userButtonRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useSession();
   
   // Charger les permissions depuis la base de données
@@ -21,6 +25,8 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
     .filter((tab) => {
       // Dashboard est temporairement désactivé
       if (tab === 'dashboard') return false;
+      // Admin est maintenant accessible via le menu utilisateur, retiré du header
+      if (tab === 'admin') return false;
       return hasAccessToTab(user?.role, tab, pagePermissions);
     })
     .map((tab) => ({
@@ -38,10 +44,17 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo / Titre */}
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">
-                Tech Health Platform
-              </h1>
+            <div className="flex items-center space-x-3">
+              <img
+                src="/icon-192.png"
+                alt="Tech Health Platform"
+                className="h-10 w-10 object-contain"
+              />
+              <div className="flex flex-col leading-tight">
+                <span className="text-xs font-semibold text-gray-900">Tech</span>
+                <span className="text-xs font-semibold text-gray-900">Health</span>
+                <span className="text-xs font-semibold text-gray-900">Platform</span>
+              </div>
             </div>
 
             {/* Onglets de navigation */}
@@ -74,18 +87,35 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
               })}
             </div>
 
-            {/* User info & Logout */}
+            {/* User profile picture/name & Menu */}
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">{user?.email}</span>
-                <span className="ml-2 text-xs text-gray-500">({user?.role})</span>
-              </div>
-              <button
-                onClick={logout}
-                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              <div
+                ref={userButtonRef}
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
               >
-                Déconnexion
-              </button>
+                {user?.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt={user.firstName || user.email}
+                    className="w-8 h-8 rounded-full object-cover border-2 border-gray-300 flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm border-2 border-gray-300 flex-shrink-0">
+                    {user?.firstName
+                      ? user.firstName[0].toUpperCase()
+                      : user?.email
+                      ? user.email[0].toUpperCase()
+                      : 'U'}
+                  </div>
+                )}
+              </div>
+              <UserMenu
+                isOpen={isUserMenuOpen}
+                onClose={() => setIsUserMenuOpen(false)}
+                anchorElement={userButtonRef.current}
+                onNavigate={onNavigate}
+              />
             </div>
           </div>
         </div>
@@ -95,7 +125,18 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
       <nav className="md:hidden bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
-            <h1 className="text-lg font-bold text-gray-900">Tech Health Platform</h1>
+            <div className="flex items-center space-x-2">
+              <img
+                src="/icon-192.png"
+                alt="Tech Health Platform"
+                className="h-8 w-8 object-contain"
+              />
+              <div className="flex flex-col leading-tight">
+                <span className="text-xs font-semibold text-gray-900">Tech</span>
+                <span className="text-xs font-semibold text-gray-900">Health</span>
+                <span className="text-xs font-semibold text-gray-900">Platform</span>
+              </div>
+            </div>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -149,16 +190,36 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange }) => {
                 );
               })}
               <div className="border-t border-gray-200 pt-2 mt-2">
-                <div className="px-4 py-2 text-xs text-gray-600">
-                  <div className="font-medium">{user?.email}</div>
-                  <div className="text-gray-500">{user?.role}</div>
-                </div>
-                <button
-                  onClick={logout}
-                  className="w-full text-left px-4 py-3 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                <div
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="px-4 py-2 flex items-center space-x-2 cursor-pointer hover:bg-gray-100 rounded-md"
                 >
-                  Déconnexion
-                </button>
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt={user.firstName || user.email}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm">
+                      {user?.firstName
+                        ? user.firstName[0].toUpperCase()
+                        : user?.email
+                        ? user.email[0].toUpperCase()
+                        : 'U'}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <div className="text-xs font-medium text-gray-900">{user?.firstName || user?.email}</div>
+                    <div className="text-xs text-gray-500">{user?.role}</div>
+                  </div>
+                </div>
+                <UserMenu
+                  isOpen={isUserMenuOpen}
+                  onClose={() => setIsUserMenuOpen(false)}
+                  anchorElement={null}
+                  onNavigate={onNavigate}
+                />
               </div>
             </div>
           </div>

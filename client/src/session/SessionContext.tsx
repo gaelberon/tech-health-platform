@@ -7,8 +7,12 @@ const ME_QUERY = gql`
     me {
       userId
       email
+      firstName
+      lastName
+      profilePicture
       role
       associatedEditorId
+      associatedEditorIds
     }
   }
 `;
@@ -22,8 +26,12 @@ const LOGOUT_MUTATION = gql`
 export type SessionUser = {
   userId: string;
   email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  profilePicture?: string | null;
   role: UserRole;
   associatedEditorId?: string | null;
+  associatedEditorIds?: string[] | null;
 };
 
 type SessionContextValue = {
