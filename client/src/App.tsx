@@ -7,6 +7,7 @@ import AccountSelection from './pages/AccountSelection';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import About from './pages/About';
 import HostingView from './pages/HostingView';
+import Dashboard from './pages/Dashboard';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
 import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions';
@@ -14,7 +15,7 @@ import { usePagePermissions } from './hooks/usePagePermissions';
 
 const AppShell: React.FC = () => {
   const { isAuthenticated, loading, user, refetch } = useSession();
-  const [activeTab, setActiveTab] = useState<TabType>('collector');
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [availableAccounts, setAvailableAccounts] = useState<any[] | null>(null);
   
   // Charger les permissions d'accès aux pages depuis la base de données
@@ -31,15 +32,20 @@ const AppShell: React.FC = () => {
       }
     } else if (!isAuthenticated) {
       // Réinitialiser l'onglet lors de la déconnexion
-      setActiveTab('collector');
+      setActiveTab('dashboard');
     }
   }, [isAuthenticated, user?.role, activeTab, pagePermissions, permissionsLoading]);
 
   // Lors de la connexion, rediriger vers un onglet autorisé
   useEffect(() => {
-    if (isAuthenticated && user && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions)) {
-      const defaultTab = getDefaultTab(user.role, pagePermissions);
-      setActiveTab(defaultTab);
+    if (isAuthenticated && user && !permissionsLoading) {
+      // Si l'utilisateur arrive sur collector mais a accès au dashboard, rediriger vers dashboard
+      if (activeTab === 'collector' && hasAccessToTab(user.role, 'dashboard', pagePermissions)) {
+        setActiveTab('dashboard');
+      } else if (!hasAccessToTab(user.role, activeTab, pagePermissions)) {
+        const defaultTab = getDefaultTab(user.role, pagePermissions);
+        setActiveTab(defaultTab);
+      }
     }
   }, [isAuthenticated, user?.role, pagePermissions, permissionsLoading]); // S'exécute quand l'utilisateur change
 
@@ -59,7 +65,7 @@ const AppShell: React.FC = () => {
         onAccountSelected={() => {
           setAvailableAccounts(null);
           // Réinitialiser l'onglet actif lors de la sélection de compte
-          setActiveTab('collector');
+          setActiveTab('dashboard');
           refetch();
         }}
       />
@@ -71,7 +77,7 @@ const AppShell: React.FC = () => {
       <Login
         onLoggedIn={() => {
           // Réinitialiser l'onglet actif lors de la connexion
-          setActiveTab('collector');
+          setActiveTab('dashboard');
           refetch();
         }}
         onAccountSelectionRequired={(accounts) => {
@@ -127,21 +133,7 @@ const AppShell: React.FC = () => {
         }
         return <AdminDashboard />;
       case 'dashboard':
-        return (
-          <div className="space-y-6">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Tableau de Bord
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Vue d'ensemble des scores et métriques (à venir)
-              </p>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-              <p className="text-blue-700">Cette fonctionnalité sera disponible prochainement.</p>
-            </div>
-          </div>
-        );
+        return <Dashboard />;
       case 'hosting':
         return <HostingView />;
       case 'about':
@@ -156,11 +148,15 @@ const AppShell: React.FC = () => {
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} onNavigate={setActiveTab} />
       
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
-            {renderContent()}
+        {activeTab === 'dashboard' ? (
+          renderContent()
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
+              {renderContent()}
+            </div>
           </div>
-        </div>
+        )}
       </main>
 
       <footer className="bg-white border-t border-gray-200 py-4">

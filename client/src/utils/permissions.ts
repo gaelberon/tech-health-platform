@@ -74,7 +74,7 @@ export function getAccessibleTabs(
   permissionsFromDB?: Map<string, boolean>
 ): TabType[] {
   if (!userRole) return [];
-  const allTabs: TabType[] = ['collector', 'admin', 'dashboard', 'hosting', 'about'];
+  const allTabs: TabType[] = ['dashboard', 'collector', 'admin', 'hosting', 'about'];
   return allTabs.filter((tab) => hasAccessToTab(userRole, tab, permissionsFromDB));
 }
 
@@ -86,13 +86,13 @@ export function getDefaultTab(
   permissionsFromDB?: Map<string, boolean>
 ): TabType {
   const accessibleTabs = getAccessibleTabs(userRole, permissionsFromDB);
-  // Priorité : collector > dashboard > hosting > about > admin
-  const priority: TabType[] = ['collector', 'dashboard', 'hosting', 'about', 'admin'];
+  // Priorité : dashboard > collector > hosting > about > admin
+  const priority: TabType[] = ['dashboard', 'collector', 'hosting', 'about', 'admin'];
   for (const tab of priority) {
     if (accessibleTabs.includes(tab)) {
       return tab;
     }
   }
-  return 'collector'; // Fallback
+  return 'dashboard'; // Fallback
 }
 

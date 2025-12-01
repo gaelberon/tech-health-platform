@@ -20,11 +20,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
   const { permissions: pagePermissions } = usePagePermissions(user?.role);
 
   // Utiliser le système de permissions pour déterminer les onglets disponibles
-  const allTabs: TabType[] = ['collector', 'admin', 'dashboard', 'hosting', 'about'];
+  const allTabs: TabType[] = ['dashboard', 'collector', 'admin', 'hosting', 'about'];
   const tabs = allTabs
     .filter((tab) => {
-      // Dashboard est temporairement désactivé
-      if (tab === 'dashboard') return false;
       // Admin est maintenant accessible via le menu utilisateur, retiré du header
       if (tab === 'admin') return false;
       return hasAccessToTab(user?.role, tab, pagePermissions);
@@ -45,7 +43,10 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo / Titre */}
-            <div className="flex items-center space-x-3">
+            <div 
+              onClick={() => onTabChange('dashboard')}
+              className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity"
+            >
               <img
                 src="/icon-192.png"
                 alt="Tech Health Platform"
@@ -126,7 +127,13 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
       <nav className="md:hidden bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-2">
+            <div 
+              onClick={() => {
+                onTabChange('dashboard');
+                setIsMenuOpen(false);
+              }}
+              className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
               <img
                 src="/icon-192.png"
                 alt="Tech Health Platform"
