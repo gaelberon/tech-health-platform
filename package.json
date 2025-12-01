@@ -1,0 +1,20 @@
+{
+  "name": "tech-health-platform",
+  "version": "1.0.0",
+  "description": "Tech-Health-Platform standardise l'audit technique (Due Diligence et suivi) des éditeurs via un scoring des risques (sécurité, dette). Construite sur une stack flexible (React, Node.js, GraphQL, Mongo), elle assure performance et souveraineté grâce à un déploiement conteneurisé sur VPS OVH France.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaelberon/tech-health-platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaelberon/tech-health-platform/issues"
+  },
+  "homepage": "https://github.com/gaelberon/tech-health-platform#readme"
+}

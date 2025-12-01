@@ -1,0 +1,45 @@
+// Fichier : /client/tsconfig.app.json (Partie compilerOptions)
+{
+  "extends": "./tsconfig.json", 
+  "compilerOptions": {
+    // Nous ajoutons composite: true si ce n'est pas déjà fait, pour l'aligner avec la correction précédente
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    // S'assurer que les types de React sont inclus dans les chemins de référence si nécessaire
+    "types": ["vite/client", "react", "react-dom"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    // Utilisation du mode JSX moderne
+    "jsx": "react-jsx", 
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    // Indique à TypeScript de résoudre les chemins relatifs à la racine du tsconfig.app.json
+    "baseUrl": ".", 
+    
+    // Mappe l'alias "@common/*" vers le chemin physique
+    "paths": {
+      // Mappage de l'alias @common vers la racine du dossier common (../common)
+      "@common/*": ["../common/*"],
+      "@common/types": ["../common/types/index"],
+      "@common/types/*": ["../common/types/*"]
+    }
+  },
+  "include": ["src", "../common/types"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

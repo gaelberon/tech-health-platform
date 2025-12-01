@@ -1,0 +1,39 @@
+### OS / éditeur
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+### Dépendances Node
+node_modules/
+server/node_modules/
+client/node_modules/
+
+### Builds / sorties
+dist/
+server/dist/
+client/dist/
+build/
+
+### Fichiers d’environnement (secrets, config locale)
+.env
+*.env.local
+*.env.development
+*.env.production
+server/.env
+client/.env
+
+### Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+### Autres
+.turbo/
+.parcel-cache/
+.eslintcache
+
+

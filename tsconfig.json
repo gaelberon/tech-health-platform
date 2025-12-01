@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+    
+    // Définition des chemins d'accès pour le code partagé /common (P1)
+    // Utile pour les interfaces de l'MCD (Editor, Solution, ScoringSnapshot) [3]
+    /* "paths": {
+      "@common/*": ["./common/types/*"]
+    } */
+  },
+  
+  // Utiliser les références pour les monorepos
+  "files": [],
+  "references": [
+    { "path": "./client" },
+    { "path": "./server" }
+    /* Si vous utilisez un dossier /common dédié avec son propre tsconfig:
+    { "path": "./common" }
+    */
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    // "rootDir": "./src",
+    // "outDir": "./dist",
+    "rootDir": "./src", // (pour indiquer que votre code source réside dans le répertoire `src`)
+    "outDir": "./dist", // (pour où le code compilé sera placé)
+    "esModuleInterop": true, // permet d'intégrer les modèles de données enrichis (comme `Codebase` ou `DevelopmentMetrics`) directement en tant qu'interfaces TypeScript dans votre code backend, assurant une forte cohérence entre la base de données MongoDB et la logique métier de votre API GraphQL.
+
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    //"module": "nodenext",
+    // "module": "commonjs",
+    "module": "NodeNext", // Utiliser NodeNext pour la gestion moderne des modules
+    "moduleResolution": "NodeNext", // Aligner la résolution sur le comportement de Node.js moderne
+    //"target": "esnext",
+    "target": "es2020", // Cibler une version moderne d'ECMAScript
+    "forceConsistentCasingInFileNames": true,
+    /* Pour corriger l'erreur spécifique */
+    "types": [],
+    // For nodejs:
+    // "lib": ["esnext"],
+    // "types": ["node"],
+    // and npm install -D @types/node
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Style Options
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+
+    // Recommended Options
+    "strict": true,
+    "jsx": "react-jsx",
+    //"verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false, // Désactiver ou s'assurer que cette option est désactivée
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+  }
+}
