@@ -12,6 +12,7 @@ const LIST_USERS = gql`
       phone
       role
       associatedEditorId
+      associatedEditorIds
       archived
       archivedAt
       archivedBy
@@ -32,6 +33,7 @@ const CREATE_USER = gql`
       phone
       role
       associatedEditorId
+      associatedEditorIds
     }
   }
 `;
@@ -46,6 +48,7 @@ const UPDATE_USER = gql`
       phone
       role
       associatedEditorId
+      associatedEditorIds
     }
   }
 `;
@@ -100,6 +103,7 @@ interface User {
   phone?: string;
   role: UserRole;
   associatedEditorId?: string;
+  associatedEditorIds?: string[];
   archived?: boolean;
   archivedAt?: string;
   archivedBy?: string;
@@ -108,11 +112,21 @@ interface User {
   updatedAt?: string;
 }
 
+const LIST_EDITORS = gql`
+  query ListEditors {
+    listEditors {
+      editorId
+      name
+    }
+  }
+`;
+
 const ROLES: UserRole[] = ['Admin', 'Supervisor', 'EntityDirector', 'Editor'];
 const PAGES = [
   { id: 'collector', label: 'Collecteur P1', icon: '📋' },
   { id: 'admin', label: 'Administration', icon: '⚙️' },
   { id: 'dashboard', label: 'Tableau de bord', icon: '📊' },
+  { id: 'hosting', label: 'Hébergement', icon: '🏗️' },
   { id: 'about', label: 'About', icon: 'ℹ️' },
 ];
 
@@ -127,6 +141,10 @@ const AdminUsers: React.FC = () => {
   const { data, loading, refetch } = useQuery(LIST_USERS, {
     variables: { includeArchived },
   });
+
+  // Query pour récupérer tous les éditeurs (pour les sélecteurs)
+  const { data: editorsData } = useQuery(LIST_EDITORS);
+  const editors = editorsData?.listEditors || [];
 
   const [createUser, { loading: creating }] = useMutation(CREATE_USER);
   const [updateUser, { loading: updating }] = useMutation(UPDATE_USER);
@@ -170,7 +188,8 @@ const AdminUsers: React.FC = () => {
     lastName: '',
     phone: '',
     role: 'Editor' as UserRole,
-    associatedEditorId: '',
+    associatedEditorId: '', // Pour Editor/EntityDirector
+    associatedEditorIds: [] as string[], // Pour Supervisor
   });
 
   const resetForm = () => {
@@ -182,6 +201,7 @@ const AdminUsers: React.FC = () => {
       phone: '',
       role: 'Editor',
       associatedEditorId: '',
+      associatedEditorIds: [],
     });
     setShowCreateForm(false);
     setEditingUser(null);
@@ -189,19 +209,26 @@ const AdminUsers: React.FC = () => {
 
   const handleCreate = async () => {
     try {
-      await createUser({
-        variables: {
-          input: {
-            email: formData.email,
-            password: formData.password,
-            firstName: formData.firstName || null,
-            lastName: formData.lastName || null,
-            phone: formData.phone || null,
-            role: formData.role,
-            associatedEditorId: formData.associatedEditorId || null,
-          },
-        },
-      });
+      const input: any = {
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName || null,
+        lastName: formData.lastName || null,
+        phone: formData.phone || null,
+        role: formData.role,
+      };
+
+      // Gérer les éditeurs associés selon le rôle
+      if (formData.role === 'Supervisor') {
+        // Supervisor : utiliser associatedEditorIds (tableau)
+        input.associatedEditorIds = formData.associatedEditorIds.length > 0 ? formData.associatedEditorIds : null;
+      } else if (formData.role === 'Editor' || formData.role === 'EntityDirector') {
+        // Editor/EntityDirector : utiliser associatedEditorId (un seul)
+        input.associatedEditorId = formData.associatedEditorId || null;
+      }
+      // Admin : pas d'éditeur associé nécessaire
+
+      await createUser({ variables: { input } });
       await refetch();
       resetForm();
       alert('Utilisateur créé avec succès');
@@ -214,20 +241,32 @@ const AdminUsers: React.FC = () => {
     if (!editingUser) return;
 
     try {
-      await updateUser({
-        variables: {
-          input: {
-            userId: editingUser.userId,
-            email: formData.email,
-            firstName: formData.firstName || null,
-            lastName: formData.lastName || null,
-            phone: formData.phone || null,
-            role: formData.role,
-            associatedEditorId: formData.associatedEditorId || null,
-            password: formData.password || undefined, // Optionnel
-          },
-        },
-      });
+      const input: any = {
+        userId: editingUser.userId,
+        email: formData.email,
+        firstName: formData.firstName || null,
+        lastName: formData.lastName || null,
+        phone: formData.phone || null,
+        role: formData.role,
+        password: formData.password || undefined, // Optionnel
+      };
+
+      // Gérer les éditeurs associés selon le rôle
+      if (formData.role === 'Supervisor') {
+        // Supervisor : utiliser associatedEditorIds (tableau)
+        input.associatedEditorIds = formData.associatedEditorIds.length > 0 ? formData.associatedEditorIds : null;
+        input.associatedEditorId = null; // Nettoyer l'ancien champ si présent
+      } else if (formData.role === 'Editor' || formData.role === 'EntityDirector') {
+        // Editor/EntityDirector : utiliser associatedEditorId (un seul)
+        input.associatedEditorId = formData.associatedEditorId || null;
+        input.associatedEditorIds = null; // Nettoyer l'ancien champ si présent
+      } else {
+        // Admin : nettoyer les deux champs
+        input.associatedEditorId = null;
+        input.associatedEditorIds = null;
+      }
+
+      await updateUser({ variables: { input } });
       await refetch();
       resetForm();
       alert('Utilisateur mis à jour avec succès');
@@ -290,6 +329,7 @@ const AdminUsers: React.FC = () => {
       phone: user.phone || '',
       role: user.role,
       associatedEditorId: user.associatedEditorId || '',
+      associatedEditorIds: user.associatedEditorIds || [],
     });
     setShowCreateForm(true);
   };
@@ -552,18 +592,92 @@ const AdminUsers: React.FC = () => {
               </select>
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                ID Éditeur associé (optionnel)
-              </label>
-              <input
-                type="text"
-                value={formData.associatedEditorId}
-                onChange={(e) => setFormData({ ...formData, associatedEditorId: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="ID de l'éditeur si applicable"
-              />
-            </div>
+            {/* Champ d'éditeur associé selon le rôle */}
+            {formData.role === 'Supervisor' && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Éditeurs du portefeuille (sélection multiple) *
+                </label>
+                <select
+                  multiple
+                  value={formData.associatedEditorIds}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions, option => option.value);
+                    setFormData({ ...formData, associatedEditorIds: selected });
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[120px]"
+                  size={5}
+                >
+                  {editors.map((editor: any) => (
+                    <option key={editor.editorId} value={editor.editorId}>
+                      {editor.name} ({editor.editorId})
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-gray-500">
+                  Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs éditeurs
+                </p>
+                {formData.associatedEditorIds.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {formData.associatedEditorIds.map((editorId) => {
+                      const editor = editors.find((e: any) => e.editorId === editorId);
+                      return (
+                        <span
+                          key={editorId}
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
+                        >
+                          {editor?.name || editorId}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({
+                                ...formData,
+                                associatedEditorIds: formData.associatedEditorIds.filter(id => id !== editorId),
+                              });
+                            }}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {(formData.role === 'Editor' || formData.role === 'EntityDirector') && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Éditeur associé *
+                </label>
+                <select
+                  value={formData.associatedEditorId}
+                  onChange={(e) => setFormData({ ...formData, associatedEditorId: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Sélectionner un éditeur...</option>
+                  {editors.map((editor: any) => (
+                    <option key={editor.editorId} value={editor.editorId}>
+                      {editor.name} ({editor.editorId})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {formData.role === 'Admin' && (
+              <div className="md:col-span-2">
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                  <p className="text-sm text-blue-800">
+                    <strong>Admin :</strong> Les administrateurs ont accès à tous les éditeurs par défaut.
+                    Aucun éditeur associé n'est nécessaire.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-3 mt-6">
@@ -575,7 +689,14 @@ const AdminUsers: React.FC = () => {
             </button>
             <button
               onClick={editingUser ? handleUpdate : handleCreate}
-              disabled={creating || updating || !formData.email || (!editingUser && !formData.password)}
+              disabled={
+                creating || 
+                updating || 
+                !formData.email || 
+                (!editingUser && !formData.password) ||
+                (formData.role === 'Supervisor' && formData.associatedEditorIds.length === 0) ||
+                ((formData.role === 'Editor' || formData.role === 'EntityDirector') && !formData.associatedEditorId)
+              }
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {creating || updating ? 'Enregistrement...' : editingUser ? 'Mettre à jour' : 'Créer'}
@@ -600,6 +721,9 @@ const AdminUsers: React.FC = () => {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Rôle
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Éditeur(s) associé(s)
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Dernière connexion
@@ -642,6 +766,40 @@ const AdminUsers: React.FC = () => {
                       >
                         {user.role}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {user.role === 'Admin' ? (
+                        <span className="text-gray-400 italic">Tous les éditeurs</span>
+                      ) : user.role === 'Supervisor' ? (
+                        user.associatedEditorIds && user.associatedEditorIds.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {user.associatedEditorIds.map((editorId: string) => {
+                              const editor = editors.find((e: any) => e.editorId === editorId);
+                              return (
+                                <span
+                                  key={editorId}
+                                  className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs"
+                                >
+                                  {editor?.name || editorId}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic">Aucun</span>
+                        )
+                      ) : user.associatedEditorId ? (
+                        (() => {
+                          const editor = editors.find((e: any) => e.editorId === user.associatedEditorId);
+                          return (
+                            <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded text-xs">
+                              {editor?.name || user.associatedEditorId}
+                            </span>
+                          );
+                        })()
+                      ) : (
+                        <span className="text-gray-400 italic">Aucun</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.lastLoginAt
