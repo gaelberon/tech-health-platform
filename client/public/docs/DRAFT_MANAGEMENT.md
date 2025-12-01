@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Le système de gestion des brouillons permet de sauvegarder automatiquement les données saisies dans le workflow de collecte (Collector P1) et de reprendre un workflow interrompu ou ayant échoué.
+Le système de gestion des brouillons permet de sauvegarder automatiquement les données saisies dans le workflow de collecte (Tech Profiler) et de reprendre un workflow interrompu ou ayant échoué.
 
 ## Fonctionnalités
 

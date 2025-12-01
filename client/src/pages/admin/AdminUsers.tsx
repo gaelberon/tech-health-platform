@@ -126,7 +126,7 @@ const LIST_EDITORS = gql`
 
 const ROLES: UserRole[] = ['Admin', 'Supervisor', 'EntityDirector', 'Editor'];
 const PAGES = [
-  { id: 'collector', label: 'Collecteur P1', icon: '📋' },
+  { id: 'collector', label: 'Tech Profiler', subtitle: 'Snapshot', icon: '📋' },
   { id: 'admin', label: 'Administration', icon: '⚙️' },
   { id: 'dashboard', label: 'Tableau de bord', icon: '📊' },
   { id: 'hosting', label: 'Hébergement', icon: '🏗️' },
@@ -451,7 +451,12 @@ const AdminUsers: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <span className="mr-2">{page.icon}</span>
-                              <span className="text-sm font-medium text-gray-900">{page.label}</span>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium text-gray-900">{page.label}</span>
+                                {page.subtitle && (
+                                  <span className="text-xs italic text-gray-500">{page.subtitle}</span>
+                                )}
+                              </div>
                               <code className="ml-3 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                                 {page.id}
                               </code>

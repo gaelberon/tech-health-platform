@@ -1,5 +1,5 @@
 // Fichier : /server/src/graphql/resolvers/CollectorResolver.ts
-// Resolver pour la collecte initiale P1 depuis le Collector UI
+// Resolver pour la collecte initiale P1 depuis le Tech Profiler
 
 import { EditorModel } from '../../models/Editor.model.js';
 import { SolutionModel } from '../../models/Solution.model.js';
@@ -111,7 +111,7 @@ const CollectorResolver = {
               entityType: 'Editor',
               entityId: editorId,
               after: editor.toObject(),
-              description: `Création d'un nouvel éditeur via Collector P1`,
+              description: `Création d'un nouvel éditeur via Tech Profiler`,
             });
           }
         } else {
@@ -137,7 +137,7 @@ const CollectorResolver = {
               entityId: editorId,
               before: beforeState,
               after: editor.toObject(),
-              description: `Mise à jour de l'éditeur via Collector P1`,
+              description: `Mise à jour de l'éditeur via Tech Profiler`,
             });
           }
         }
@@ -164,7 +164,7 @@ const CollectorResolver = {
             entityType: 'Hosting',
             entityId: hostingId,
             after: hosting.toObject(),
-            description: `Création d'un profil d'hébergement via Collector P1`,
+            description: `Création d'un profil d'hébergement via Tech Profiler`,
           });
         } else {
           const beforeState = hosting.toObject();
@@ -188,7 +188,7 @@ const CollectorResolver = {
               entityId: hostingId,
               before: beforeState,
               after: hosting.toObject(),
-              description: `Mise à jour du profil d'hébergement via Collector P1`,
+              description: `Mise à jour du profil d'hébergement via Tech Profiler`,
             });
           }
         }
@@ -231,7 +231,7 @@ const CollectorResolver = {
               entityType: 'Solution',
               entityId: solutionId,
               after: solution.toObject(),
-              description: `Création d'une nouvelle solution via Collector P1`,
+              description: `Création d'une nouvelle solution via Tech Profiler`,
             });
           }
         } else {
@@ -259,7 +259,7 @@ const CollectorResolver = {
               entityId: solutionId,
               before: beforeState,
               after: solution.toObject(),
-              description: `Mise à jour de la solution via Collector P1`,
+              description: `Mise à jour de la solution via Tech Profiler`,
             });
           }
         }
@@ -302,7 +302,7 @@ const CollectorResolver = {
               entityType: 'Environment',
               entityId: envId,
               after: environment.toObject(),
-              description: `Création d'un environnement via Collector P1`,
+              description: `Création d'un environnement via Tech Profiler`,
             });
           }
         } else if (environment) {
@@ -336,7 +336,7 @@ const CollectorResolver = {
               entityId: envId,
               before: beforeState,
               after: environment.toObject(),
-              description: `Mise à jour de l'environnement via Collector P1`,
+              description: `Mise à jour de l'environnement via Tech Profiler`,
             });
           }
         }
@@ -369,7 +369,7 @@ const CollectorResolver = {
             entityType: 'SecurityProfile',
             entityId: secId,
             after: securityProfile.toObject(),
-            description: `Création d'un profil de sécurité via Collector P1`,
+            description: `Création d'un profil de sécurité via Tech Profiler`,
           });
         } else {
           const beforeState = securityProfile.toObject();
@@ -398,7 +398,7 @@ const CollectorResolver = {
               entityId: secId,
               before: beforeState,
               after: securityProfile.toObject(),
-              description: `Mise à jour du profil de sécurité via Collector P1`,
+              description: `Mise à jour du profil de sécurité via Tech Profiler`,
             });
           }
         }
@@ -425,7 +425,7 @@ const CollectorResolver = {
           },
           global_score: 0, // Sera calculé par le scoring engine
           risk_level: 'Low', // Sera calculé par le scoring engine
-          notes: 'Snapshot initial créé via Collector P1. Le scoring sera calculé par le Scoring Engine.',
+          notes: 'Snapshot initial créé via Tech Profiler. Le scoring sera calculé par le Scoring Engine.',
         });
 
         await logAudit(auditContext, {
@@ -433,7 +433,7 @@ const CollectorResolver = {
           entityType: 'ScoringSnapshot',
           entityId: scoreId,
           after: scoringSnapshot.toObject(),
-          description: `Création d'un snapshot de scoring initial via Collector P1`,
+          description: `Création d'un snapshot de scoring initial via Tech Profiler`,
         });
 
         // Retourner toutes les entités créées/mises à jour

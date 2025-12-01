@@ -30,7 +30,7 @@ Le scoring est calculé par un service backend (`Scoring Engine`) qui génère u
 
 L'application supporte plusieurs interfaces utilisateur :
 
-- **Collector UI** : Formulaire guidé (stepper) utilisant la *Progressive Disclosure* pour une collecte progressive des données (priorités P1 à P5)
+- **Tech Profiler (Snapshot)** : Formulaire guidé (stepper) utilisant la *Progressive Disclosure* pour une collecte progressive des données (priorités P1 à P5)
 - **Vue d'Hébergement** : Visualisation et analyse de l'infrastructure d'hébergement des solutions (environnements, redondance, backup, sécurité, coûts)
 - **Portfolio View** : Permet la comparaison, le filtrage et l'affichage de *heatmaps* (maturité / risque / coûts) pour toutes les solutions du groupe
 - **Technical DD View** : Vue agrégée de tous les champs pertinents pour l'évaluation pré-acquisition
@@ -70,7 +70,7 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Administration des éditeurs : Interface dédiée pour créer et mettre à jour les éditeurs avec leurs caractéristiques
 
 #### Workflow de Collecte et Gestion des Brouillons
-- ✅ **Collecteur P1** : Formulaire guidé multi-étapes pour la collecte initiale des données critiques
+- ✅ **Tech Profiler (Snapshot)** : Formulaire guidé multi-étapes pour la collecte initiale des données critiques
 - ✅ **Sélection d'éditeur existant** : Possibilité d'utiliser un éditeur déjà enregistré lors de la collecte
 - ✅ **Gestion des brouillons** : Système complet de sauvegarde automatique et de reprise de workflow
   - Sauvegarde automatique avec debounce (2 secondes d'inactivité)

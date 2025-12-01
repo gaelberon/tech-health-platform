@@ -32,6 +32,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
     .map((tab) => ({
       id: tab,
       label: TAB_METADATA[tab].label,
+      subtitle: TAB_METADATA[tab].subtitle,
       icon: TAB_METADATA[tab].icon,
     }));
 

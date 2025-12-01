@@ -70,7 +70,7 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
       <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
         <h1 className="text-2xl font-bold mb-2 text-center">Connexion</h1>
         <p className="text-sm text-gray-500 mb-6 text-center">
-          Accédez au tableau de bord de scoring et au Collector P1.
+          Accédez au tableau de bord de scoring et au Tech Profiler.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

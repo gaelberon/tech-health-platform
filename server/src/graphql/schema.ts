@@ -759,7 +759,7 @@ const typeDefs = gql`
         notes: String
     }
 
-    # Inputs P1 pour la collecte initiale (Collector UI)
+    # Inputs P1 pour la collecte initiale (Tech Profiler)
     input EditorInputP1 {
         name: String!
         business_criticality: String! # Low/Medium/High/Critical
@@ -970,7 +970,7 @@ const typeDefs = gql`
             hosting: HostingInputP1!
             environment: EnvironmentInputP1!
             security: SecurityInputP1!
-        ): SubmitP1DataResponse! # P1 - Collecte initiale depuis Collector UI
+        ): SubmitP1DataResponse! # P1 - Collecte initiale depuis Tech Profiler
         saveCollectorDraft(input: SaveCollectorDraftInput!): CollectorDraft! # Sauvegarder un brouillon
         deleteCollectorDraft(draftId: ID!): Boolean! # Supprimer un brouillon
         

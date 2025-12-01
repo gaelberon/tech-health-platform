@@ -104,7 +104,7 @@ const CollectorDraftResolver = {
             entityId: draftId,
             before: beforeState,
             after: draft.toObject(),
-            description: `Mise à jour du brouillon de collecte (étape ${step}, statut: ${status})`,
+            description: `Mise à jour du brouillon de collecte Tech Profiler (étape ${step}, statut: ${status})`,
           });
         }
       } else {
@@ -127,7 +127,7 @@ const CollectorDraftResolver = {
             entityType: 'CollectorDraft', // Type non encore dans EntityType, sera ajouté
             entityId: newDraftId,
             after: draft.toObject(),
-            description: `Création d'un nouveau brouillon de collecte (étape ${step}, statut: ${status})`,
+            description: `Création d'un nouveau brouillon de collecte Tech Profiler (étape ${step}, statut: ${status})`,
           });
       }
 
@@ -171,7 +171,7 @@ const CollectorDraftResolver = {
         entityType: 'CollectorDraft',
         entityId: args.draftId,
         before: beforeState,
-        description: `Suppression du brouillon de collecte`,
+        description: `Suppression du brouillon de collecte Tech Profiler`,
       });
 
       return true;
