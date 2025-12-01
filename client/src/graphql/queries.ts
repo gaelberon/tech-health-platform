@@ -143,4 +143,37 @@ export const GET_SOLUTION_HOSTING_VIEW = gql`
   }
 `;
 
+// Queries pour les brouillons de collecte
+export const LIST_COLLECTOR_DRAFTS = gql`
+  query ListCollectorDrafts($status: String) {
+    listCollectorDrafts(status: $status) {
+      draftId
+      userId
+      status
+      step
+      formData
+      errorMessage
+      lastSavedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_COLLECTOR_DRAFT = gql`
+  query GetCollectorDraft($draftId: ID!) {
+    getCollectorDraft(draftId: $draftId) {
+      draftId
+      userId
+      status
+      step
+      formData
+      errorMessage
+      lastSavedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 

@@ -13,8 +13,6 @@ export const CREATE_SOLUTION_ENVIRONMENT_P1 = gql`
     $environmentInput: EnvironmentInputP1!
     $securityInput: SecurityInputP1!
   ) {
-    # La logique de mutation sera implémentée dans le Backend Resolver (ex: SolutionResolver)
-    # Elle prend les inputs P1 et retourne le ScoringSnapshot créé.
     submitP1Data(
       editor: $editorInput
       solution: $solutionInput
@@ -22,16 +20,61 @@ export const CREATE_SOLUTION_ENVIRONMENT_P1 = gql`
       environment: $environmentInput
       security: $securityInput
     ) {
-      # Nous demandons en retour les champs P1 critiques de la solution mise à jour
-      id
-      name
-      # Et surtout le premier Scoring Snapshot généré (P1)
-      latestScore {
+      solution {
+        solutionId
+        name
+        type
+        product_criticality
+      }
+      editor {
+        editorId
+        name
+        business_criticality
+      }
+      environment {
+        envId
+        env_type
+        redundancy
+      }
+      hosting {
+        hostingId
+        provider
+        region
+      }
+      securityProfile {
+        secId
+        auth
+      }
+      scoringSnapshot {
+        scoreId
         global_score
         risk_level
-        notes
+        date
       }
     }
+  }
+`;
+
+// Mutations pour la gestion des brouillons
+export const SAVE_COLLECTOR_DRAFT = gql`
+  mutation SaveCollectorDraft($input: SaveCollectorDraftInput!) {
+    saveCollectorDraft(input: $input) {
+      draftId
+      userId
+      status
+      step
+      formData
+      errorMessage
+      lastSavedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_COLLECTOR_DRAFT = gql`
+  mutation DeleteCollectorDraft($draftId: ID!) {
+    deleteCollectorDraft(draftId: $draftId)
   }
 `;
 

@@ -12,6 +12,7 @@ import { GraphQLError, GraphQLFormattedError, SourceLocation } from 'graphql'; /
 import http from 'http';
 import typeDefs from './graphql/schema.js'; // Import du schéma GraphQL que nous avons défini
 import resolvers from './graphql/resolvers/index.js'; // Import de l'objet regroupant tous les Resolvers (.js pour ESM)
+import { GraphQLJSON } from 'graphql-type-json'; // Pour le scalar JSON
 import jwt from 'jsonwebtoken';
 import { ensureDefaultAdminUser, removeOldEmailUniqueIndex } from './models/User.model.js';
 import { seedInitialLookups } from './config/seedLookups.js';
@@ -97,9 +98,15 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
 
     // d. Initialisation de l'Instance Apollo Server
     // L'utilisation de GraphQL permet de créer des vues flexibles (Portfolio, Technique DD).
+    // Ajouter le scalar JSON aux resolvers
+    const resolversWithJSON = {
+        ...resolvers,
+        JSON: GraphQLJSON,
+    };
+
     const server = new ApolloServer({
         typeDefs,
-        resolvers,
+        resolvers: resolversWithJSON,
         context: ({ req, res }) => {
             const token = req.cookies?.auth_token;
             let user = null;

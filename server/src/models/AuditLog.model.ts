@@ -20,7 +20,8 @@ export type EntityType =
   | 'CodeBase'
   | 'DevelopmentMetrics'
   | 'DevelopmentTeam'
-  | 'AIFeatures';
+  | 'AIFeatures'
+  | 'CollectorDraft';
 
 export interface IAuditLog extends Document {
   // Qui
@@ -83,6 +84,7 @@ const AuditLogSchema = new Schema<IAuditLog>(
         'DevelopmentMetrics',
         'DevelopmentTeam',
         'AIFeatures',
+        'CollectorDraft',
       ],
       required: true,
       index: true,

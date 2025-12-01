@@ -5,7 +5,7 @@ const BackupSchema = new Schema({
     schedule: { type: String },
     rto: { type: Number }, // RTO en heures
     rpo: { type: Number }, // RPO en heures
-    restoration_test_frequency: { type: String, enum: ['Annual', 'Quarterly', 'Never'] } // Sous-champ de backup
+    restoration_test_frequency: { type: String, enum: ['annual', 'quarterly', 'never'] } // Sous-champ de backup
 }, { _id: false });
 
 export interface IEnvironment extends Document {
@@ -41,15 +41,21 @@ export interface IEnvironment extends Document {
 }
 
 const EnvironmentSchema = new Schema<IEnvironment>({
+    envId: { type: String, required: true, unique: true }, // PK
     solutionId: { type: Schema.Types.ObjectId, ref: 'Solution', required: true },
+    hostingId: { type: String, required: true }, // FK vers Hosting (string, pas ObjectId)
     env_type: { type: String, enum: ['production', 'test', 'dev', 'backup'], required: true },
+    data_types: [{ type: String }], // Array of strings
     deployment_type: { type: String, enum: ['monolith', 'microservices', 'hybrid'] },
+    virtualization: { type: String, enum: ['physical', 'VM', 'container', 'k8s'] },
     tech_stack: [{ type: String }],
-    redundancy: { type: String, enum: ['none', 'minimal', 'geo-redundant', 'high'] },
+    redundancy: { type: String, enum: ['none', 'minimal', 'geo-redundant', 'high'], required: true },
     backup: { type: BackupSchema, required: true }, // Utilisation du schéma imbriqué
     disaster_recovery_plan: { type: String, enum: ['Documented', 'Tested', 'None'] }, // Donnée DD
-    // Les références aux collections SecurityProfile, Monitoring, Costs peuvent être gérées comme des FK, ou des sous-documents si 1:1.
-    // hostingId: { type: Schema.Types.ObjectId, ref: 'Hosting', required: true }, // Exemple de FK
+    db_scaling_mechanism: { type: String },
+    sla_offered: { type: String },
+}, {
+    timestamps: true
 });
 
 export const EnvironmentModel = model<IEnvironment>('Environment', EnvironmentSchema, 'environments');

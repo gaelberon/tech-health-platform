@@ -7,6 +7,9 @@ const typeDefs = gql`
     # SCALARS & ENUMS (Dictionnaire Synthétique)
     # =================================================================
 
+    # Scalar pour JSON (utilisé pour formData dans CollectorDraft)
+    scalar JSON
+
     # Priorités P1/P2/P3
     enum Criticality {
         Low
@@ -753,6 +756,87 @@ const typeDefs = gql`
         notes: String
     }
 
+    # Inputs P1 pour la collecte initiale (Collector UI)
+    input EditorInputP1 {
+        name: String!
+        business_criticality: String! # Low/Medium/High/Critical
+        country: String
+        size: String # Micro/SME/Mid/Enterprise
+    }
+
+    input SolutionInputP1 {
+        name: String!
+        type: String! # SaaS/OnPrem/Hybrid/ClientHeavy
+        product_criticality: String! # Low/Medium/High/Critical
+        main_use_case: String!
+        description: String
+    }
+
+    input HostingInputP1 {
+        provider: String! # OVH, Azure, AWS, OnPrem, etc.
+        region: String! # Pays/Région
+        tier: String! # datacenter/private/public/cloud
+        certifications: [String!]
+    }
+
+    input EnvironmentInputP1 {
+        env_type: String! # production/test/dev/backup
+        data_types: [String!]! # Personal/Sensitive/Health/Financial/Synthetic
+        redundancy: String! # none/minimal/geo-redundant/high
+        backup: BackupInputP1!
+        deployment_type: String # monolith/microservices/hybrid
+        virtualization: String # physical/VM/container/k8s
+        tech_stack: [String!]
+    }
+
+    input BackupInputP1 {
+        exists: Boolean!
+        schedule: String
+        rto_hours: Float # Recovery Time Objective
+        rpo_hours: Float # Recovery Point Objective
+        restoration_test_frequency: String # never/annual/quarterly
+    }
+
+    input SecurityInputP1 {
+        auth: String! # None/Passwords/MFA/SSO
+        encryption: EncryptionInput!
+        patching: String # ad_hoc/scheduled/automated
+        pentest_freq: String # never/annual/quarterly
+        vuln_mgmt: String # none/manual/automated
+    }
+
+    # Type de retour pour submitP1Data
+    type SubmitP1DataResponse {
+        solution: Solution!
+        editor: Editor!
+        environment: Environment!
+        hosting: Hosting!
+        securityProfile: SecurityProfile!
+        scoringSnapshot: ScoringSnapshot
+    }
+
+    # Entité CollectorDraft pour la gestion des brouillons
+    type CollectorDraft {
+        draftId: ID!
+        userId: ID!
+        status: String! # draft, in_progress, failed, completed
+        step: Int!
+        formData: JSON!
+        errorMessage: String
+        lastSavedAt: String!
+        createdAt: String!
+        updatedAt: String!
+    }
+
+    # Inputs pour la gestion des brouillons
+    input SaveCollectorDraftInput {
+        draftId: ID # Optionnel, pour mettre à jour un brouillon existant
+        status: String! # draft, in_progress, failed
+        step: Int!
+        formData: JSON!
+        errorMessage: String
+    }
+
 
     # =================================================================
     # ROOT QUERY
@@ -790,6 +874,10 @@ const typeDefs = gql`
         listEditors: [Editor!]!
         getEditor(editorId: ID!): Editor
         listEditorsForUser: [Editor!]! # Liste des éditeurs accessibles selon le rôle de l'utilisateur
+
+        # Collector Drafts
+        listCollectorDrafts(status: String): [CollectorDraft!]! # Liste des brouillons de l'utilisateur connecté
+        getCollectorDraft(draftId: ID!): CollectorDraft
 
         # Solution (P1)
         getSolution(solutionId: ID!): Solution
@@ -873,6 +961,15 @@ const typeDefs = gql`
         # Timeseries / Historique
         recordPerformanceMetric(input: CreatePerformanceMetricInput!): PerformanceMetrics!
         recordScoringSnapshot(input: CreateScoringSnapshotInput!): ScoringSnapshot! # P1 - Appelé par le service
+        submitP1Data(
+            editor: EditorInputP1!
+            solution: SolutionInputP1!
+            hosting: HostingInputP1!
+            environment: EnvironmentInputP1!
+            security: SecurityInputP1!
+        ): SubmitP1DataResponse! # P1 - Collecte initiale depuis Collector UI
+        saveCollectorDraft(input: SaveCollectorDraftInput!): CollectorDraft! # Sauvegarder un brouillon
+        deleteCollectorDraft(draftId: ID!): Boolean! # Supprimer un brouillon
         
         # Documents / Roadmap
         createDocument(input: CreateDocumentInput!): Document!

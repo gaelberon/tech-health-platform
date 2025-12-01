@@ -51,6 +51,7 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ **Gestion des Utilisateurs** : CRUD complet avec archivage
 - ✅ **Droits d'accès aux pages** : Configuration des permissions d'accès par rôle et page
 - ✅ **Pistes d'audit** : Consultation des logs d'audit avec filtres avancés
+- ✅ **Gestion des Données** : Interface d'administration pour créer et mettre à jour les éditeurs manuellement
 
 #### Système de Pistes d'Audit
 - ✅ Enregistrement automatique de toutes les modifications (CREATE, UPDATE, DELETE, ARCHIVE, RESTORE)
@@ -62,6 +63,18 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Lookups dynamiques : Les menus déroulants sont gérés via MongoDB et peuvent être modifiés sans redéploiement
 - ✅ Organisation hiérarchique : Lookups organisés par entité et criticité (P1, P2, etc.)
 - ✅ Recherche avancée : Recherche par nom de formulaire, clé technique, description
+- ✅ Administration des éditeurs : Interface dédiée pour créer et mettre à jour les éditeurs avec leurs caractéristiques
+
+#### Workflow de Collecte et Gestion des Brouillons
+- ✅ **Collecteur P1** : Formulaire guidé multi-étapes pour la collecte initiale des données critiques
+- ✅ **Sélection d'éditeur existant** : Possibilité d'utiliser un éditeur déjà enregistré lors de la collecte
+- ✅ **Gestion des brouillons** : Système complet de sauvegarde automatique et de reprise de workflow
+  - Sauvegarde automatique avec debounce (2 secondes d'inactivité)
+  - Statuts de workflow : `draft`, `in_progress`, `failed`, `completed`
+  - Interface de sélection pour reprendre un brouillon interrompu
+  - Gestion des erreurs : sauvegarde automatique avec message d'erreur en cas d'échec
+  - Suppression automatique des brouillons complétés
+- ✅ **Traçabilité** : Tous les brouillons sont enregistrés dans les pistes d'audit
 
 #### Page About et Documentation Interactive
 - ✅ Système d'onglets pour organiser la documentation
@@ -125,6 +138,10 @@ Le modèle de données fusionne l'inventaire CIEC avec des entités spécifiques
 - **`AuditLog`** : Logs d'audit pour la traçabilité
   - Enregistrement automatique de toutes les modifications
   - Collection dédiée pour immutabilité
+- **`CollectorDraft`** : Brouillons de workflow de collecte
+  - Sauvegarde automatique des données de formulaire
+  - Statuts : `draft`, `in_progress`, `failed`, `completed`
+  - Permet la reprise d'un workflow interrompu ou ayant échoué
 
 ## Sécurité et Conformité
 
@@ -281,6 +298,7 @@ tech-health-platform/
 - **Données collectées** : Documentation complète des entités et champs (onglet "Données collectées")
 - **Pistes d'audit** : Bonnes pratiques et implémentation (onglet "Pistes d'audit" ou `docs/AUDIT_TRAIL_BEST_PRACTICES.md`)
 - **Vue d'hébergement** : Guide d'utilisation de la vue d'hébergement (onglet "Vue d'hébergement" ou `docs/HOSTING_VIEW.md`)
+- **Gestion des brouillons** : Documentation du système de sauvegarde et de reprise des workflows (onglet "Gestion des brouillons" ou `docs/DRAFT_MANAGEMENT.md`)
 
 ## Développement
 

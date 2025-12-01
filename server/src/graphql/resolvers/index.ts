@@ -30,6 +30,8 @@ import PermissionResolver from './PermissionResolver.js';
 import LookupResolver from './LookupResolver.js';
 import UserResolver from './UserResolver.js';
 import AuditResolver from './AuditResolver.js';
+import CollectorResolver from './CollectorResolver.js';
+import CollectorDraftResolver from './CollectorDraftResolver.js';
 
 
 // ------------------ FONCTION D'AGREGATION ------------------
@@ -96,6 +98,8 @@ const allResolvers = combineResolvers([
     LookupResolver,
     UserResolver,
     AuditResolver,
+    CollectorResolver,
+    CollectorDraftResolver,
 ]);
 
 export default allResolvers;
