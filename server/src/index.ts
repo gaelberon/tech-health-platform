@@ -53,6 +53,11 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
     // b. Initialisation de l'Application Express
     const app = express();
     
+    // Configuration du body parser avec limite de taille augmentée pour les images base64
+    // Une image de 2MB encodée en base64 peut faire ~2.7MB, on met 10MB pour la marge
+    app.use(express.json({ limit: '10mb' }));
+    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    
     // Middleware de logging pour debug
     app.use((req, res, next) => {
       if (req.path === '/graphql') {
@@ -171,9 +176,15 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
 
     // f. Application du middleware Apollo à Express
     // Cela permet à Apollo de gérer toutes les requêtes HTTP sur le chemin /graphql
-    // server.applyMiddleware({ app, path: GRAPHQL_PATH });
+    // Configuration du body parser pour accepter des requêtes plus grandes (images base64)
     // CORRECTION : Forcer l'application à 'any' pour contourner le conflit de typage Express/Apollo Server v3
-    server.applyMiddleware({ app: app as any, path: GRAPHQL_PATH }); 
+    server.applyMiddleware({ 
+        app: app as any, 
+        path: GRAPHQL_PATH,
+        bodyParserConfig: {
+            limit: '10mb',
+        },
+    }); 
     
     // g. Démarrage du Serveur d'écoute
     await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
