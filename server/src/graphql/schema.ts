@@ -332,7 +332,8 @@ const typeDefs = gql`
         lastName: String
         phone: String
         role: UserRole!
-        associatedEditorId: ID
+        associatedEditorId: ID # Pour Editor/EntityDirector (un seul éditeur)
+        associatedEditorIds: [ID!] # Pour Supervisor (portefeuille d'éditeurs)
         archived: Boolean
         archivedAt: String
         archivedBy: ID
@@ -727,7 +728,8 @@ const typeDefs = gql`
         lastName: String
         phone: String
         role: UserRole!
-        associatedEditorId: ID
+        associatedEditorId: ID # Pour Editor/EntityDirector
+        associatedEditorIds: [ID!] # Pour Supervisor (portefeuille)
     }
 
     input UpdateUserInput {
@@ -737,7 +739,8 @@ const typeDefs = gql`
         lastName: String
         phone: String
         role: UserRole
-        associatedEditorId: ID
+        associatedEditorId: ID # Pour Editor/EntityDirector
+        associatedEditorIds: [ID!] # Pour Supervisor (portefeuille)
         password: String # Optionnel, pour changer le mot de passe
     }
 
@@ -786,6 +789,7 @@ const typeDefs = gql`
         # Editor (Vue Portfolio)
         listEditors: [Editor!]!
         getEditor(editorId: ID!): Editor
+        listEditorsForUser: [Editor!]! # Liste des éditeurs accessibles selon le rôle de l'utilisateur
 
         # Solution (P1)
         getSolution(solutionId: ID!): Solution

@@ -59,6 +59,47 @@ const EditorResolver = {
             // editorId est P1 [2]
             return await EditorModel.findOne({ editorId: editorId });
         },
+
+        // Query 3: Lister les éditeurs accessibles selon le rôle de l'utilisateur
+        listEditorsForUser: async (_: any, __: any, ctx: any) => {
+            const user = ctx.user;
+            
+            if (!user) {
+                return []; // Pas d'utilisateur connecté
+            }
+
+            // Admin : tous les éditeurs (même sans éditeur associé)
+            if (user.role === 'Admin') {
+                // Si l'admin a des éditeurs associés, on peut les filtrer, sinon tous
+                // Pour l'instant, on retourne tous les éditeurs
+                return await EditorModel.find({});
+            }
+
+            // Editor ou EntityDirector : uniquement l'éditeur associé
+            if (user.role === 'Editor' || user.role === 'EntityDirector') {
+                if (user.associatedEditorId) {
+                    // Trouver l'éditeur par editorId (pas _id)
+                    const editor = await EditorModel.findOne({ editorId: user.associatedEditorId });
+                    return editor ? [editor] : [];
+                }
+                return []; // Pas d'éditeur associé
+            }
+
+            // Supervisor : uniquement les éditeurs dans son portefeuille (associatedEditorIds)
+            if (user.role === 'Supervisor') {
+                if (user.associatedEditorIds && user.associatedEditorIds.length > 0) {
+                    // Retourner uniquement les éditeurs du portefeuille
+                    const editors = await EditorModel.find({ 
+                        editorId: { $in: user.associatedEditorIds } 
+                    });
+                    return editors;
+                }
+                // Si aucun éditeur associé, retourner un tableau vide
+                return [];
+            }
+
+            return [];
+        },
     },
 
     // Résolveurs de Mutations (Mutations)
