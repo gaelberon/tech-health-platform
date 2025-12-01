@@ -13,7 +13,9 @@ import http from 'http';
 import typeDefs from './graphql/schema.js'; // Import du schéma GraphQL que nous avons défini
 import resolvers from './graphql/resolvers/index.js'; // Import de l'objet regroupant tous les Resolvers (.js pour ESM)
 import jwt from 'jsonwebtoken';
-import { ensureDefaultAdminUser } from './models/User.model.js';
+import { ensureDefaultAdminUser, removeOldEmailUniqueIndex } from './models/User.model.js';
+import { seedInitialLookups } from './config/seedLookups.js';
+import { initializeDefaultPagePermissions } from './models/PageAccessPermission.model.js';
 
 // Fichier fictif pour la connexion MongoDB (Mongoose)
 // (Vous devez créer ce fichier /server/src/config/db.js ou équivalent)
@@ -38,7 +40,10 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
     try {
         await connectDB();
         console.log("✅ Connexion à MongoDB Atlas établie avec succès.");
+        await removeOldEmailUniqueIndex(); // Supprimer l'ancien index unique sur email
         await ensureDefaultAdminUser();
+        await seedInitialLookups();
+        await initializeDefaultPagePermissions(); // Initialiser les permissions d'accès aux pages
     } catch (error) {
         console.error("❌ ERREUR: Impossible de se connecter à la base de données. Exiting...");
         process.exit(1);
