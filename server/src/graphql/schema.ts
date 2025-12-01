@@ -328,8 +328,45 @@ const typeDefs = gql`
     type User {
         userId: ID!
         email: String!
+        firstName: String
+        lastName: String
+        phone: String
         role: UserRole!
         associatedEditorId: ID
+        archived: Boolean
+        archivedAt: String
+        archivedBy: ID
+        lastLoginAt: String
+        createdAt: String
+        updatedAt: String
+    }
+
+    # Réponse de connexion (peut contenir plusieurs comptes)
+    type LoginResponse {
+        user: User
+        availableAccounts: [User!]!
+        requiresAccountSelection: Boolean!
+    }
+
+    # ENTITÉ LOOKUP (Administration) - Listes de valeurs pour les menus déroulants
+    type LookupValue {
+        code: String!
+        label: String!
+        label_fr: String
+        label_en: String
+        description: String
+        order: Int
+        active: Boolean
+    }
+
+    type Lookup {
+        id: ID!
+        key: String!
+        values: [LookupValue!]!
+        category: String
+        entity: String
+        formLabel: String
+        description: String
     }
 
     # MATRICE DE PERMISSIONS PAR ROLE
@@ -337,6 +374,14 @@ const typeDefs = gql`
         id: ID!
         role: UserRole!
         operation: String!
+        allowed: Boolean!
+    }
+
+    # PERMISSIONS D'ACCÈS AUX PAGES
+    type PageAccessPermission {
+        id: ID!
+        role: UserRole!
+        page: String!
         allowed: Boolean!
     }
 
@@ -629,6 +674,48 @@ const typeDefs = gql`
         compliance: Float!
     }
 
+    # Lookup Inputs
+    input LookupValueInput {
+        code: String!
+        label: String!
+        label_fr: String
+        label_en: String
+        description: String
+        order: Int
+        active: Boolean
+    }
+
+    input UpdateLookupInput {
+        key: String!
+        values: [LookupValueInput!]!
+        category: String
+        entity: String
+        formLabel: String
+        description: String
+    }
+
+    # User Inputs
+    input CreateUserInput {
+        email: String!
+        password: String!
+        firstName: String
+        lastName: String
+        phone: String
+        role: UserRole!
+        associatedEditorId: ID
+    }
+
+    input UpdateUserInput {
+        userId: ID!
+        email: String
+        firstName: String
+        lastName: String
+        phone: String
+        role: UserRole
+        associatedEditorId: ID
+        password: String # Optionnel, pour changer le mot de passe
+    }
+
     input CreateScoringSnapshotInput {
         solutionId: ID!
         envId: ID
@@ -649,6 +736,15 @@ const typeDefs = gql`
 
         # Permissions / Administration
         listRolePermissions(role: UserRole!): [RolePermission!]!
+        listPageAccessPermissions(role: UserRole!): [PageAccessPermission!]!
+        
+        # Lookups / Dictionnaires
+        getLookups(keys: [String!]!): [Lookup!]!
+        listAllLookups(category: String): [Lookup!]!
+        
+        # Users / Administration
+        listUsers(includeArchived: Boolean): [User!]!
+        getUser(userId: ID!): User
 
         # Editor (Vue Portfolio)
         listEditors: [Editor!]!
@@ -696,12 +792,23 @@ const typeDefs = gql`
     # =================================================================
     
     type Mutation {
-        # Auth
-        login(email: String!, password: String!): User!
-        logout: Boolean!
+    # Auth
+    login(email: String!, password: String!): LoginResponse!
+    selectAccount(userId: ID!): User!
+    logout: Boolean!
 
         # Permissions / Administration
         setRolePermission(role: UserRole!, operation: String!, allowed: Boolean!): RolePermission!
+        setPageAccessPermission(role: UserRole!, page: String!, allowed: Boolean!): PageAccessPermission!
+        
+        # Lookups / Dictionnaires
+        updateLookup(input: UpdateLookupInput!): Lookup!
+        
+        # Users / Administration
+        createUser(input: CreateUserInput!): User!
+        updateUser(input: UpdateUserInput!): User!
+        archiveUser(userId: ID!): User!
+        restoreUser(userId: ID!): User!
 
         # Editor & Team
         updateEditor(input: UpdateEditorInput!): Editor!
