@@ -62,6 +62,14 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Organisation hiérarchique : Lookups organisés par entité et criticité (P1, P2, etc.)
 - ✅ Recherche avancée : Recherche par nom de formulaire, clé technique, description
 
+#### Page About et Documentation Interactive
+- ✅ Système d'onglets pour organiser la documentation
+- ✅ **Vue d'ensemble** : Affichage du README.md avec rendu Markdown complet
+- ✅ **Données collectées** : Documentation interactive des 13 entités avec navigation et tableaux détaillés
+- ✅ **Pistes d'audit** : Affichage de la documentation des bonnes pratiques
+- ✅ Extension automatique : Tout nouveau fichier dans `docs/` devient automatiquement un onglet
+- ✅ Rendu Markdown optimisé avec composants personnalisés (titres, tableaux, code inline/blocs)
+
 ## Architecture Technique
 
 La plateforme est basée sur une architecture Monorepo utilisant TypeScript pour la cohérence entre le frontend et le backend. L'API est construite autour de GraphQL pour une flexibilité maximale dans la récupération des données.
@@ -103,17 +111,63 @@ Le modèle de données fusionne l'inventaire CIEC avec des entités spécifiques
 ### Entités d'Administration
 
 - **`User`** : Utilisateurs avec rôles et permissions
+  - Format d'ID : `user-XXXX` (générique, sans indication du rôle)
+  - Unicité : Combinaison `email + role` (un même email peut avoir plusieurs rôles)
+  - Champs : email, firstName, lastName, phone, role, associatedEditorId, archived, lastLoginAt
 - **`Lookup`** : Listes de valeurs dynamiques pour les menus déroulants
-- **`Permission`** : Permissions par rôle et opération
-- **`PageAccessPermission`** : Permissions d'accès aux pages par rôle
+  - Organisation par entité et criticité (P1, P2, etc.)
+  - Recherche par nom de formulaire, clé technique, description
+- **`Permission`** : Permissions par rôle et opération (backend)
+  - Contrôle l'accès aux mutations/queries GraphQL
+- **`PageAccessPermission`** : Permissions d'accès aux pages par rôle (frontend)
+  - Contrôle l'affichage des pages et onglets de navigation
 - **`AuditLog`** : Logs d'audit pour la traçabilité
+  - Enregistrement automatique de toutes les modifications
+  - Collection dédiée pour immutabilité
 
 ## Sécurité et Conformité
 
 ### Authentification
-- JWT stocké dans des cookies HttpOnly (protection XSS)
-- Support de plusieurs comptes par email avec sélection
-- Contrôle d'accès basé sur les rôles (RBAC)
+
+#### Flux d'Authentification Complet
+
+Le système d'authentification suit un flux sécurisé en plusieurs étapes :
+
+1. **Connexion initiale** : L'utilisateur saisit son email et mot de passe
+2. **Vérification des comptes** : Le système détecte tous les comptes associés à cet email
+3. **Sélection de compte** (si nécessaire) :
+   - Si **un seul compte** : Redirection automatique vers la page d'accueil
+   - Si **plusieurs comptes** : Affichage de la page de sélection de compte (`AccountSelection.tsx`)
+4. **Création de session** : Un JWT est généré et stocké dans un cookie HttpOnly
+5. **Redirection** : L'utilisateur est redirigé vers la page d'accueil ou la dernière page visitée (si autorisée)
+
+#### Caractéristiques de Sécurité
+- **JWT stocké dans des cookies HttpOnly** : Protection contre les attaques XSS
+- **Support de plusieurs comptes par email** : Un même email peut avoir plusieurs rôles (ex: Admin + Editor)
+- **Unicité composite** : L'unicité d'un utilisateur dépend de la combinaison `email + role`
+- **Format des IDs** : Les identifiants utilisateurs suivent le format `user-XXXX` (générique, sans indication du rôle)
+- **Contrôle d'accès basé sur les rôles (RBAC)** : Vérification des permissions à deux niveaux
+
+#### Contrôle d'Accès à Deux Niveaux
+
+Le système de permissions fonctionne à deux niveaux pour garantir la sécurité :
+
+1. **Permissions Backend (Opérations GraphQL)** :
+   - Vérification dans chaque resolver GraphQL avant l'exécution
+   - Stockées dans la collection `permissions` (role + operation + allowed)
+   - Fonction `assertAuthorized()` utilisée dans tous les resolvers critiques
+
+2. **Permissions Frontend (Accès aux Pages)** :
+   - Vérification côté client pour l'affichage des onglets de navigation
+   - Stockées dans la collection `page_access_permissions` (role + page + allowed)
+   - Redirection automatique si l'utilisateur tente d'accéder à une page non autorisée
+   - Seules les pages autorisées sont affichées dans la navigation
+
+#### Gestion des Sessions
+- Les cookies HttpOnly ne sont pas accessibles via JavaScript (protection XSS)
+- Les tokens JWT contiennent les informations essentielles (userId, email, role)
+- La session est vérifiée à chaque requête GraphQL via le contexte Apollo
+- Déconnexion sécurisée avec invalidation du cookie
 
 ### Pistes d'Audit
 - Enregistrement automatique de toutes les modifications
@@ -164,13 +218,30 @@ cd client
 npm run dev
 ```
 
-### Utilisateur Admin par Défaut
+### Initialisation Automatique au Démarrage
 
-Au premier démarrage, un utilisateur admin est créé automatiquement :
-- **Email** : `admin@example.com`
-- **Mot de passe** : `ChangeMe123!`
+Au premier démarrage du serveur, plusieurs opérations d'initialisation sont effectuées automatiquement :
 
-⚠️ **Important** : Changez ce mot de passe immédiatement en production !
+1. **Connexion à MongoDB** : Établissement de la connexion à la base de données
+2. **Nettoyage des index** : Suppression de l'ancien index unique sur `email` (remplacé par un index composite `email + role`)
+3. **Création de l'utilisateur admin par défaut** :
+   - **Email** : `admin@example.com`
+   - **Mot de passe** : `ChangeMe123!`
+   - ⚠️ **Important** : Changez ce mot de passe immédiatement en production !
+4. **Initialisation des lookups** : Création automatique des listes de valeurs critiques (P1) :
+   - `BUSINESS_CRITICALITY` : Low, Medium, High, Critical
+   - `SOLUTION_TYPES` : SaaS, OnPrem, Hybrid, ClientHeavy
+   - `HOSTING_TIERS` : datacenter, private, public, cloud
+   - `DATA_TYPES` : Personal, Sensitive, Health, Financial, Synthetic
+   - `REDUNDANCY_LEVELS` : none, minimal, geo-redundant, high
+   - Et autres lookups essentiels
+5. **Initialisation des permissions d'accès aux pages** : Configuration des permissions par défaut pour chaque rôle :
+   - **Admin** : Accès à toutes les pages
+   - **Supervisor** : Accès limité (pas d'accès à l'administration des utilisateurs)
+   - **EntityDirector** : Accès aux pages de collecte et visualisation
+   - **Editor** : Accès uniquement aux pages de collecte
+
+Cette initialisation garantit que l'application est **prête à l'emploi** dès le premier démarrage, sans configuration manuelle supplémentaire.
 
 ## Structure du Projet
 
@@ -196,7 +267,8 @@ tech-health-platform/
 ├── common/                 # Types partagés
 │   └── types/              # Interfaces TypeScript communes
 ├── docs/                   # Documentation
-│   └── AUDIT_TRAIL_BEST_PRACTICES.md
+│   ├── AUDIT_TRAIL_BEST_PRACTICES.md
+│   └── DOCUMENTATION_REVIEW.md
 └── README.md              # Ce fichier
 ```
 

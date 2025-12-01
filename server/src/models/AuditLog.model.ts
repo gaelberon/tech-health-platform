@@ -115,3 +115,4 @@ AuditLogSchema.index({ timestamp: -1 }); // Pour les recherches par période
 
 export const AuditLogModel = model<IAuditLog>('AuditLog', AuditLogSchema, 'audit_logs');
 
+

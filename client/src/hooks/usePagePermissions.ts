@@ -67,3 +67,4 @@ export function hasAccessToTab(userRole: UserRole | null | undefined, tab: strin
   return defaultPermissions[tab]?.includes(userRole) ?? false;
 }
 
+

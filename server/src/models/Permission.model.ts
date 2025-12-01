@@ -25,3 +25,4 @@ PermissionSchema.index({ role: 1, operation: 1 }, { unique: true });
 export const PermissionModel = model<IPermission>('Permission', PermissionSchema, 'permissions');
 
 
+

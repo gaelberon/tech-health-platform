@@ -279,3 +279,4 @@ Le système de pistes d'audit implémenté respecte les meilleures pratiques du 
 
 Il garantit la conformité aux exigences de traçabilité et d'audit pour une application SaaS gérant des données sensibles.
 
+

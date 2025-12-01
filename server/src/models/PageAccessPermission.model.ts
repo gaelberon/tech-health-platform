@@ -67,3 +67,4 @@ export async function initializeDefaultPagePermissions() {
   console.log('✅ Permissions d\'accès aux pages initialisées');
 }
 
+
