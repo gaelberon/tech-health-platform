@@ -1,8 +1,9 @@
 // Fichier : /client/src/components/CollectorStepper.tsx
 
-import React, { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
+import React, { useState, useMemo } from 'react';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import AssistanceTooltip from './AssistanceTooltip';
+import { GET_P1_LOOKUPS } from '../graphql/queries';
 
 // // Nous importons chaque type P1 depuis son fichier modèle, en utilisant le chemin complet
 // // L'alias @common pointe maintenant vers le dossier /common/
@@ -11,14 +12,7 @@ import AssistanceTooltip from './AssistanceTooltip';
 // import { HostingTier } from '@common/types/Hosting.model'; 
 // import { DataTypes, RedundancyLevel } from '@common/types/Environment.model'; 
 
-// Importe les types P1 critiques depuis le fichier d'index du répertoire partagé @common
-import type { 
-    CriticalityLevel, // Utilisé par Editor (P1) [6] et Solution (P1) [6]
-    SolutionType,     // Utilisé par Solution (P1) [6]
-    HostingTier,      // Utilisé par Hosting (P1) [7]
-    DataTypes,        // Utilisé par Environment (P1) [8]
-    RedundancyLevel   // Utilisé par Environment (P1) [8]
-} from '@common/types'; // <-- Remplace l'ancien chemin Editor.model par le répertoire racine des types
+// Note: Les types sont maintenant chargés dynamiquement via les lookups depuis MongoDB
 
 // Définition de la mutation (utiliser le contenu de /client/src/graphql/mutations.ts)
 const CREATE_SOLUTION_ENVIRONMENT_P1 = gql`
@@ -68,6 +62,27 @@ const CollectorStepper: React.FC = () => {
     const [step, setStep] = useState(1);
     const [showP2Details, setShowP2Details] = useState(false); // Progressive Disclosure [9]
 
+    // Chargement des lookups P1
+    const { data: lookupsData, loading: lookupsLoading } = useQuery(GET_P1_LOOKUPS);
+
+    // Extraction des valeurs actives des lookups
+    const lookups = useMemo(() => {
+        if (!lookupsData) return {};
+        
+        const extractValues = (lookupArray: any[]) => {
+            if (!lookupArray || lookupArray.length === 0) return [];
+            return lookupArray[0]?.values?.filter((v: any) => v.active !== false) || [];
+        };
+
+        return {
+            businessCriticality: extractValues(lookupsData.businessCriticality || []),
+            solutionTypes: extractValues(lookupsData.solutionTypes || []),
+            dataTypes: extractValues(lookupsData.dataTypes || []),
+            redundancyLevels: extractValues(lookupsData.redundancyLevels || []),
+            authTypes: extractValues(lookupsData.authTypes || []),
+        };
+    }, [lookupsData]);
+
     // Hook Apollo pour la mutation
     const [submitP1Data, { loading, error, data }] = useMutation(CREATE_SOLUTION_ENVIRONMENT_P1);
 
@@ -100,6 +115,16 @@ const CollectorStepper: React.FC = () => {
         }
     };
 
+    // Affichage du chargement si les lookups ne sont pas encore chargés
+    if (lookupsLoading) {
+        return (
+            <div className="text-center py-8">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <p className="mt-4 text-gray-500 text-sm">Chargement des listes de valeurs...</p>
+            </div>
+        );
+    }
+
     const renderStep = () => {
     switch (step) {
       case 1:
@@ -119,7 +144,12 @@ const CollectorStepper: React.FC = () => {
                 <AssistanceTooltip content="Évalue l'impact métier si l'éditeur devenait indisponible (définitions standardisées). P1 pour le score global : fixe la tolérance au risque et les exigences de product_criticality." />
             </label>
             <select className="w-full border p-2 rounded">
-              {(['Low', 'Medium', 'High', 'Critical'] as CriticalityLevel[]).map(c => <option key={c}>{c}</option>)}
+              <option value="">Sélectionner...</option>
+              {lookups.businessCriticality.map((item: any) => (
+                <option key={item.code} value={item.code}>
+                  {item.label}
+                </option>
+              ))}
             </select>
 
             {/* Solution.type (P1) */}
@@ -127,7 +157,12 @@ const CollectorStepper: React.FC = () => {
                 <AssistanceTooltip content="Modèle de livraison du logiciel. Crucial pour les enjeux d'hébergement." />
             </label>
             <select className="w-full border p-2 rounded">
-              {(['SaaS', 'OnPrem', 'Hybrid', 'ClientHeavy'] as SolutionType[]).map(t => <option key={t}>{t}</option>)}
+              <option value="">Sélectionner...</option>
+              {lookups.solutionTypes.map((item: any) => (
+                <option key={item.code} value={item.code}>
+                  {item.label}
+                </option>
+              ))}
             </select>
           </div>
         );
@@ -155,7 +190,11 @@ const CollectorStepper: React.FC = () => {
                 <AssistanceTooltip content="Indique si des données réglementées sont traitées (Santé, Finance, RGPD). Critique pour le score de conformité (20%) et justifie les exigences de certifications (HDS, Ségur)." />
             </label>
             <select multiple className="w-full border p-2 rounded">
-              {(['Personal', 'Sensitive', 'Health', 'Financial', 'Synthetic'] as DataTypes[]).map(d => <option key={d}>{d}</option>)}
+              {lookups.dataTypes.map((item: any) => (
+                <option key={item.code} value={item.code}>
+                  {item.label}
+                </option>
+              ))}
             </select>
 
             {/* Environment.backup (exists, RTO, RPO) (P1) */}
@@ -214,7 +253,12 @@ const CollectorStepper: React.FC = () => {
                 <AssistanceTooltip content="Méthode pour valider l'identité des utilisateurs (Passwords/MFA/SSO). P1 pour le score Sécurité (30%) : MFA ou SSO requis pour atteindre le maximum." />
             </label>
             <select className="w-full border p-2 rounded">
-              <option>Passwords</option><option>MFA</option><option>SSO</option>
+              <option value="">Sélectionner...</option>
+              {lookups.authTypes.map((item: any) => (
+                <option key={item.code} value={item.code}>
+                  {item.label}
+                </option>
+              ))}
             </select>
 
             {/* SecurityProfile.encryption (in_transit, at_rest) (P1) */}
