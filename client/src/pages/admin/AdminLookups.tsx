@@ -1,0 +1,608 @@
+import React, { useState, useMemo } from 'react';
+import { gql, useMutation, useQuery } from '@apollo/client';
+
+const LIST_ALL_LOOKUPS = gql`
+  query ListAllLookups($category: String) {
+    listAllLookups(category: $category) {
+      id
+      key
+      category
+      entity
+      formLabel
+      description
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+  }
+`;
+
+const UPDATE_LOOKUP = gql`
+  mutation UpdateLookup($input: UpdateLookupInput!) {
+    updateLookup(input: $input) {
+      id
+      key
+      category
+      entity
+      formLabel
+      description
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+  }
+`;
+
+interface LookupValue {
+  code: string;
+  label: string;
+  label_fr?: string;
+  label_en?: string;
+  description?: string;
+  order?: number;
+  active?: boolean;
+}
+
+interface Lookup {
+  id: string;
+  key: string;
+  category?: string;
+  entity?: string;
+  formLabel?: string;
+  description?: string;
+  values: LookupValue[];
+}
+
+const AdminLookups: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedEntity, setSelectedEntity] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [editingLookup, setEditingLookup] = useState<Lookup | null>(null);
+  const [newValue, setNewValue] = useState<Partial<LookupValue>>({
+    code: '',
+    label: '',
+    description: '',
+    order: 0,
+    active: true,
+  });
+
+  const { data, loading, refetch } = useQuery(LIST_ALL_LOOKUPS, {
+    variables: { category: null }, // Charger tous les lookups
+  });
+
+  const [updateLookup, { loading: saving }] = useMutation(UPDATE_LOOKUP);
+
+  const allLookups: Lookup[] = data?.listAllLookups || [];
+
+  // Extraction des entités et catégories uniques
+  const entities = useMemo(() => {
+    const uniqueEntities = Array.from(new Set(allLookups.map((l) => l.entity).filter(Boolean)));
+    return uniqueEntities.sort();
+  }, [allLookups]);
+
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(new Set(allLookups.map((l) => l.category).filter(Boolean)));
+    return uniqueCategories.sort();
+  }, [allLookups]);
+
+  // Filtrage des lookups
+  const filteredLookups = useMemo(() => {
+    return allLookups.filter((lookup) => {
+      // Filtre par entité
+      if (selectedEntity !== 'all' && lookup.entity !== selectedEntity) {
+        return false;
+      }
+
+      // Filtre par catégorie (criticité)
+      if (selectedCategory !== 'all' && lookup.category !== selectedCategory) {
+        return false;
+      }
+
+      // Filtre par recherche
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const matchesKey = lookup.key.toLowerCase().includes(query);
+        const matchesFormLabel = lookup.formLabel?.toLowerCase().includes(query);
+        const matchesDescription = lookup.description?.toLowerCase().includes(query);
+        const matchesValues = lookup.values.some(
+          (v) =>
+            v.code.toLowerCase().includes(query) ||
+            v.label.toLowerCase().includes(query) ||
+            v.description?.toLowerCase().includes(query)
+        );
+
+        if (!matchesKey && !matchesFormLabel && !matchesDescription && !matchesValues) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [allLookups, selectedEntity, selectedCategory, searchQuery]);
+
+  // Organisation des lookups par entité et catégorie
+  const organizedLookups = useMemo(() => {
+    const organized: Record<string, Record<string, Lookup[]>> = {};
+
+    filteredLookups.forEach((lookup) => {
+      const entity = lookup.entity || 'Autres';
+      const category = lookup.category || 'Non classé';
+
+      if (!organized[entity]) {
+        organized[entity] = {};
+      }
+      if (!organized[entity][category]) {
+        organized[entity][category] = [];
+      }
+
+      organized[entity][category].push(lookup);
+    });
+
+    return organized;
+  }, [filteredLookups]);
+
+  const handleSaveLookup = async () => {
+    if (!editingLookup) return;
+
+    const sortedValues = [...editingLookup.values].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    await updateLookup({
+      variables: {
+        input: {
+          key: editingLookup.key,
+          values: sortedValues,
+          category: editingLookup.category || null,
+          entity: editingLookup.entity || null,
+          formLabel: editingLookup.formLabel || null,
+          description: editingLookup.description || null,
+        },
+      },
+    });
+
+    await refetch();
+    setEditingLookup(null);
+  };
+
+  const handleAddValue = () => {
+    if (!editingLookup || !newValue.code || !newValue.label) return;
+
+    const updatedLookup = {
+      ...editingLookup,
+      values: [
+        ...editingLookup.values,
+        {
+          code: newValue.code,
+          label: newValue.label,
+          label_fr: newValue.label_fr,
+          label_en: newValue.label_en,
+          description: newValue.description,
+          order: newValue.order || editingLookup.values.length + 1,
+          active: newValue.active !== false,
+        },
+      ],
+    };
+
+    setEditingLookup(updatedLookup);
+    setNewValue({ code: '', label: '', description: '', order: 0, active: true });
+  };
+
+  const handleRemoveValue = (code: string) => {
+    if (!editingLookup) return;
+
+    const updatedLookup = {
+      ...editingLookup,
+      values: editingLookup.values.filter((v) => v.code !== code),
+    };
+
+    setEditingLookup(updatedLookup);
+  };
+
+  const handleToggleValueActive = (code: string) => {
+    if (!editingLookup) return;
+
+    const updatedLookup = {
+      ...editingLookup,
+      values: editingLookup.values.map((v) =>
+        v.code === code ? { ...v, active: !v.active } : v
+      ),
+    };
+
+    setEditingLookup(updatedLookup);
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-gray-500">Chargement des lookups...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Barre de recherche et filtres */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        {/* Moteur de recherche */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            🔍 Rechercher une liste de valeurs
+          </label>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher par nom (ex: 'Mode Logiciel (Type)'), clé technique, ou valeur..."
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {searchQuery && (
+            <p className="mt-2 text-sm text-gray-500">
+              {filteredLookups.length} résultat{filteredLookups.length !== 1 ? 's' : ''} trouvé{filteredLookups.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+
+        {/* Filtres par entité et criticité */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Filtre par entité */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Entité
+            </label>
+            <select
+              value={selectedEntity}
+              onChange={(e) => setSelectedEntity(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">Toutes les entités</option>
+              {entities.map((entity) => (
+                <option key={entity} value={entity}>
+                  {entity}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtre par criticité */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Criticité
+            </label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">Toutes les criticités</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Vue organisée par entité et criticité */}
+      {Object.keys(organizedLookups).length === 0 ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+          <p className="text-yellow-800">
+            Aucune liste de valeurs ne correspond aux critères de recherche.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {Object.entries(organizedLookups)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([entity, categoriesMap]) => (
+              <div key={entity} className="space-y-4">
+                <h3 className="text-xl font-bold text-gray-900 border-b-2 border-blue-500 pb-2">
+                  📦 {entity}
+                </h3>
+
+                {Object.entries(categoriesMap)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([category, lookups]) => (
+                    <div key={category} className="ml-4 space-y-4">
+                      <h4 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                        <span
+                          className={`px-2 py-1 text-xs font-bold rounded ${
+                            category === 'P1'
+                              ? 'bg-red-100 text-red-800'
+                              : category === 'P2'
+                              ? 'bg-orange-100 text-orange-800'
+                              : category === 'P3'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {category}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          ({lookups.length} liste{lookups.length !== 1 ? 's' : ''})
+                        </span>
+                      </h4>
+
+                      <div className="ml-4 space-y-4">
+                        {lookups.map((lookup) => (
+                          <div
+                            key={lookup.id}
+                            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h5 className="text-lg font-semibold text-gray-900">
+                                    {lookup.formLabel || lookup.key}
+                                  </h5>
+                                  <code className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                    {lookup.key}
+                                  </code>
+                                </div>
+                                {lookup.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{lookup.description}</p>
+                                )}
+                              </div>
+                              <button
+                                onClick={() =>
+                                  setEditingLookup(editingLookup?.id === lookup.id ? null : lookup)
+                                }
+                                className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 whitespace-nowrap"
+                              >
+                                {editingLookup?.id === lookup.id ? 'Annuler' : 'Modifier'}
+                              </button>
+                            </div>
+
+                            {editingLookup?.id === lookup.id ? (
+                              <div className="space-y-4">
+                                {/* Métadonnées du lookup */}
+                                <div className="p-4 bg-gray-50 rounded-md border border-gray-200">
+                                  <h6 className="text-sm font-semibold text-gray-900 mb-3">
+                                    Métadonnées
+                                  </h6>
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Nom dans le formulaire
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editingLookup.formLabel || ''}
+                                        onChange={(e) =>
+                                          setEditingLookup({
+                                            ...editingLookup,
+                                            formLabel: e.target.value,
+                                          })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="ex: Mode Logiciel (Type)"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Entité
+                                      </label>
+                                      <select
+                                        value={editingLookup.entity || ''}
+                                        onChange={(e) =>
+                                          setEditingLookup({
+                                            ...editingLookup,
+                                            entity: e.target.value,
+                                          })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      >
+                                        <option value="">Sélectionner...</option>
+                                        {entities.map((e) => (
+                                          <option key={e} value={e}>
+                                            {e}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Criticité
+                                      </label>
+                                      <select
+                                        value={editingLookup.category || ''}
+                                        onChange={(e) =>
+                                          setEditingLookup({
+                                            ...editingLookup,
+                                            category: e.target.value,
+                                          })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      >
+                                        <option value="">Sélectionner...</option>
+                                        {categories.map((c) => (
+                                          <option key={c} value={c}>
+                                            {c}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Liste des valeurs existantes */}
+                                <div className="space-y-2">
+                                  <h6 className="text-sm font-semibold text-gray-900">
+                                    Valeurs ({editingLookup.values.length})
+                                  </h6>
+                                  {editingLookup.values.map((value) => (
+                                    <div
+                                      key={value.code}
+                                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-md border border-gray-200"
+                                    >
+                                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        <div>
+                                          <span className="text-xs text-gray-500">Code</span>
+                                          <div className="font-mono text-sm text-gray-900">
+                                            {value.code}
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-gray-500">Label</span>
+                                          <div className="text-sm text-gray-900">{value.label}</div>
+                                        </div>
+                                        <div>
+                                          <span className="text-xs text-gray-500">Description</span>
+                                          <div className="text-sm text-gray-600">
+                                            {value.description || '-'}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <button
+                                          onClick={() => handleToggleValueActive(value.code)}
+                                          className={`px-3 py-1 text-xs font-medium rounded ${
+                                            value.active
+                                              ? 'bg-green-100 text-green-700'
+                                              : 'bg-gray-100 text-gray-500'
+                                          }`}
+                                        >
+                                          {value.active ? 'Actif' : 'Inactif'}
+                                        </button>
+                                        <button
+                                          onClick={() => handleRemoveValue(value.code)}
+                                          className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded hover:bg-red-100"
+                                        >
+                                          Supprimer
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Formulaire d'ajout de valeur */}
+                                <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                                  <h6 className="text-sm font-semibold text-gray-900 mb-3">
+                                    Ajouter une valeur
+                                  </h6>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Code *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={newValue.code}
+                                        onChange={(e) =>
+                                          setNewValue({ ...newValue, code: e.target.value })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="ex: VeryHigh"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Label *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={newValue.label}
+                                        onChange={(e) =>
+                                          setNewValue({ ...newValue, label: e.target.value })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="ex: Très Élevée"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Description
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={newValue.description || ''}
+                                        onChange={(e) =>
+                                          setNewValue({ ...newValue, description: e.target.value })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Texte pour l'infobulle"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Ordre
+                                      </label>
+                                      <input
+                                        type="number"
+                                        value={newValue.order || 0}
+                                        onChange={(e) =>
+                                          setNewValue({
+                                            ...newValue,
+                                            order: parseInt(e.target.value) || 0,
+                                          })
+                                        }
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      />
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={handleAddValue}
+                                    disabled={!newValue.code || !newValue.label}
+                                    className="mt-3 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    Ajouter
+                                  </button>
+                                </div>
+
+                                <button
+                                  onClick={handleSaveLookup}
+                                  disabled={saving}
+                                  className="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50"
+                                >
+                                  {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                {lookup.values
+                                  .filter((v) => v.active !== false)
+                                  .map((value) => (
+                                    <div
+                                      key={value.code}
+                                      className="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-200"
+                                    >
+                                      <div>
+                                        <span className="font-mono text-sm font-medium text-gray-900">
+                                          {value.code}
+                                        </span>
+                                        <span className="ml-3 text-sm text-gray-700">
+                                          {value.label}
+                                        </span>
+                                        {value.description && (
+                                          <p className="mt-1 text-xs text-gray-500">
+                                            {value.description}
+                                          </p>
+                                        )}
+                                      </div>
+                                      <span className="text-xs text-gray-500">
+                                        Ordre: {value.order || 0}
+                                      </span>
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminLookups;
