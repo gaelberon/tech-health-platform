@@ -31,6 +31,7 @@ Le scoring est calculé par un service backend (`Scoring Engine`) qui génère u
 L'application supporte plusieurs interfaces utilisateur :
 
 - **Collector UI** : Formulaire guidé (stepper) utilisant la *Progressive Disclosure* pour une collecte progressive des données (priorités P1 à P5)
+- **Vue d'Hébergement** : Visualisation et analyse de l'infrastructure d'hébergement des solutions (environnements, redondance, backup, sécurité, coûts)
 - **Portfolio View** : Permet la comparaison, le filtrage et l'affichage de *heatmaps* (maturité / risque / coûts) pour toutes les solutions du groupe
 - **Technical DD View** : Vue agrégée de tous les champs pertinents pour l'évaluation pré-acquisition
 - **Administration** : Module d'administration modulaire pour gérer les utilisateurs, permissions, listes de valeurs et pistes d'audit
@@ -268,7 +269,9 @@ tech-health-platform/
 │   └── types/              # Interfaces TypeScript communes
 ├── docs/                   # Documentation
 │   ├── AUDIT_TRAIL_BEST_PRACTICES.md
-│   └── DOCUMENTATION_REVIEW.md
+│   ├── DOCUMENTATION_REVIEW.md
+│   ├── HOSTING_VIEW_PROPOSAL.md
+│   └── HOSTING_VIEW.md
 └── README.md              # Ce fichier
 ```
 
@@ -277,6 +280,7 @@ tech-health-platform/
 - **Vue d'ensemble** : Page "About" de l'application
 - **Données collectées** : Documentation complète des entités et champs (onglet "Données collectées")
 - **Pistes d'audit** : Bonnes pratiques et implémentation (onglet "Pistes d'audit" ou `docs/AUDIT_TRAIL_BEST_PRACTICES.md`)
+- **Vue d'hébergement** : Guide d'utilisation de la vue d'hébergement (onglet "Vue d'hébergement" ou `docs/HOSTING_VIEW.md`)
 
 ## Développement
 
