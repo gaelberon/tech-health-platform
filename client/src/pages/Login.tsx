@@ -4,24 +4,53 @@ import { gql, useMutation } from '@apollo/client';
 const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
-      userId
-      email
-      role
-      associatedEditorId
+      user {
+        userId
+        email
+        firstName
+        lastName
+        role
+        associatedEditorId
+      }
+      availableAccounts {
+        userId
+        email
+        firstName
+        lastName
+        role
+        associatedEditorId
+      }
+      requiresAccountSelection
     }
   }
 `;
 
-const Login: React.FC<{ onLoggedIn?: () => void }> = ({ onLoggedIn }) => {
+interface LoginProps {
+  onLoggedIn?: () => void;
+  onAccountSelectionRequired?: (accounts: any[]) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted: (data) => {
-      console.log('[LOGIN CLIENT] Connexion réussie:', data);
+      console.log('[LOGIN CLIENT] Réponse de connexion:', data);
       setErrorMsg(null);
-      if (onLoggedIn) onLoggedIn();
+      
+      if (data.login.requiresAccountSelection) {
+        // Plusieurs comptes disponibles, afficher la page de sélection
+        if (onAccountSelectionRequired && data.login.availableAccounts) {
+          onAccountSelectionRequired(data.login.availableAccounts);
+        }
+      } else {
+        // Un seul compte, connexion directe
+        if (onLoggedIn) {
+          onLoggedIn();
+        }
+      }
     },
     onError: (err) => {
       console.error('[LOGIN CLIENT] Erreur:', err);
