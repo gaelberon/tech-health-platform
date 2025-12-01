@@ -29,6 +29,7 @@ import { AuthResolver } from './AuthResolver.js';
 import PermissionResolver from './PermissionResolver.js';
 import LookupResolver from './LookupResolver.js';
 import UserResolver from './UserResolver.js';
+import AuditResolver from './AuditResolver.js';
 
 
 // ------------------ FONCTION D'AGREGATION ------------------
@@ -94,6 +95,7 @@ const allResolvers = combineResolvers([
     PermissionResolver,
     LookupResolver,
     UserResolver,
+    AuditResolver,
 ]);
 
 export default allResolvers;

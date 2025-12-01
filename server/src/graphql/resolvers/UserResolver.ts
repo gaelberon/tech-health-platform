@@ -3,6 +3,7 @@
 import { UserModel } from '../../models/User.model.js';
 import { assertAuthorized } from '../authorization.js';
 import bcrypt from 'bcryptjs';
+import { logAudit, extractAuditContext, getObjectDifferences } from '../../services/audit.service.js';
 
 // Fonction utilitaire pour convertir les dates en strings ISO
 function serializeUserDates(userObj: any): any {
@@ -112,9 +113,19 @@ const UserResolver = {
         associatedEditorId: associatedEditorId || null,
         archived: false,
       });
-      
+
+      // Enregistrer l'audit
+      const auditContext = extractAuditContext(ctx);
       const userObj = user.toObject();
       serializeUserDates(userObj);
+      await logAudit(auditContext, {
+        action: 'CREATE',
+        entityType: 'User',
+        entityId: userId,
+        after: { ...userObj, passwordHash: '[REDACTED]' },
+        description: `Création d'un nouvel utilisateur avec le rôle ${role}`,
+      });
+      
       return {
         ...userObj,
         passwordHash: undefined,
@@ -169,6 +180,9 @@ const UserResolver = {
         updateData.passwordHash = await bcrypt.hash(password, 10);
       }
       
+      // Récupérer l'état avant pour l'audit
+      const beforeState = user.toObject();
+      
       const updatedUser = await UserModel.findOneAndUpdate(
         { userId },
         updateData,
@@ -181,6 +195,20 @@ const UserResolver = {
       
       const userObj = updatedUser.toObject();
       serializeUserDates(userObj);
+      
+      // Enregistrer l'audit
+      const auditContext = extractAuditContext(ctx);
+      const changes = getObjectDifferences(beforeState, userObj, ['passwordHash', 'updatedAt']);
+      await logAudit(auditContext, {
+        action: 'UPDATE',
+        entityType: 'User',
+        entityId: userId,
+        changes,
+        before: { ...beforeState, passwordHash: '[REDACTED]' },
+        after: { ...userObj, passwordHash: '[REDACTED]' },
+        description: `Mise à jour de l'utilisateur ${userId}`,
+      });
+      
       const { passwordHash, ...userWithoutPassword } = userObj;
       
       return userWithoutPassword;
@@ -200,6 +228,9 @@ const UserResolver = {
         throw new Error('Cet utilisateur est déjà archivé');
       }
       
+      // Récupérer l'état avant pour l'audit
+      const beforeState = user.toObject();
+      
       const archivedUser = await UserModel.findOneAndUpdate(
         { userId },
         {
@@ -216,6 +247,18 @@ const UserResolver = {
       
       const userObj = archivedUser.toObject();
       serializeUserDates(userObj);
+      
+      // Enregistrer l'audit
+      const auditContext = extractAuditContext(ctx);
+      await logAudit(auditContext, {
+        action: 'ARCHIVE',
+        entityType: 'User',
+        entityId: userId,
+        before: { ...beforeState, passwordHash: '[REDACTED]' },
+        after: { ...userObj, passwordHash: '[REDACTED]' },
+        description: `Archivage de l'utilisateur ${userId}`,
+      });
+      
       const { passwordHash, ...userWithoutPassword } = userObj;
       
       return userWithoutPassword;
@@ -235,6 +278,9 @@ const UserResolver = {
         throw new Error('Cet utilisateur n\'est pas archivé');
       }
       
+      // Récupérer l'état avant pour l'audit
+      const beforeState = user.toObject();
+      
       const restoredUser = await UserModel.findOneAndUpdate(
         { userId },
         {
@@ -251,6 +297,18 @@ const UserResolver = {
       
       const userObj = restoredUser.toObject();
       serializeUserDates(userObj);
+      
+      // Enregistrer l'audit
+      const auditContext = extractAuditContext(ctx);
+      await logAudit(auditContext, {
+        action: 'RESTORE',
+        entityType: 'User',
+        entityId: userId,
+        before: { ...beforeState, passwordHash: '[REDACTED]' },
+        after: { ...userObj, passwordHash: '[REDACTED]' },
+        description: `Restauration de l'utilisateur ${userId}`,
+      });
+      
       const { passwordHash, ...userWithoutPassword } = userObj;
       
       return userWithoutPassword;

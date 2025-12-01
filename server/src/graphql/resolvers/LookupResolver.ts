@@ -2,6 +2,7 @@
 
 import { LookupModel, ILookup } from '../../models/Lookup.model.js';
 import { assertAuthorized } from '../authorization.js';
+import { logAudit, extractAuditContext, getObjectDifferences } from '../../services/audit.service.js';
 
 const LookupResolver = {
   Query: {
@@ -45,6 +46,10 @@ const LookupResolver = {
       // Trier les valeurs par order si défini
       const sortedValues = [...values].sort((a, b) => (a.order || 0) - (b.order || 0));
       
+      // Récupérer l'état avant pour l'audit (si existe)
+      const existingLookup = await LookupModel.findOne({ key });
+      const beforeState = existingLookup ? existingLookup.toObject() : null;
+      
       const lookup = await LookupModel.findOneAndUpdate(
         { key },
         {
@@ -58,9 +63,25 @@ const LookupResolver = {
         { new: true, upsert: true }
       );
       
+      // Enregistrer l'audit
+      const auditContext = extractAuditContext(ctx);
+      const afterState = lookup.toObject();
+      const action = beforeState ? 'UPDATE' : 'CREATE';
+      const changes = beforeState ? getObjectDifferences(beforeState, afterState) : undefined;
+      
+      await logAudit(auditContext, {
+        action,
+        entityType: 'Lookup',
+        entityId: key,
+        ...(changes && { changes }),
+        ...(beforeState && { before: beforeState }),
+        after: afterState,
+        description: `${action === 'CREATE' ? 'Création' : 'Mise à jour'} du lookup ${key}`,
+      });
+      
       // S'assurer que l'ID est bien retourné
       return {
-        ...lookup.toObject(),
+        ...afterState,
         id: lookup._id.toString(),
       };
     },

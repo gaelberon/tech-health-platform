@@ -385,6 +385,31 @@ const typeDefs = gql`
         allowed: Boolean!
     }
 
+    # PISTES D'AUDIT
+    type AuditChange {
+        field: String!
+        oldValue: String
+        newValue: String
+    }
+
+    type AuditLog {
+        id: ID!
+        userId: String!
+        userEmail: String
+        userRole: String
+        action: String!
+        entityType: String!
+        entityId: String!
+        changes: [AuditChange!]
+        before: String # JSON stringifié
+        after: String # JSON stringifié
+        ipAddress: String
+        userAgent: String
+        description: String
+        timestamp: String!
+        createdAt: String!
+    }
+
 
     # =================================================================
     # CORE ENTITIES (Nœuds principaux)
@@ -745,6 +770,18 @@ const typeDefs = gql`
         # Users / Administration
         listUsers(includeArchived: Boolean): [User!]!
         getUser(userId: ID!): User
+        
+        # Audit / Pistes d'audit
+        listAuditLogs(
+            entityType: String
+            entityId: ID
+            userId: ID
+            action: String
+            startDate: String
+            endDate: String
+            limit: Int
+        ): [AuditLog!]!
+        getAuditLogsForEntity(entityType: String!, entityId: ID!): [AuditLog!]!
 
         # Editor (Vue Portfolio)
         listEditors: [Editor!]!

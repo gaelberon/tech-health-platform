@@ -1,6 +1,7 @@
 import { UserModel } from '../../models/User.model.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { logAudit, extractAuditContext } from '../../services/audit.service.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 const JWT_EXPIRES_IN = '8h';
@@ -103,13 +104,22 @@ export const AuthResolver = {
             path: '/',
           });
 
-          console.log(`[LOGIN] Cookie défini avec succès`);
+        console.log(`[LOGIN] Cookie défini avec succès`);
 
-          return {
-            user: selectedUser,
-            availableAccounts: [],
-            requiresAccountSelection: false,
-          };
+        // Enregistrer l'audit de connexion
+        const auditContext = extractAuditContext(ctx, ctx.req);
+        await logAudit(auditContext, {
+          action: 'LOGIN',
+          entityType: 'User',
+          entityId: selectedUser.userId,
+          description: `Connexion réussie pour ${selectedUser.email}`,
+        });
+
+        return {
+          user: selectedUser,
+          availableAccounts: [],
+          requiresAccountSelection: false,
+        };
         } catch (error: any) {
           console.error('[LOGIN] Erreur lors de la génération du token ou du cookie:', error);
           throw new Error('Erreur lors de la création de la session');
@@ -166,6 +176,15 @@ export const AuthResolver = {
         const userObj = user.toObject();
         const { passwordHash, ...userWithoutPassword } = userObj;
 
+        // Enregistrer l'audit de sélection de compte
+        const auditContext = extractAuditContext(ctx, ctx.req);
+        await logAudit(auditContext, {
+          action: 'LOGIN',
+          entityType: 'User',
+          entityId: user.userId,
+          description: `Sélection de compte et connexion pour ${user.email}`,
+        });
+
         return userWithoutPassword;
       } catch (error: any) {
         console.error('[SELECT_ACCOUNT] Erreur lors de la génération du token:', error);
@@ -173,6 +192,17 @@ export const AuthResolver = {
       }
     },
     logout: async (_parent: any, _args: any, ctx: any) => {
+      // Enregistrer l'audit de déconnexion
+      if (ctx.user) {
+        const auditContext = extractAuditContext(ctx, ctx.req);
+        await logAudit(auditContext, {
+          action: 'LOGOUT',
+          entityType: 'User',
+          entityId: ctx.user.userId,
+          description: `Déconnexion de l'utilisateur ${ctx.user.email}`,
+        });
+      }
+      
       ctx.res.clearCookie(COOKIE_NAME);
       return true;
     },

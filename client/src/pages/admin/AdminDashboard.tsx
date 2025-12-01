@@ -3,8 +3,9 @@ import { useSession } from '../../session/SessionContext';
 import AdminPermissions from './AdminPermissions';
 import AdminLookups from './AdminLookups';
 import AdminUsers from './AdminUsers';
+import AdminAuditLogs from './AdminAuditLogs';
 
-type AdminSection = 'permissions' | 'lookups' | 'users' | 'settings';
+type AdminSection = 'permissions' | 'lookups' | 'users' | 'audit' | 'settings';
 
 const AdminDashboard: React.FC = () => {
   const { user } = useSession();
@@ -38,6 +39,7 @@ const AdminDashboard: React.FC = () => {
     { id: 'permissions' as AdminSection, label: 'Permissions', icon: '🔐', description: 'Gérer les permissions par rôle' },
     { id: 'lookups' as AdminSection, label: 'Listes de Valeurs', icon: '📋', description: 'Administrer les menus déroulants' },
     { id: 'users' as AdminSection, label: 'Utilisateurs', icon: '👥', description: 'Gérer les utilisateurs et leurs accès' },
+    { id: 'audit' as AdminSection, label: 'Pistes d\'Audit', icon: '📊', description: 'Consulter les logs d\'audit et l\'historique des modifications' },
     { id: 'settings' as AdminSection, label: 'Paramètres', icon: '⚙️', description: 'Configuration générale (à venir)' },
   ];
 
@@ -49,6 +51,8 @@ const AdminDashboard: React.FC = () => {
         return <AdminLookups />;
       case 'users':
         return <AdminUsers />;
+      case 'audit':
+        return <AdminAuditLogs />;
       case 'settings':
         return (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
