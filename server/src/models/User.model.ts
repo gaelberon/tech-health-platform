@@ -11,7 +11,8 @@ export interface IUser extends Document {
   lastName?: string;
   phone?: string;
   role: UserRole;
-  associatedEditorId?: string;
+  associatedEditorId?: string; // Pour Editor/EntityDirector (un seul éditeur)
+  associatedEditorIds?: string[]; // Pour Supervisor (plusieurs éditeurs dans le portefeuille)
   archived?: boolean;
   archivedAt?: Date;
   archivedBy?: string; // userId de l'admin qui a archivé
@@ -34,7 +35,8 @@ const UserSchema = new Schema<IUser>(
     firstName: { type: String, required: false },
     lastName: { type: String, required: false },
     phone: { type: String, required: false },
-    associatedEditorId: { type: String, required: false },
+    associatedEditorId: { type: String, required: false }, // Pour Editor/EntityDirector
+    associatedEditorIds: [{ type: String }], // Pour Supervisor (portefeuille d'éditeurs)
     archived: { type: Boolean, default: false, index: true },
     archivedAt: { type: Date, required: false },
     archivedBy: { type: String, required: false },
