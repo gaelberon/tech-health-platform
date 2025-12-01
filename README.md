@@ -34,7 +34,8 @@ L'application supporte plusieurs interfaces utilisateur :
 - **Vue d'Hébergement** : Visualisation et analyse de l'infrastructure d'hébergement des solutions (environnements, redondance, backup, sécurité, coûts)
 - **Portfolio View** : Permet la comparaison, le filtrage et l'affichage de *heatmaps* (maturité / risque / coûts) pour toutes les solutions du groupe
 - **Technical DD View** : Vue agrégée de tous les champs pertinents pour l'évaluation pré-acquisition
-- **Administration** : Module d'administration modulaire pour gérer les utilisateurs, permissions, listes de valeurs et pistes d'audit
+- **Administration** : Module d'administration modulaire accessible via le menu utilisateur, pour gérer les utilisateurs, permissions, listes de valeurs et pistes d'audit
+- **Interface utilisateur moderne** : Header avec logo, menu contextuel utilisateur style Google Workspace, photos de profil
 
 ### 3. Fonctionnalités Récentes
 
