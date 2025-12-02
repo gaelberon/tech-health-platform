@@ -9,7 +9,7 @@ export const GET_COMPANY_NAME = gql`
   }
 `;
 
-// Query pour récupérer les lookups P1 nécessaires au CollectorStepper
+// Query pour récupérer les lookups P1 et DD nécessaires au CollectorStepper
 export const GET_P1_LOOKUPS = gql`
   query GetP1Lookups($lang: String!) {
     businessCriticality: getLookups(keys: ["BUSINESS_CRITICALITY"], lang: $lang) {
@@ -53,6 +53,97 @@ export const GET_P1_LOOKUPS = gql`
       }
     }
     authTypes: getLookups(keys: ["AUTH_TYPES"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    # Lookups DD (Due Diligence)
+    environmentTypes: getLookups(keys: ["ENVIRONMENT_TYPES"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    hostingTiers: getLookups(keys: ["HOSTING_TIERS"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    deploymentTypes: getLookups(keys: ["DEPLOYMENT_TYPES"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    virtualizationTypes: getLookups(keys: ["VIRTUALIZATION_TYPES"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    scalingMechanisms: getLookups(keys: ["SCALING_MECHANISMS"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    monitoringStatus: getLookups(keys: ["MONITORING_STATUS"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    monitoringTools: getLookups(keys: ["MONITORING_TOOLS"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    complianceTypes: getLookups(keys: ["COMPLIANCE_TYPES"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        description
+        order
+        active
+      }
+    }
+    securityMechanisms: getLookups(keys: ["SECURITY_MECHANISMS"], lang: $lang) {
       key
       values {
         code
