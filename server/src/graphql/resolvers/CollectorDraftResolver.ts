@@ -1,6 +1,7 @@
 // Fichier : /server/src/graphql/resolvers/CollectorDraftResolver.ts
 // Resolver pour la gestion des brouillons de collecte
 
+import { Types } from 'mongoose';
 import { CollectorDraftModel } from '../../models/CollectorDraft.model.js';
 import { assertAuthorized } from '../authorization.js';
 import { logAudit, extractAuditContext } from '../../services/audit.service.js';
@@ -109,8 +110,20 @@ const CollectorDraftResolver = {
         }
       } else {
         // Création d'un nouveau brouillon
-        const count = await CollectorDraftModel.countDocuments();
-        const newDraftId = `draft-${String(count + 1).padStart(4, '0')}`;
+        // Utiliser un ObjectId MongoDB pour garantir l'unicité et éviter les collisions
+        // Format: draft-{ObjectId} pour rester lisible
+        const objectId = new Types.ObjectId();
+        let newDraftId = `draft-${objectId.toString()}`;
+        
+        // Vérifier l'unicité et réessayer si nécessaire (protection contre les collisions rares)
+        let attempts = 0;
+        let existingDraft = await CollectorDraftModel.findOne({ draftId: newDraftId });
+        while (existingDraft && attempts < 5) {
+          const newObjectId = new Types.ObjectId();
+          newDraftId = `draft-${newObjectId.toString()}`;
+          existingDraft = await CollectorDraftModel.findOne({ draftId: newDraftId });
+          attempts++;
+        }
 
         draft = await CollectorDraftModel.create({
           draftId: newDraftId,
