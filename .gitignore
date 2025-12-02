@@ -38,5 +38,13 @@ logs/
 docs/third-party-docs/
 server/scripts/
 
+### Fichiers de debug et scripts temporaires
+DEBUG_*.md
+*.debug.md
+*_debug.md
+migrate-*.sh
+*_migration.sh
+*.migration.sh
+
 
 
