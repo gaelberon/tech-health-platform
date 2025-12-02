@@ -1,5 +1,5 @@
 // Fichier : /server/src/config/seedLookups.ts
-// Script de peuplement initial des lookups P1
+// Script de peuplement initial des lookups P1 et DD (Due Diligence)
 
 import { LookupModel } from '../models/Lookup.model.js';
 
@@ -29,7 +29,11 @@ export async function seedInitialLookups() {
         { code: 'OnPrem', label: 'On-Premise', label_fr: 'Sur site', label_en: 'On-Premise', description: 'Solution installée et gérée sur les serveurs du client', order: 2, active: true },
         { code: 'Hybrid', label: 'Hybride', label_fr: 'Hybride', label_en: 'Hybrid', description: 'Combinaison de SaaS et On-Premise', order: 3, active: true },
         { code: 'ClientHeavy', label: 'Client Lourd', label_fr: 'Client Lourd', label_en: 'Client Heavy', description: 'Application nécessitant une installation client importante', order: 4, active: true },
-        { code: 'FullWeb', label: 'Application Web Complète', label_fr: 'Application Web Complète', label_en: 'Full Web Application', description: 'Application web complète accessible via navigateur', order: 5, active: true },
+        { code: 'ClientHeavyHosted', label: 'Client Lourd (hébergé)', label_fr: 'Client Lourd (hébergé)', label_en: 'Client Heavy (Hosted)', description: 'Client lourd avec possibilité d\'hébergement', order: 5, active: true },
+        { code: 'FullWeb', label: 'Application Web Complète', label_fr: 'Application Web Complète', label_en: 'Full Web Application', description: 'Application web complète accessible via navigateur', order: 6, active: true },
+        { code: 'OnPremEditor', label: 'On-Premise (Éditeur)', label_fr: 'On-Premise (Éditeur)', label_en: 'On-Premise (Publisher)', description: 'Solution installée chez l\'éditeur', order: 7, active: true },
+        { code: 'OnPremClient', label: 'On-Premise (Client)', label_fr: 'On-Premise (Client)', label_en: 'On-Premise (Client)', description: 'Solution installée chez le client', order: 8, active: true },
+        { code: 'ERPAllInOne', label: 'ERP Tout-en-un', label_fr: 'ERP Tout-en-un', label_en: 'ERP All-in-One', description: 'ERP intégré tout-en-un', order: 9, active: true },
       ],
     },
     {
@@ -54,9 +58,10 @@ export async function seedInitialLookups() {
       description: 'Niveaux de redondance pour les environnements',
       values: [
         { code: 'none', label: 'Aucune', label_fr: 'Aucune', label_en: 'None', description: 'Pas de redondance configurée', order: 1, active: true },
-        { code: 'minimal', label: 'Minimale', label_fr: 'Minimale', label_en: 'Minimal', description: 'Redondance minimale (ex: sauvegarde locale)', order: 2, active: true },
-        { code: 'geo-redundant', label: 'Géo-redondante', label_fr: 'Géo-redondante', label_en: 'Geo-redundant', description: 'Redondance géographique (plusieurs datacenters)', order: 3, active: true },
-        { code: 'high', label: 'Élevée', label_fr: 'Élevée', label_en: 'High', description: 'Redondance élevée avec failover automatique', order: 4, active: true },
+        { code: 'minimal', label: 'Minimale (dégradée)', label_fr: 'Minimale (dégradée)', label_en: 'Minimal (Degraded)', description: 'Redondance minimale avec dégradation possible', order: 2, active: true },
+        { code: 'full', label: 'Complète (full perimeter)', label_fr: 'Complète (périmètre complet)', label_en: 'Full (Full Perimeter)', description: 'Redondance complète sur tout le périmètre', order: 3, active: true },
+        { code: 'geo-redundant', label: 'Géo-redondante', label_fr: 'Géo-redondante', label_en: 'Geo-redundant', description: 'Redondance géographique (plusieurs datacenters)', order: 4, active: true },
+        { code: 'high', label: 'Élevée', label_fr: 'Élevée', label_en: 'High', description: 'Redondance élevée avec failover automatique', order: 5, active: true },
       ],
     },
     {
@@ -72,6 +77,158 @@ export async function seedInitialLookups() {
         { code: 'SSO', label: 'Single Sign-On', label_fr: 'Authentification Unique', label_en: 'Single Sign-On', description: 'Authentification unique via un fournisseur d\'identité', order: 4, active: true },
       ],
     },
+    // ========== LOOKUPS DD (Due Diligence) ==========
+    {
+      key: 'ENVIRONMENT_TYPES',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Type d\'Environnement',
+      description: 'Types d\'environnements (CIEC)',
+      values: [
+        { code: 'production', label: 'Production', label_fr: 'Production', label_en: 'Production', description: 'Environnement de production', order: 1, active: true },
+        { code: 'production_small', label: 'Production (Petits Clients)', label_fr: 'Production (Petits Clients)', label_en: 'Production (Small Clients)', description: 'Production pour petits clients', order: 2, active: true },
+        { code: 'production_large', label: 'Production (Grands Clients)', label_fr: 'Production (Grands Clients)', label_en: 'Production (Large Clients)', description: 'Production pour grands clients', order: 3, active: true },
+        { code: 'test', label: 'Tests', label_fr: 'Tests', label_en: 'Test', description: 'Environnement de test', order: 4, active: true },
+        { code: 'dev', label: 'Développement', label_fr: 'Développement', label_en: 'Development', description: 'Environnement de développement', order: 5, active: true },
+        { code: 'dev_local', label: 'Développement Local', label_fr: 'Développement Local (IDE, BDD)', label_en: 'Local Development (IDE, DB)', description: 'Environnement de développement local', order: 6, active: true },
+        { code: 'dev_remote', label: 'Développement Distant', label_fr: 'Développement Distant (BDD)', label_en: 'Remote Development (DB)', description: 'Environnement de développement distant', order: 7, active: true },
+        { code: 'backup', label: 'Sauvegarde', label_fr: 'Sauvegarde', label_en: 'Backup', description: 'Environnement de sauvegarde', order: 8, active: true },
+        { code: 'infrastructure', label: 'Infrastructure Interne', label_fr: 'Infrastructure Interne', label_en: 'Internal Infrastructure', description: 'Infrastructure interne (emails, GED, outils collaboratifs)', order: 9, active: true },
+        { code: 'repo', label: 'Repository Source Code', label_fr: 'Repository Source Code', label_en: 'Source Code Repository', description: 'Repository distant pour collaboration et sauvegarde', order: 10, active: true },
+      ],
+    },
+    {
+      key: 'HOSTING_TIERS',
+      category: 'DD',
+      entity: 'Hosting',
+      formLabel: 'Type d\'Hébergement',
+      description: 'Types d\'hébergement (CIEC)',
+      values: [
+        { code: 'onprem_editor', label: 'On-Premise (Éditeur)', label_fr: 'On-Premise (Éditeur)', label_en: 'On-Premise (Publisher)', description: 'Hébergement on-premise chez l\'éditeur', order: 1, active: true },
+        { code: 'onprem_client', label: 'On-Premise (Client)', label_fr: 'On-Premise (Client)', label_en: 'On-Premise (Client)', description: 'Hébergement on-premise chez le client', order: 2, active: true },
+        { code: 'datacenter_editor', label: 'Datacenter (Éditeur)', label_fr: 'Datacenter (Éditeur)', label_en: 'Datacenter (Publisher)', description: 'Datacenter appartenant à l\'éditeur', order: 3, active: true },
+        { code: 'datacenter_private', label: 'Datacenter (Privé)', label_fr: 'Datacenter (Privé)', label_en: 'Private Datacenter', description: 'Datacenter privé', order: 4, active: true },
+        { code: 'third_party', label: 'Hébergeur Tiers', label_fr: 'Hébergeur Tiers (OVH, Bleu, Scaleway, etc.)', label_en: 'Third-Party Hosting (OVH, Blue, Scaleway, etc.)', description: 'Hébergement par un tiers (OVH, Bleu, Scaleway, etc.)', order: 5, active: true },
+        { code: 'cloud_public', label: 'Cloud Public', label_fr: 'Cloud Public (AWS, Azure, GCP, etc.)', label_en: 'Public Cloud (AWS, Azure, GCP, etc.)', description: 'Cloud public (AWS, Azure, GCP, etc.)', order: 6, active: true },
+        { code: 'cloud_hybrid', label: 'Cloud Hybride', label_fr: 'Cloud Hybride', label_en: 'Hybrid Cloud', description: 'Cloud hybride', order: 7, active: true },
+        { code: 'internal', label: 'En Interne', label_fr: 'En Interne (chez l\'éditeur)', label_en: 'Internal (at Publisher)', description: 'Hébergement interne chez l\'éditeur', order: 8, active: true },
+      ],
+    },
+    {
+      key: 'DEPLOYMENT_TYPES',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Type de Déploiement',
+      description: 'Types de déploiement (CIEC)',
+      values: [
+        { code: 'monolith', label: 'Monolithique', label_fr: 'Monolithique', label_en: 'Monolithic', description: 'Architecture monolithique', order: 1, active: true },
+        { code: 'microservices', label: 'Microservices', label_fr: 'Microservices', label_en: 'Microservices', description: 'Architecture microservices', order: 2, active: true },
+        { code: 'hybrid', label: 'Hybride', label_fr: 'Hybride', label_en: 'Hybrid', description: 'Architecture hybride', order: 3, active: true },
+      ],
+    },
+    {
+      key: 'VIRTUALIZATION_TYPES',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Virtualisation/Conteneurisation',
+      description: 'Types de virtualisation et conteneurisation (CIEC)',
+      values: [
+        { code: 'physical', label: 'Matériel', label_fr: 'Matériel', label_en: 'Physical', description: 'Serveurs physiques', order: 1, active: true },
+        { code: 'vmware', label: 'VMware', label_fr: 'VMware', label_en: 'VMware', description: 'Virtualisation VMware', order: 2, active: true },
+        { code: 'docker', label: 'Docker', label_fr: 'Docker', label_en: 'Docker', description: 'Conteneurisation Docker', order: 3, active: true },
+        { code: 'kubernetes', label: 'Kubernetes', label_fr: 'Kubernetes', label_en: 'Kubernetes', description: 'Orchestration Kubernetes', order: 4, active: true },
+      ],
+    },
+    {
+      key: 'SCALING_MECHANISMS',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Mécanisme de Montée en Charge',
+      description: 'Mécanismes de montée en charge (CIEC)',
+      values: [
+        { code: 'vertical', label: 'Verticale', label_fr: 'Verticale', label_en: 'Vertical', description: 'Montée en charge verticale (augmentation des ressources)', order: 1, active: true },
+        { code: 'horizontal', label: 'Horizontale', label_fr: 'Horizontale', label_en: 'Horizontal', description: 'Montée en charge horizontale (ajout d\'instances)', order: 2, active: true },
+        { code: 'not_supported', label: 'Non Supportée', label_fr: 'Non Supportée', label_en: 'Not Supported', description: 'Montée en charge non supportée', order: 3, active: true },
+      ],
+    },
+    {
+      key: 'MONITORING_STATUS',
+      category: 'DD',
+      entity: 'MonitoringObservability',
+      formLabel: 'Statut de Monitoring',
+      description: 'Statuts de monitoring et observabilité (CIEC)',
+      values: [
+        { code: 'yes_industrial', label: 'Oui (Industriel)', label_fr: 'Oui (Industriel)', label_en: 'Yes (Industrial)', description: 'Monitoring industriel complet', order: 1, active: true },
+        { code: 'partial', label: 'Partiel', label_fr: 'Partiel', label_en: 'Partial', description: 'Monitoring partiel', order: 2, active: true },
+        { code: 'no', label: 'Non', label_fr: 'Non', label_en: 'No', description: 'Pas de monitoring', order: 3, active: true },
+      ],
+    },
+    {
+      key: 'MONITORING_TOOLS',
+      category: 'DD',
+      entity: 'MonitoringObservability',
+      formLabel: 'Outils de Monitoring',
+      description: 'Outils de monitoring et observabilité (CIEC) - Choix multiple',
+      values: [
+        { code: 'prometheus', label: 'Prometheus', label_fr: 'Prometheus (Observabilité hybride)', label_en: 'Prometheus (Hybrid Observability)', description: 'Prometheus pour la collecte de métriques', order: 1, active: true },
+        { code: 'grafana', label: 'Grafana', label_fr: 'Grafana (Observabilité hybride)', label_en: 'Grafana (Hybrid Observability)', description: 'Grafana pour la visualisation', order: 2, active: true },
+        { code: 'elk', label: 'ELK Stack', label_fr: 'ELK Stack (Elasticsearch, Logstash, Kibana)', label_en: 'ELK Stack (Elasticsearch, Logstash, Kibana)', description: 'Stack ELK pour les logs', order: 3, active: true },
+        { code: 'graylog', label: 'Graylog', label_fr: 'Graylog (Observabilité hybride)', label_en: 'Graylog (Hybrid Observability)', description: 'Graylog pour la gestion des logs', order: 4, active: true },
+        { code: 'datadog', label: 'Datadog', label_fr: 'Datadog (Monitoring Application et Infrastructure)', label_en: 'Datadog (Application and Infrastructure Monitoring)', description: 'Datadog pour le monitoring complet', order: 5, active: true },
+        { code: 'splunk', label: 'Splunk', label_fr: 'Splunk (Monitoring Application et Infrastructure)', label_en: 'Splunk (Application and Infrastructure Monitoring)', description: 'Splunk pour l\'analyse de données', order: 6, active: true },
+        { code: 'zabbix', label: 'Zabbix', label_fr: 'Zabbix (Monitoring Application et Infrastructure)', label_en: 'Zabbix (Application and Infrastructure Monitoring)', description: 'Zabbix pour le monitoring réseau', order: 7, active: true },
+        { code: 'newrelic', label: 'New Relic', label_fr: 'New Relic (Monitoring Application et Infrastructure)', label_en: 'New Relic (Application and Infrastructure Monitoring)', description: 'New Relic pour l\'APM', order: 8, active: true },
+        { code: 'dynatrace', label: 'Dynatrace', label_fr: 'Dynatrace (Monitoring Application et Infrastructure)', label_en: 'Dynatrace (Application and Infrastructure Monitoring)', description: 'Dynatrace pour l\'observabilité complète', order: 9, active: true },
+        { code: 'grafana_loki', label: 'Grafana Loki', label_fr: 'Grafana Loki (Observabilité Spécialisée)', label_en: 'Grafana Loki (Specialized Observability)', description: 'Grafana Loki pour les logs', order: 10, active: true },
+        { code: 'grafana_tempo', label: 'Grafana Tempo', label_fr: 'Grafana Tempo (Observabilité Spécialisée)', label_en: 'Grafana Tempo (Specialized Observability)', description: 'Grafana Tempo pour le tracing', order: 11, active: true },
+        { code: 'jaeger', label: 'Jaeger', label_fr: 'Jaeger (Observabilité Spécialisée)', label_en: 'Jaeger (Specialized Observability)', description: 'Jaeger pour le distributed tracing', order: 12, active: true },
+        { code: 'opentelemetry', label: 'OpenTelemetry', label_fr: 'OpenTelemetry (Observabilité Spécialisée)', label_en: 'OpenTelemetry (Specialized Observability)', description: 'OpenTelemetry pour l\'observabilité standardisée', order: 13, active: true },
+        { code: 'sentry', label: 'Sentry', label_fr: 'Sentry (Observabilité Spécialisée)', label_en: 'Sentry (Specialized Observability)', description: 'Sentry pour le monitoring d\'erreurs', order: 14, active: true },
+      ],
+    },
+    {
+      key: 'COMPLIANCE_TYPES',
+      category: 'DD',
+      entity: 'Hosting',
+      formLabel: 'Conformité & Réglementation',
+      description: 'Types de conformité et réglementation (CIEC) - Choix multiple',
+      values: [
+        { code: 'rgpd_conforme', label: 'RGPD - Conforme', label_fr: 'RGPD & Confidentialité des Données - Conforme', label_en: 'GDPR & Data Privacy - Compliant', description: 'Conforme au RGPD', order: 1, active: true },
+        { code: 'rgpd_non_conforme', label: 'RGPD - Non Conforme', label_fr: 'RGPD & Confidentialité des Données - Non conforme', label_en: 'GDPR & Data Privacy - Non-Compliant', description: 'Non conforme au RGPD', order: 2, active: true },
+        { code: 'banking_conforme', label: 'Normes Bancaires - Conforme', label_fr: 'Normes Bancaires (EBICS, SEPA, etc.) - Conforme', label_en: 'Banking Standards (EBICS, SEPA, etc.) - Compliant', description: 'Conforme aux normes bancaires', order: 3, active: true },
+        { code: 'banking_non_conforme', label: 'Normes Bancaires - Non Conforme', label_fr: 'Normes Bancaires (EBICS, SEPA, etc.) - Non conforme', label_en: 'Banking Standards (EBICS, SEPA, etc.) - Non-Compliant', description: 'Non conforme aux normes bancaires', order: 4, active: true },
+        { code: 'health_conforme', label: 'Santé/Social - Conforme', label_fr: 'Certifications Spécifiques Santé/Social (Ségur, HDS) - Conforme', label_en: 'Health/Social Certifications (Ségur, HDS) - Compliant', description: 'Conforme aux certifications santé/social', order: 5, active: true },
+        { code: 'health_non_conforme', label: 'Santé/Social - Non Conforme', label_fr: 'Certifications Spécifiques Santé/Social (Ségur, HDS) - Non conforme', label_en: 'Health/Social Certifications (Ségur, HDS) - Non-Compliant', description: 'Non conforme aux certifications santé/social', order: 6, active: true },
+        { code: 'quality_conforme', label: 'Qualité/Caisse - Conforme', label_fr: 'Certifications Qualité/Caisse (NF525, Datadock/Qualiopi) - Conforme', label_en: 'Quality/Cash Register Certifications (NF525, Datadock/Qualiopi) - Compliant', description: 'Conforme aux certifications qualité/caisse', order: 7, active: true },
+        { code: 'quality_non_conforme', label: 'Qualité/Caisse - Non Conforme', label_fr: 'Certifications Qualité/Caisse (NF525, Datadock/Qualiopi) - Non conforme', label_en: 'Quality/Cash Register Certifications (NF525, Datadock/Qualiopi) - Non-Compliant', description: 'Non conforme aux certifications qualité/caisse', order: 8, active: true },
+        { code: 'sox_conforme', label: 'SOX/SOC1 - Conforme', label_fr: 'Conformité Financière (SOX/SOC1) - Conforme', label_en: 'Financial Compliance (SOX/SOC1) - Compliant', description: 'Conforme à SOX/SOC1', order: 9, active: true },
+        { code: 'sox_non_conforme', label: 'SOX/SOC1 - Non Conforme', label_fr: 'Conformité Financière (SOX/SOC1) - Non conforme', label_en: 'Financial Compliance (SOX/SOC1) - Non-Compliant', description: 'Non conforme à SOX/SOC1', order: 10, active: true },
+        { code: 'pdp_conforme', label: 'Facturation Électronique - Conforme', label_fr: 'Facturation Électronique (PDP) - Conforme', label_en: 'Electronic Invoicing (PDP) - Compliant', description: 'Conforme à la facturation électronique', order: 11, active: true },
+        { code: 'pdp_non_conforme', label: 'Facturation Électronique - Non Conforme', label_fr: 'Facturation Électronique (PDP) - Non conforme', label_en: 'Electronic Invoicing (PDP) - Non-Compliant', description: 'Non conforme à la facturation électronique', order: 12, active: true },
+        { code: 'nf525_conforme', label: 'NF525 - Conforme', label_fr: 'NF525 (Certification AFNOR) - Conforme', label_en: 'NF525 (AFNOR Certification) - Compliant', description: 'Conforme à la certification NF525', order: 13, active: true },
+        { code: 'nf525_non_conforme', label: 'NF525 - Non Conforme', label_fr: 'NF525 (Certification AFNOR) - Non conforme', label_en: 'NF525 (AFNOR Certification) - Non-Compliant', description: 'Non conforme à la certification NF525', order: 14, active: true },
+        { code: 'infra_critical_conforme', label: 'Infrastructure Critique - Conforme', label_fr: 'Risque d\'Infrastructure Critique - Conforme', label_en: 'Critical Infrastructure Risk - Compliant', description: 'Conforme aux exigences d\'infrastructure critique', order: 15, active: true },
+        { code: 'infra_critical_non_conforme', label: 'Infrastructure Critique - Non Conforme', label_fr: 'Risque d\'Infrastructure Critique - Non conforme', label_en: 'Critical Infrastructure Risk - Non-Compliant', description: 'Non conforme aux exigences d\'infrastructure critique', order: 16, active: true },
+      ],
+    },
+    {
+      key: 'SECURITY_MECHANISMS',
+      category: 'DD',
+      entity: 'SecurityProfile',
+      formLabel: 'Mécanismes de Cybersécurité',
+      description: 'Mécanismes de cybersécurité (CIEC) - Choix multiple',
+      values: [
+        { code: 'mfa_sso', label: 'Authentification Forte (MFA/SSO)', label_fr: 'Authentification forte activée (MFA, SSO)', label_en: 'Strong Authentication Enabled (MFA, SSO)', description: 'Authentification multi-facteurs ou SSO activée', order: 1, active: true },
+        { code: 'patching', label: 'Gestion des Patchs', label_fr: 'Gestion des patchs', label_en: 'Patch Management', description: 'Gestion des correctifs de sécurité', order: 2, active: true },
+        { code: 'encrypt_transit', label: 'Chiffrement en Transit', label_fr: 'Chiffrement en transit', label_en: 'Encryption in Transit', description: 'Chiffrement des données en transit', order: 3, active: true },
+        { code: 'encrypt_rest', label: 'Chiffrement au Repos', label_fr: 'Chiffrement au repos', label_en: 'Encryption at Rest', description: 'Chiffrement des données au repos', order: 4, active: true },
+        { code: 'privilege_access', label: 'Gestion des Accès Privilégiés', label_fr: 'Gestion des accès à privilèges', label_en: 'Privileged Access Management', description: 'Gestion des accès privilégiés (PAM)', order: 5, active: true },
+        { code: 'pentest', label: 'Tests de Sécurité', label_fr: 'Tests de sécurité réalisés (e.g., tests de pénétration)', label_en: 'Security Tests Performed (e.g., Penetration Tests)', description: 'Tests de pénétration réalisés', order: 6, active: true },
+        { code: 'reverse_proxy', label: 'Reverse Proxy', label_fr: 'Reverse proxy', label_en: 'Reverse Proxy', description: 'Reverse proxy configuré', order: 7, active: true },
+        { code: 'waf', label: 'Firewall Applicatif', label_fr: 'Firewall applicatif', label_en: 'Web Application Firewall', description: 'Firewall applicatif (WAF)', order: 8, active: true },
+        { code: 'https_certs', label: 'Certificats HTTPS Automatisés', label_fr: 'Certificats HTTPS automatisés', label_en: 'Automated HTTPS Certificates', description: 'Certificats HTTPS renouvelés automatiquement', order: 9, active: true },
+      ],
+    },
   ];
 
   for (const lookup of lookups) {
@@ -82,6 +239,6 @@ export async function seedInitialLookups() {
     );
   }
 
-  console.log('✅ Lookups P1 initialisés avec succès');
+  console.log('✅ Lookups P1 et DD initialisés avec succès');
 }
 
