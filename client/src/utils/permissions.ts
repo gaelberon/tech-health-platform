@@ -15,7 +15,7 @@ export interface TabPermission {
 // Métadonnées des onglets (pour l'affichage)
 export const TAB_METADATA: Record<TabType, { label: string; icon: string; subtitle?: string }> = {
   collector: {
-    label: 'Bilan Tech Instantané',
+    label: 'Bilan Tech',
     subtitle: 'Snapshot',
     icon: '📋',
   },
