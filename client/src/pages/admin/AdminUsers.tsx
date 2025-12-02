@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import type { UserRole } from '@common/types';
 import { useSession } from '../../session/SessionContext';
@@ -141,6 +142,7 @@ const PAGES = [
 ];
 
 const AdminUsers: React.FC = () => {
+  const { t } = useTranslation();
   const { user: currentUser, refetch: refetchSession } = useSession();
   const [includeArchived, setIncludeArchived] = useState<boolean>(false);
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
@@ -250,9 +252,9 @@ const AdminUsers: React.FC = () => {
       await createUser({ variables: { input } });
       await refetch();
       resetForm();
-      alert('Utilisateur créé avec succès');
+      alert(t('admin.users.createSuccess'));
     } catch (error: any) {
-      alert(`Erreur lors de la création : ${error.message}`);
+      alert(`${t('admin.users.createError')}: ${error.message}`);
     }
   };
 
@@ -374,7 +376,7 @@ const AdminUsers: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-8 text-gray-500 dark:text-gray-400">Chargement des utilisateurs...</div>;
+    return <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('admin.users.loading')}</div>;
   }
 
   return (
@@ -382,12 +384,12 @@ const AdminUsers: React.FC = () => {
       {/* En-tête avec actions */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Gestion des Utilisateurs</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('admin.users.title')}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {activeUsers.length} utilisateur{activeUsers.length !== 1 ? 's' : ''} actif{activeUsers.length !== 1 ? 's' : ''}
+            {t('admin.users.activeUsers', { count: activeUsers.length })}
             {includeArchived && archivedUsers.length > 0 && (
               <span className="ml-2">
-                • {archivedUsers.length} archivé{archivedUsers.length !== 1 ? 's' : ''}
+                • {t('admin.users.archivedUsers', { count: archivedUsers.length })}
               </span>
             )}
           </p>
@@ -400,7 +402,7 @@ const AdminUsers: React.FC = () => {
               onChange={(e) => setIncludeArchived(e.target.checked)}
               className="rounded border-gray-300 dark:border-gray-600"
             />
-            Afficher les archivés
+            {t('admin.users.showArchived')}
           </label>
           <button
             onClick={() => {
@@ -409,7 +411,7 @@ const AdminUsers: React.FC = () => {
             }}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600"
           >
-            + Nouvel utilisateur
+            {t('admin.users.newUser')}
           </button>
         </div>
       </div>
@@ -418,16 +420,16 @@ const AdminUsers: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Droits d'accès aux pages</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('admin.users.pageAccess')}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Configurez les pages accessibles pour chaque rôle
+              {t('admin.users.pageAccessDesc')}
             </p>
           </div>
           <button
             onClick={() => setShowPagePermissions(!showPagePermissions)}
             className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30"
           >
-            {showPagePermissions ? 'Masquer' : 'Afficher'} les permissions
+            {showPagePermissions ? t('admin.users.hidePermissions') : t('admin.users.showPermissions')}
           </button>
         </div>
 
@@ -436,7 +438,7 @@ const AdminUsers: React.FC = () => {
             {/* Sélection du rôle */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Sélectionner un rôle
+                {t('admin.users.selectRole')}
               </label>
               <div className="flex flex-wrap gap-2">
                 {ROLES.map((role) => (
@@ -457,20 +459,20 @@ const AdminUsers: React.FC = () => {
 
             {/* Liste des permissions */}
             {pagePermissionsLoading ? (
-              <div className="text-center py-4 text-gray-500 dark:text-gray-400">Chargement des permissions...</div>
+              <div className="text-center py-4 text-gray-500 dark:text-gray-400">{t('admin.users.loadingPermissions')}</div>
             ) : (
               <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
                   <thead className="bg-gray-100 dark:bg-gray-700">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                        Page
+                        {t('admin.users.page')}
                       </th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                        Statut
+                        {t('admin.users.status')}
                       </th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                        Action
+                        {t('admin.users.action')}
                       </th>
                     </tr>
                   </thead>
@@ -501,7 +503,7 @@ const AdminUsers: React.FC = () => {
                                   : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                               }`}
                             >
-                              {allowed ? 'Autorisé' : 'Bloqué'}
+                              {allowed ? t('admin.users.allowed') : t('admin.users.blocked')}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -514,7 +516,7 @@ const AdminUsers: React.FC = () => {
                                   : 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30'
                               } disabled:opacity-50`}
                             >
-                              {allowed ? 'Bloquer' : 'Autoriser'}
+                              {allowed ? t('admin.users.blocked') : t('admin.users.allowed')}
                             </button>
                           </td>
                         </tr>
@@ -534,7 +536,7 @@ const AdminUsers: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Rechercher par nom, email ou ID..."
+          placeholder={t('common.search') + '...'}
           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
         />
       </div>
@@ -544,7 +546,7 @@ const AdminUsers: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {editingUser ? 'Modifier un utilisateur' : 'Créer un nouvel utilisateur'}
+              {editingUser ? t('admin.users.edit') : t('admin.users.create')}
             </h4>
             <button
               onClick={resetForm}
@@ -557,7 +559,7 @@ const AdminUsers: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email *
+                {t('admin.users.email')} *
               </label>
               <input
                 type="email"
@@ -570,7 +572,7 @@ const AdminUsers: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {editingUser ? 'Nouveau mot de passe (laisser vide pour ne pas changer)' : 'Mot de passe *'}
+                {editingUser ? t('admin.users.passwordChange') : t('admin.users.password') + ' *'}
               </label>
               <input
                 type="password"
@@ -583,7 +585,7 @@ const AdminUsers: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Prénom
+                {t('admin.users.firstName')}
               </label>
               <input
                 type="text"
@@ -595,7 +597,7 @@ const AdminUsers: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Nom
+                {t('admin.users.lastName')}
               </label>
               <input
                 type="text"
@@ -607,7 +609,7 @@ const AdminUsers: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Téléphone
+                {t('admin.users.phone')}
               </label>
               <input
                 type="tel"
@@ -697,11 +699,11 @@ const AdminUsers: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, themePreference: e.target.value as 'light' | 'dark' })}
                     className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Mode sombre</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('admin.users.dark')}</span>
                 </label>
               </div>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Le thème sélectionné sera appliqué lors de la prochaine connexion de l'utilisateur
+                {t('admin.users.themeDesc')}
               </p>
             </div>
 
@@ -719,7 +721,7 @@ const AdminUsers: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, languagePreference: e.target.value as 'fr' | 'en' | 'de' })}
                     className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Français</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('admin.users.french')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -730,7 +732,7 @@ const AdminUsers: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, languagePreference: e.target.value as 'fr' | 'en' | 'de' })}
                     className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">English</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('admin.users.english')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -741,17 +743,17 @@ const AdminUsers: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, languagePreference: e.target.value as 'fr' | 'en' | 'de' })}
                     className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Deutsch</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('admin.users.german')}</span>
                 </label>
               </div>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                La langue sélectionnée sera appliquée lors de la prochaine connexion de l'utilisateur
+                {t('admin.users.languageDesc')}
               </p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Rôle *
+                {t('admin.users.role')} *
               </label>
               <select
                 value={formData.role}

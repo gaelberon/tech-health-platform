@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSession } from '../../session/SessionContext';
 import AdminPermissions from './AdminPermissions';
 import AdminLookups from './AdminLookups';
@@ -9,6 +10,7 @@ import AdminDataManagement from './AdminDataManagement';
 type AdminSection = 'permissions' | 'lookups' | 'users' | 'audit' | 'data' | 'settings';
 
 const AdminDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useSession();
   const [activeSection, setActiveSection] = useState<AdminSection>('permissions');
 
@@ -24,12 +26,12 @@ const AdminDashboard: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg p-8 text-center">
-          <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Accès refusé</h3>
+          <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">{t('admin.accessDenied')}</h3>
           <p className="text-red-700 dark:text-red-300">
-            Vous devez être administrateur pour accéder à cette page.
+            {t('admin.adminRequired')}
           </p>
           <p className="text-red-600 dark:text-red-400 text-sm mt-2">
-            Rôle actuel : {user?.role || 'Non authentifié'}
+            {t('admin.currentRole')}: {user?.role ? t(`roles.${user.role}`) : t('admin.notAuthenticated')}
           </p>
         </div>
       </div>
@@ -37,12 +39,12 @@ const AdminDashboard: React.FC = () => {
   }
 
   const sections = [
-    { id: 'permissions' as AdminSection, label: 'Permissions', icon: '🔐', description: 'Gérer les permissions par rôle' },
-    { id: 'lookups' as AdminSection, label: 'Listes de Valeurs', icon: '📋', description: 'Administrer les menus déroulants' },
-    { id: 'users' as AdminSection, label: 'Utilisateurs', icon: '👥', description: 'Gérer les utilisateurs et leurs accès' },
-    { id: 'data' as AdminSection, label: 'Gestion des Données', icon: '💾', description: 'Créer et modifier les éditeurs et données de test' },
-    { id: 'audit' as AdminSection, label: 'Pistes d\'Audit', icon: '📊', description: 'Consulter les logs d\'audit et l\'historique des modifications' },
-    { id: 'settings' as AdminSection, label: 'Paramètres', icon: '⚙️', description: 'Configuration générale (à venir)' },
+    { id: 'permissions' as AdminSection, label: t('admin.sections.permissions.label'), icon: '🔐', description: t('admin.sections.permissions.description') },
+    { id: 'lookups' as AdminSection, label: t('admin.sections.lookups.label'), icon: '📋', description: t('admin.sections.lookups.description') },
+    { id: 'users' as AdminSection, label: t('admin.sections.users.label'), icon: '👥', description: t('admin.sections.users.description') },
+    { id: 'data' as AdminSection, label: t('admin.sections.data.label'), icon: '💾', description: t('admin.sections.data.description') },
+    { id: 'audit' as AdminSection, label: t('admin.sections.audit.label'), icon: '📊', description: t('admin.sections.audit.description') },
+    { id: 'settings' as AdminSection, label: t('admin.sections.settings.label'), icon: '⚙️', description: t('admin.sections.settings.description') },
   ];
 
   const renderContent = () => {
@@ -60,7 +62,7 @@ const AdminDashboard: React.FC = () => {
       case 'settings':
         return (
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-8 text-center">
-            <p className="text-blue-700 dark:text-blue-300">Cette section sera disponible prochainement.</p>
+            <p className="text-blue-700 dark:text-blue-300">{t('admin.sections.settings.comingSoon')}</p>
           </div>
         );
       default:
@@ -72,9 +74,9 @@ const AdminDashboard: React.FC = () => {
     <div className="space-y-6">
       {/* En-tête */}
       <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Module d'Administration</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('admin.moduleTitle')}</h2>
         <p className="text-gray-600 dark:text-gray-400 text-sm">
-          Gérez les permissions, les listes de valeurs, les utilisateurs et les paramètres de la plateforme
+          {t('admin.moduleDesc')}
         </p>
       </div>
 
