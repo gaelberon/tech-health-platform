@@ -41,9 +41,61 @@ const CollectorStepper: React.FC = () => {
     patching: 'ad_hoc',
     pentestFreq: 'never',
     vulnMgmt: 'none',
+    // Champs DD (Due Diligence) - Optionnels
+    // DD Éditeur
+    internalItSystems: [],
+    itSecurityStrategy: '',
+    contractsForReview: [],
+    // DD Solution
+    apiRobustness: '',
+    apiDocumentationQuality: '',
+    ipOwnershipClear: false,
+    licensingModel: '',
+    licenseComplianceAssured: false,
+    // DD Environnement
+    networkSecurityMechanisms: [],
+    dbScalingMechanism: '',
+    disasterRecoveryPlan: '',
+    slaOffered: '',
+    hostingContactName: '',
+    hostingContactEmail: '',
+    // DD Sécurité
+    accessControl: '',
+    internalAuditsRecent: '',
+    centralizedMonitoring: false,
+    pentestResultsSummary: '',
+    knownSecurityFlaws: '',
+    incidentReportingProcess: '',
+    // DD Complémentaire (étape 4)
+    perfMonitoring: '',
+    logCentralization: '',
+    monitoringTools: [],
+    repoLocation: '',
+    documentationLevel: '',
+    codeReviewProcess: '',
+    versionControlTool: '',
+    technicalDebtKnown: '',
+    legacySystems: '',
+    thirdPartyDependencies: [],
+    sdlcProcess: '',
+    devopsAutomationLevel: '',
+    plannedVsUnplannedRatio: null,
+    leadTimeForChangesDays: null,
+    mttrHours: null,
+    internalVsExternalBugRatio: null,
+    hostingMonthly: null,
+    licensesMonthly: null,
+    opsHoursMonthlyEquiv: null,
+    hiddenCosts: '',
+    costEvolutionFactors: '',
+    modernizationInvestmentNeeds: '',
+    aiFeatures: [],
+    teamSizeAdequate: '',
+    keyPersonDependency: '',
   });
 
     const [step, setStep] = useState(1);
+  const [ddMode, setDdMode] = useState(false); // Toggle Mode Complet DD Tech
   const [showP2Details, setShowP2Details] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
@@ -79,6 +131,16 @@ const CollectorStepper: React.FC = () => {
       dataTypes: extractValues(lookupsData.dataTypes || []),
       redundancyLevels: extractValues(lookupsData.redundancyLevels || []),
       authTypes: extractValues(lookupsData.authTypes || []),
+      // Lookups DD
+      environmentTypes: extractValues(lookupsData.environmentTypes || []),
+      hostingTiers: extractValues(lookupsData.hostingTiers || []),
+      deploymentTypes: extractValues(lookupsData.deploymentTypes || []),
+      virtualizationTypes: extractValues(lookupsData.virtualizationTypes || []),
+      scalingMechanisms: extractValues(lookupsData.scalingMechanisms || []),
+      monitoringStatus: extractValues(lookupsData.monitoringStatus || []),
+      monitoringTools: extractValues(lookupsData.monitoringTools || []),
+      complianceTypes: extractValues(lookupsData.complianceTypes || []),
+      securityMechanisms: extractValues(lookupsData.securityMechanisms || []),
     };
   }, [lookupsData]);
 
@@ -115,7 +177,7 @@ const CollectorStepper: React.FC = () => {
               draftId: currentDraftId || undefined,
               status,
               step,
-              formData,
+              formData: { ...formData, ddMode }, // Inclure ddMode dans formData
             },
           },
         }).then((result) => {
@@ -153,6 +215,10 @@ const CollectorStepper: React.FC = () => {
       if (data?.getCollectorDraft) {
         const draft = data.getCollectorDraft;
         setFormData(draft.formData);
+        // Restaurer le mode DD si présent dans le brouillon
+        if (draft.formData.ddMode !== undefined) {
+          setDdMode(draft.formData.ddMode);
+        }
         setStep(draft.step);
         setCurrentDraftId(draft.draftId);
         setSubmissionError(draft.errorMessage || null);
@@ -231,7 +297,7 @@ const CollectorStepper: React.FC = () => {
       return;
     }
 
-    // Préparation des inputs
+    // Préparation des inputs (P1 + DD optionnels)
         const inputs = {
       editorInput: {
         name: formData.useExistingEditor && formData.selectedEditorId
@@ -240,6 +306,10 @@ const CollectorStepper: React.FC = () => {
         business_criticality: formData.editorCriticality,
         country: formData.editorCountry || undefined,
         size: formData.editorSize || undefined,
+        // Champs DD (optionnels)
+        internal_it_systems: formData.internalItSystems && formData.internalItSystems.length > 0 ? formData.internalItSystems : undefined,
+        it_security_strategy: formData.itSecurityStrategy || undefined,
+        contracts_for_review: formData.contractsForReview && formData.contractsForReview.length > 0 ? formData.contractsForReview : undefined,
       },
       solutionInput: {
         name: formData.solutionName,
@@ -247,12 +317,23 @@ const CollectorStepper: React.FC = () => {
         product_criticality: formData.solutionCriticality,
         main_use_case: formData.solutionMainUseCase,
         description: formData.solutionDescription || undefined,
+        // Champs DD (optionnels)
+        api_robustness: formData.apiRobustness || undefined,
+        api_documentation_quality: formData.apiDocumentationQuality || undefined,
+        ip_ownership_clear: formData.ipOwnershipClear !== undefined ? formData.ipOwnershipClear : undefined,
+        licensing_model: formData.licensingModel || undefined,
+        license_compliance_assured: formData.licenseComplianceAssured !== undefined ? formData.licenseComplianceAssured : undefined,
       },
       hostingInput: {
         provider: formData.provider,
         region: formData.region,
         tier: formData.hostingTier,
         certifications: formData.certifications || [],
+        // Champs DD (optionnels)
+        contact: (formData.hostingContactName || formData.hostingContactEmail) ? {
+          name: formData.hostingContactName || '',
+          email: formData.hostingContactEmail || '',
+        } : undefined,
       },
       environmentInput: {
         env_type: 'production', // Par défaut pour la première collecte
@@ -268,6 +349,11 @@ const CollectorStepper: React.FC = () => {
         deployment_type: formData.deploymentType || undefined,
         virtualization: formData.virtualization || undefined,
         tech_stack: formData.techStack || [],
+        // Champs DD (optionnels)
+        network_security_mechanisms: formData.networkSecurityMechanisms && formData.networkSecurityMechanisms.length > 0 ? formData.networkSecurityMechanisms : undefined,
+        db_scaling_mechanism: formData.dbScalingMechanism || undefined,
+        disaster_recovery_plan: formData.disasterRecoveryPlan || undefined,
+        sla_offered: formData.slaOffered || undefined,
       },
       securityInput: {
         auth: formData.auth,
@@ -278,6 +364,13 @@ const CollectorStepper: React.FC = () => {
         patching: formData.patching || 'ad_hoc',
         pentest_freq: formData.pentestFreq || 'never',
         vuln_mgmt: formData.vulnMgmt || 'none',
+        // Champs DD (optionnels)
+        access_control: formData.accessControl || undefined,
+        internal_audits_recent: formData.internalAuditsRecent || undefined,
+        centralized_monitoring: formData.centralizedMonitoring !== undefined ? formData.centralizedMonitoring : undefined,
+        pentest_results_summary: formData.pentestResultsSummary || undefined,
+        known_security_flaws: formData.knownSecurityFlaws || undefined,
+        incident_reporting_process: formData.incidentReportingProcess || undefined,
       },
         };
 
@@ -290,7 +383,7 @@ const CollectorStepper: React.FC = () => {
               draftId: currentDraftId,
               status: 'in_progress',
               step,
-              formData,
+              formData: { ...formData, ddMode }, // Inclure ddMode dans formData
             },
           },
         });
@@ -327,7 +420,7 @@ const CollectorStepper: React.FC = () => {
                 draftId: currentDraftId || undefined,
                 status: 'failed',
                 step,
-                formData,
+                formData: { ...formData, ddMode }, // Inclure ddMode dans formData
                 errorMessage,
               },
             },
@@ -445,6 +538,25 @@ const CollectorStepper: React.FC = () => {
         return (
           <div className="space-y-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('collector.solution.step1Title')}</h2>
+
+            {/* Toggle Mode Complet DD Tech */}
+            <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={ddMode}
+                  onChange={(e) => setDdMode(e.target.checked)}
+                  className="mr-2 w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
+                />
+                <span className="font-medium text-gray-900 dark:text-gray-100">
+                  {t('collector.ddMode.enable')}
+                </span>
+                <AssistanceTooltip content={t('collector.ddMode.tooltip')} />
+              </label>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                {t('collector.ddMode.description')}
+              </p>
+            </div>
 
             {/* Choix: éditeur existant ou nouveau */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-gray-50 dark:bg-gray-800 transition-colors">
@@ -584,6 +696,111 @@ const CollectorStepper: React.FC = () => {
               rows={3}
               required
             />
+
+            {/* Section DD Éditeur/Solution (Optionnel) */}
+            {ddMode && (
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">DD</span>
+                  {t('collector.dd.editorSolution.title')} ({t('collector.dd.optional')})
+                </h3>
+                
+                {/* Editor.internal_it_systems (DD) */}
+                <label className="block text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.editorSolution.internalItSystems')}
+                  <AssistanceTooltip content={t('collector.dd.editorSolution.internalItSystemsTooltip')} />
+                </label>
+                <textarea
+                  value={Array.isArray(formData.internalItSystems) ? formData.internalItSystems.join('\n') : formData.internalItSystems || ''}
+                  onChange={(e) => setFormData({ ...formData, internalItSystems: e.target.value.split('\n').filter(v => v.trim()) })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder={t('collector.dd.editorSolution.internalItSystemsPlaceholder')}
+                />
+
+                {/* Editor.it_security_strategy (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.editorSolution.itSecurityStrategy')}
+                  <AssistanceTooltip content={t('collector.dd.editorSolution.itSecurityStrategyTooltip')} />
+                </label>
+                <textarea
+                  value={formData.itSecurityStrategy}
+                  onChange={(e) => setFormData({ ...formData, itSecurityStrategy: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder={t('collector.dd.editorSolution.itSecurityStrategyPlaceholder')}
+                />
+
+                {/* Solution.api_robustness (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.solution.apiRobustness')}
+                  <AssistanceTooltip content={t('collector.dd.solution.apiRobustnessTooltip')} />
+                </label>
+                <textarea
+                  value={formData.apiRobustness}
+                  onChange={(e) => setFormData({ ...formData, apiRobustness: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={2}
+                  placeholder={t('collector.dd.solution.apiRobustnessPlaceholder')}
+                />
+
+                {/* Solution.api_documentation_quality (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.solution.apiDocumentationQuality')}
+                  <AssistanceTooltip content={t('collector.dd.solution.apiDocumentationQualityTooltip')} />
+                </label>
+                <textarea
+                  value={formData.apiDocumentationQuality}
+                  onChange={(e) => setFormData({ ...formData, apiDocumentationQuality: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={2}
+                  placeholder={t('collector.dd.solution.apiDocumentationQualityPlaceholder')}
+                />
+
+                {/* Solution.ip_ownership_clear (DD) */}
+                <div className="flex items-center pt-2">
+                  <input
+                    type="checkbox"
+                    id="ipOwnershipClear"
+                    checked={formData.ipOwnershipClear}
+                    onChange={(e) => setFormData({ ...formData, ipOwnershipClear: e.target.checked })}
+                    className="mr-2"
+                  />
+                  <label htmlFor="ipOwnershipClear" className="text-gray-700 dark:text-gray-300">
+                    {t('collector.dd.solution.ipOwnershipClear')}
+                    <AssistanceTooltip content={t('collector.dd.solution.ipOwnershipClearTooltip')} />
+                  </label>
+                </div>
+
+                {/* Solution.licensing_model (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.solution.licensingModel')}
+                  <AssistanceTooltip content={t('collector.dd.solution.licensingModelTooltip')} />
+                </label>
+                <input
+                  type="text"
+                  value={formData.licensingModel}
+                  onChange={(e) => setFormData({ ...formData, licensingModel: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  placeholder={t('collector.dd.solution.licensingModelPlaceholder')}
+                />
+
+                {/* Solution.license_compliance_assured (DD) */}
+                <div className="flex items-center pt-2">
+                  <input
+                    type="checkbox"
+                    id="licenseComplianceAssured"
+                    checked={formData.licenseComplianceAssured}
+                    onChange={(e) => setFormData({ ...formData, licenseComplianceAssured: e.target.checked })}
+                    className="mr-2"
+                  />
+                  <label htmlFor="licenseComplianceAssured" className="text-gray-700 dark:text-gray-300">
+                    {t('collector.dd.solution.licenseComplianceAssured')}
+                    <AssistanceTooltip content={t('collector.dd.solution.licenseComplianceAssuredTooltip')} />
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         );
 
@@ -773,6 +990,112 @@ const CollectorStepper: React.FC = () => {
                 </select>
               </div>
             )}
+
+            {/* Section DD Hébergement/Environnement (Optionnel) */}
+            {ddMode && (
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">DD</span>
+                  {t('collector.dd.hostingEnvironment.title')} ({t('collector.dd.optional')})
+                </h3>
+                
+                {/* Environment.network_security_mechanisms (DD) - Choix multiple */}
+                <label className="block text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.environment.networkSecurityMechanisms')}
+                  <AssistanceTooltip content={t('collector.dd.environment.networkSecurityMechanismsTooltip')} />
+                </label>
+                <select
+                  multiple
+                  value={formData.networkSecurityMechanisms || []}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions, option => option.value);
+                    setFormData({ ...formData, networkSecurityMechanisms: selected });
+                  }}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  size={5}
+                >
+                  {lookups.securityMechanisms.map((item: any) => (
+                    <option key={item.code} value={item.code}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {t('collector.dd.multiSelectHint')}
+                </p>
+
+                {/* Environment.db_scaling_mechanism (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.environment.dbScalingMechanism')}
+                  <AssistanceTooltip content={t('collector.dd.environment.dbScalingMechanismTooltip')} />
+                </label>
+                <select
+                  value={formData.dbScalingMechanism}
+                  onChange={(e) => setFormData({ ...formData, dbScalingMechanism: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  <option value="">{t('collector.select')}</option>
+                  {lookups.scalingMechanisms.map((item: any) => (
+                    <option key={item.code} value={item.code}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Environment.disaster_recovery_plan (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.environment.disasterRecoveryPlan')}
+                  <AssistanceTooltip content={t('collector.dd.environment.disasterRecoveryPlanTooltip')} />
+                </label>
+                <textarea
+                  value={formData.disasterRecoveryPlan}
+                  onChange={(e) => setFormData({ ...formData, disasterRecoveryPlan: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder={t('collector.dd.environment.disasterRecoveryPlanPlaceholder')}
+                />
+
+                {/* Environment.sla_offered (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.environment.slaOffered')}
+                  <AssistanceTooltip content={t('collector.dd.environment.slaOfferedTooltip')} />
+                </label>
+                <input
+                  type="text"
+                  value={formData.slaOffered}
+                  onChange={(e) => setFormData({ ...formData, slaOffered: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  placeholder={t('collector.dd.environment.slaOfferedPlaceholder')}
+                />
+
+                {/* Hosting.contact (DD) */}
+                <div className="border border-gray-200 dark:border-gray-700 p-4 rounded mt-4 bg-white dark:bg-gray-800 transition-colors">
+                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t('collector.dd.hosting.contactDetails')}
+                  </label>
+                  <label className="block text-gray-700 dark:text-gray-300">
+                    {t('collector.dd.hosting.contactName')}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.hostingContactName}
+                    onChange={(e) => setFormData({ ...formData, hostingContactName: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder={t('collector.dd.hosting.contactNamePlaceholder')}
+                  />
+                  <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                    {t('collector.dd.hosting.contactEmail')}
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.hostingContactEmail}
+                    onChange={(e) => setFormData({ ...formData, hostingContactEmail: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder={t('collector.dd.hosting.contactEmailPlaceholder')}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         );
 
@@ -824,6 +1147,96 @@ const CollectorStepper: React.FC = () => {
                 <label htmlFor="encryptRest">{t('collector.security.encryptRest')}</label>
               </div>
             </div>
+
+            {/* Section DD Sécurité (Optionnel) */}
+            {ddMode && (
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">DD</span>
+                  {t('collector.dd.security.title')} ({t('collector.dd.optional')})
+                </h3>
+                
+                {/* SecurityProfile.access_control (DD) */}
+                <label className="block text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.security.accessControl')}
+                  <AssistanceTooltip content={t('collector.dd.security.accessControlTooltip')} />
+                </label>
+                <input
+                  type="text"
+                  value={formData.accessControl}
+                  onChange={(e) => setFormData({ ...formData, accessControl: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  placeholder={t('collector.dd.security.accessControlPlaceholder')}
+                />
+
+                {/* SecurityProfile.internal_audits_recent (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.security.internalAuditsRecent')}
+                  <AssistanceTooltip content={t('collector.dd.security.internalAuditsRecentTooltip')} />
+                </label>
+                <textarea
+                  value={formData.internalAuditsRecent}
+                  onChange={(e) => setFormData({ ...formData, internalAuditsRecent: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={2}
+                  placeholder={t('collector.dd.security.internalAuditsRecentPlaceholder')}
+                />
+
+                {/* SecurityProfile.centralized_monitoring (DD) */}
+                <div className="flex items-center pt-2">
+                  <input
+                    type="checkbox"
+                    id="centralizedMonitoring"
+                    checked={formData.centralizedMonitoring}
+                    onChange={(e) => setFormData({ ...formData, centralizedMonitoring: e.target.checked })}
+                    className="mr-2"
+                  />
+                  <label htmlFor="centralizedMonitoring" className="text-gray-700 dark:text-gray-300">
+                    {t('collector.dd.security.centralizedMonitoring')}
+                    <AssistanceTooltip content={t('collector.dd.security.centralizedMonitoringTooltip')} />
+                  </label>
+                </div>
+
+                {/* SecurityProfile.pentest_results_summary (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.security.pentestResultsSummary')}
+                  <AssistanceTooltip content={t('collector.dd.security.pentestResultsSummaryTooltip')} />
+                </label>
+                <textarea
+                  value={formData.pentestResultsSummary}
+                  onChange={(e) => setFormData({ ...formData, pentestResultsSummary: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder={t('collector.dd.security.pentestResultsSummaryPlaceholder')}
+                />
+
+                {/* SecurityProfile.known_security_flaws (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.security.knownSecurityFlaws')}
+                  <AssistanceTooltip content={t('collector.dd.security.knownSecurityFlawsTooltip')} />
+                </label>
+                <textarea
+                  value={formData.knownSecurityFlaws}
+                  onChange={(e) => setFormData({ ...formData, knownSecurityFlaws: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder={t('collector.dd.security.knownSecurityFlawsPlaceholder')}
+                />
+
+                {/* SecurityProfile.incident_reporting_process (DD) */}
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">
+                  {t('collector.dd.security.incidentReportingProcess')}
+                  <AssistanceTooltip content={t('collector.dd.security.incidentReportingProcessTooltip')} />
+                </label>
+                <textarea
+                  value={formData.incidentReportingProcess}
+                  onChange={(e) => setFormData({ ...formData, incidentReportingProcess: e.target.value })}
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder={t('collector.dd.security.incidentReportingProcessPlaceholder')}
+                />
+              </div>
+            )}
           </div>
         );
 
