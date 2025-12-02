@@ -20,8 +20,13 @@ const PermissionResolver = {
       }));
     },
     listPageAccessPermissions: async (_: any, { role }: { role: UserRole }, ctx: any) => {
-      if (!ctx.user || ctx.user.role !== 'Admin') {
-        throw new Error(REQUIRE_ADMIN_MESSAGE);
+      if (!ctx.user) {
+        throw new Error('Authentification requise');
+      }
+      // Permettre aux utilisateurs de consulter les permissions de leur propre rôle
+      // Seuls les admins peuvent consulter les permissions d'autres rôles
+      if (ctx.user.role !== 'Admin' && ctx.user.role !== role) {
+        throw new Error('Vous ne pouvez consulter que les permissions de votre propre rôle');
       }
       const docs = await PageAccessPermissionModel.find({ role }).sort({ page: 1 });
       return docs.map((p) => ({
