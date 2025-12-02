@@ -103,6 +103,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
 
   // Vérifier si l'utilisateur a accès à l'administration
   const hasAdminAccess = user.role === 'Admin' || user.role === 'Supervisor';
+  // Vérifier si l'utilisateur est Admin (pour Docs Tiers)
+  const isAdmin = user.role === 'Admin';
 
   // Utiliser un portail pour rendre le menu en dehors du flux du document
   const menuContent = (
@@ -137,36 +139,48 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
           </div>
         </div>
 
-        {/* Lien Gérer le compte */}
+        {/* Lien Gérer le compte - Inactif (en cours de développement) */}
         <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <button
-            onClick={() => {
-              if (onNavigate) {
-                onNavigate('profile');
-              }
-              onClose();
-            }}
-            className="w-full text-left text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-2 py-1.5 rounded transition-colors"
+            disabled
+            className="w-full text-left text-sm text-gray-400 dark:text-gray-500 cursor-not-allowed px-2 py-1.5 rounded transition-colors opacity-50"
+            title="Fonctionnalité en cours de développement"
           >
-            {t('userMenu.manageAccount')}
+            {t('userMenu.manageAccount')} {t('userMenu.inProgress')}
           </button>
         </div>
 
         {/* Sous-menu des fonctionnalités */}
         <div className="py-1">
           {hasAdminAccess && (
-            <button
-              onClick={() => {
-                if (onNavigate) {
-                  onNavigate('admin');
-                }
-                onClose();
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
-            >
-              <span className="mr-2">⚙️</span>
-              {t('userMenu.adminConsole')}
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  if (onNavigate) {
+                    onNavigate('admin');
+                  }
+                  onClose();
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
+              >
+                <span className="mr-2">⚙️</span>
+                {t('userMenu.adminConsole')}
+              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    if (onNavigate) {
+                      onNavigate('third-party-docs');
+                    }
+                    onClose();
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
+                >
+                  <span className="mr-2">📚</span>
+                  {t('userMenu.thirdPartyDocs')}
+                </button>
+              )}
+            </>
           )}
           
           <button
