@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import About from './pages/About';
 import ThirdPartyDocs from './pages/ThirdPartyDocs';
 import HostingView from './pages/HostingView';
+import DDTechView from './pages/DDTechView';
 import Dashboard from './pages/Dashboard';
 import MyProfile from './pages/MyProfile';
 import Navigation from './components/Navigation';
@@ -186,6 +187,8 @@ const AppShell: React.FC = () => {
         return <Dashboard />;
       case 'hosting':
         return <HostingView />;
+      case 'dd-tech':
+        return <DDTechView />;
       case 'about':
         return <About />;
       case 'third-party-docs':
