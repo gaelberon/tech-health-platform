@@ -141,14 +141,14 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
         <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={() => {
-              // TODO: Implémenter la page de gestion de profil
-              alert(t('userMenu.manageAccount') + ' - ' + t('userMenu.inProgress'));
+              if (onNavigate) {
+                onNavigate('profile');
+              }
               onClose();
             }}
             className="w-full text-left text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-2 py-1.5 rounded transition-colors"
           >
             {t('userMenu.manageAccount')}
-            <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">{t('userMenu.inProgress')}</span>
           </button>
         </div>
 
@@ -171,7 +171,9 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
           
           <button
             onClick={() => {
-              // TODO: Ajouter d'autres fonctionnalités du profil
+              if (onNavigate) {
+                onNavigate('profile');
+              }
               onClose();
             }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"

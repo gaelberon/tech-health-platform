@@ -9,6 +9,7 @@ const ME_QUERY = gql`
       email
       firstName
       lastName
+      phone
       profilePicture
       themePreference
       languagePreference
@@ -30,6 +31,7 @@ export type SessionUser = {
   email: string;
   firstName?: string | null;
   lastName?: string | null;
+  phone?: string | null;
   profilePicture?: string | null;
   themePreference?: 'light' | 'dark' | null;
   languagePreference?: 'fr' | 'en' | 'de' | null;

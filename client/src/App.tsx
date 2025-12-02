@@ -9,6 +9,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import About from './pages/About';
 import HostingView from './pages/HostingView';
 import Dashboard from './pages/Dashboard';
+import MyProfile from './pages/MyProfile';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -20,14 +21,28 @@ const AppShell: React.FC = () => {
   const { t } = useTranslation();
   const { isAuthenticated, loading, user, refetch } = useSession();
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [showProfile, setShowProfile] = useState(false);
   const [availableAccounts, setAvailableAccounts] = useState<any[] | null>(null);
   
   // Charger les permissions d'accès aux pages depuis la base de données
   const { permissions: pagePermissions, loading: permissionsLoading } = usePagePermissions(user?.role);
 
+  // Gérer la navigation vers le profil
+  useEffect(() => {
+    if (activeTab === 'profile') {
+      setShowProfile(true);
+    } else {
+      setShowProfile(false);
+    }
+  }, [activeTab]);
+
   // Vérifier les permissions et rediriger si nécessaire
   useEffect(() => {
     if (isAuthenticated && user && !permissionsLoading) {
+      // Le profil est toujours accessible, ne pas rediriger
+      if (activeTab === 'profile') {
+        return;
+      }
       // Si l'utilisateur n'a pas accès à l'onglet actuel, rediriger vers un onglet autorisé
       if (!hasAccessToTab(user.role, activeTab, pagePermissions)) {
         const defaultTab = getDefaultTab(user.role, pagePermissions);
@@ -92,8 +107,25 @@ const AppShell: React.FC = () => {
   }
 
   const renderContent = () => {
+    // Afficher la page de profil si demandée
+    if (showProfile) {
+      return (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 md:p-8 transition-colors duration-200">
+            <MyProfile
+              onClose={() => {
+                setShowProfile(false);
+                setActiveTab('dashboard');
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+
     // Double vérification de sécurité avant de rendre le contenu
-    if (!user || (!permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
+    // Le profil est toujours accessible, ne pas bloquer
+    if (!user || (activeTab !== 'profile' && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
       return (
           <div className="space-y-6">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
