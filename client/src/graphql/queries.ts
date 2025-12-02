@@ -2,6 +2,13 @@
 
 import { gql } from '@apollo/client';
 
+// Query pour récupérer le nom de l'entreprise
+export const GET_COMPANY_NAME = gql`
+  query GetCompanyName {
+    companyName: getSetting(key: "company_name")
+  }
+`;
+
 // Query pour récupérer les lookups P1 nécessaires au CollectorStepper
 export const GET_P1_LOOKUPS = gql`
   query GetP1Lookups($lang: String!) {
