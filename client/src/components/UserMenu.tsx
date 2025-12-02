@@ -2,6 +2,7 @@
 // Composant menu contextuel style Google Workspace pour le profil utilisateur
 
 import React, { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { useSession } from '../session/SessionContext';
 
@@ -13,6 +14,7 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onNavigate }) => {
+  const { t } = useTranslation();
   const { user, logout } = useSession();
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -140,13 +142,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
           <button
             onClick={() => {
               // TODO: Implémenter la page de gestion de profil
-              alert('Fonctionnalité "Gérer le compte" en cours de développement');
+              alert(t('userMenu.manageAccount') + ' - ' + t('userMenu.inProgress'));
               onClose();
             }}
             className="w-full text-left text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-2 py-1.5 rounded transition-colors"
           >
-            Gérer le compte
-            <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">(in progress)</span>
+            {t('userMenu.manageAccount')}
+            <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">{t('userMenu.inProgress')}</span>
           </button>
         </div>
 
@@ -163,7 +165,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
               className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
             >
               <span className="mr-2">⚙️</span>
-              Console d'administration
+              {t('userMenu.adminConsole')}
             </button>
           )}
           
@@ -175,7 +177,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
             className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
           >
             <span className="mr-2">👤</span>
-            Mon profil
+            {t('userMenu.myProfile')}
           </button>
 
         </div>
@@ -192,7 +194,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
             }}
             className="w-full text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
-            Déconnexion
+            {t('userMenu.logout')}
           </button>
         </div>
       </div>

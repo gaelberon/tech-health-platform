@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { gql, useMutation } from '@apollo/client';
 
 const SELECT_ACCOUNT = gql`
@@ -29,13 +30,14 @@ interface AccountSelectionProps {
 }
 
 const AccountSelection: React.FC<AccountSelectionProps> = ({ accounts, onAccountSelected }) => {
+  const { t } = useTranslation();
   const [selectAccount, { loading }] = useMutation(SELECT_ACCOUNT, {
     onCompleted: () => {
       onAccountSelected();
     },
     onError: (err) => {
       console.error('[ACCOUNT_SELECTION] Erreur:', err);
-      alert(`Erreur lors de la sélection du compte : ${err.message}`);
+      alert(`${t('common.error')}: ${err.message}`);
     },
   });
 
@@ -59,27 +61,16 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({ accounts, onAccount
   };
 
   const getRoleLabel = (role: string) => {
-    switch (role) {
-      case 'Admin':
-        return 'Administrateur';
-      case 'Supervisor':
-        return 'Superviseur';
-      case 'EntityDirector':
-        return 'Directeur d\'Entité';
-      case 'Editor':
-        return 'Éditeur';
-      default:
-        return role;
-    }
+    return t(`roles.${role}`) || role;
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2 text-center">Sélectionner un compte</h1>
+          <h1 className="text-2xl font-bold mb-2 text-center">{t('accountSelection.title')}</h1>
           <p className="text-sm text-gray-500 text-center">
-            Vous avez plusieurs comptes associés à cet email. Veuillez choisir celui que vous souhaitez utiliser.
+            {t('accountSelection.subtitle')}
           </p>
         </div>
 
@@ -101,7 +92,7 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({ accounts, onAccount
                     >
                       {getRoleLabel(account.role)}
                     </span>
-                    <span className="text-xs text-gray-500">ID: {account.userId}</span>
+                    <span className="text-xs text-gray-500">{t('accountSelection.id')}: {account.userId}</span>
                   </div>
                   <div className="text-sm font-medium text-gray-900">
                     {account.firstName || account.lastName
@@ -113,7 +104,7 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({ accounts, onAccount
                   ) : null}
                   {account.associatedEditorId && (
                     <div className="text-xs text-gray-500 mt-1">
-                      Éditeur associé: {account.associatedEditorId}
+                      {t('accountSelection.associatedEditor')}: {account.associatedEditorId}
                     </div>
                   )}
                 </div>
@@ -140,7 +131,7 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({ accounts, onAccount
         {loading && (
           <div className="mt-4 text-center">
             <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-sm text-gray-500">Connexion en cours...</p>
+            <p className="mt-2 text-sm text-gray-500">{t('accountSelection.connecting')}</p>
           </div>
         )}
       </div>

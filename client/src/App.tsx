@@ -1,6 +1,7 @@
 // Fichier : /client/src/App.tsx
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import CollectorStepper from './components/CollectorStepper';
 import Login from './pages/Login';
 import AccountSelection from './pages/AccountSelection';
@@ -16,6 +17,7 @@ import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions
 import { usePagePermissions } from './hooks/usePagePermissions';
 
 const AppShell: React.FC = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, loading, user, refetch } = useSession();
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [availableAccounts, setAvailableAccounts] = useState<any[] | null>(null);
@@ -54,7 +56,7 @@ const AppShell: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <span className="text-gray-500 text-sm">Chargement de la session...</span>
+        <span className="text-gray-500 text-sm">{t('app.sessionLoading')}</span>
       </div>
     );
   }
@@ -93,14 +95,14 @@ const AppShell: React.FC = () => {
     // Double vérification de sécurité avant de rendre le contenu
     if (!user || (!permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
       return (
-        <div className="space-y-6">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p className="text-red-700 font-semibold">Accès refusé</p>
-            <p className="text-red-600 text-sm mt-2">
-              Vous n'avez pas les permissions nécessaires pour accéder à cette page.
-            </p>
+          <div className="space-y-6">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+              <p className="text-red-700 font-semibold">{t('app.accessDenied')}</p>
+              <p className="text-red-600 text-sm mt-2">
+                {t('app.noPermission')}
+              </p>
+            </div>
           </div>
-        </div>
       );
     }
 
@@ -110,10 +112,10 @@ const AppShell: React.FC = () => {
           <div className="space-y-6">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Formulaire d'Évaluation Technique MVS
+                {t('app.collectorTitle')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Collecte des données de Priorité 1 (P1) pour l'évaluation technique
+                {t('app.collectorSubtitle')}
               </p>
             </div>
             <CollectorStepper />
@@ -125,9 +127,9 @@ const AppShell: React.FC = () => {
           return (
             <div className="space-y-6">
               <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center transition-colors duration-200">
-                <p className="text-red-700 dark:text-red-300 font-semibold">Accès refusé</p>
+                <p className="text-red-700 dark:text-red-300 font-semibold">{t('app.accessDenied')}</p>
                 <p className="text-red-600 dark:text-red-400 text-sm mt-2">
-                  Seuls les administrateurs peuvent accéder à cette page.
+                  {t('app.adminOnly')}
                 </p>
               </div>
             </div>
@@ -164,7 +166,7 @@ const AppShell: React.FC = () => {
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-            Centre d'Opérations Techniques (COT) - Tech Health Platform
+            {t('app.footer')}
           </p>
         </div>
       </footer>
