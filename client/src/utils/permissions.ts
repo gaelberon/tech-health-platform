@@ -3,7 +3,7 @@
 
 import type { UserRole } from '@common/types';
 
-export type TabType = 'collector' | 'admin' | 'dashboard' | 'hosting' | 'about' | 'profile';
+export type TabType = 'collector' | 'admin' | 'dashboard' | 'hosting' | 'about' | 'profile' | 'third-party-docs';
 
 export interface TabPermission {
   tab: TabType;
@@ -35,6 +35,10 @@ export const TAB_METADATA: Record<TabType, { label: string; icon: string; subtit
     label: 'About',
     icon: 'ℹ️',
   },
+  'third-party-docs': {
+    label: 'Docs Tiers',
+    icon: '📚',
+  },
 };
 
 // Permissions par défaut (utilisées comme fallback avant le chargement depuis la DB)
@@ -45,6 +49,7 @@ const DEFAULT_PERMISSIONS: Record<TabType, UserRole[]> = {
   hosting: ['Admin', 'Supervisor', 'EntityDirector', 'Editor'],
   about: ['Admin', 'Supervisor', 'EntityDirector', 'Editor'],
   profile: ['Admin', 'Supervisor', 'EntityDirector', 'Editor'], // Tous les utilisateurs peuvent accéder à leur profil
+  'third-party-docs': ['Admin'], // Uniquement les admins
 };
 
 /**
@@ -75,7 +80,7 @@ export function getAccessibleTabs(
   permissionsFromDB?: Map<string, boolean>
 ): TabType[] {
   if (!userRole) return [];
-  const allTabs: TabType[] = ['dashboard', 'collector', 'admin', 'hosting', 'about', 'profile'];
+  const allTabs: TabType[] = ['dashboard', 'collector', 'admin', 'hosting', 'about', 'profile', 'third-party-docs'];
   return allTabs.filter((tab) => hasAccessToTab(userRole, tab, permissionsFromDB));
 }
 
@@ -88,7 +93,7 @@ export function getDefaultTab(
 ): TabType {
   const accessibleTabs = getAccessibleTabs(userRole, permissionsFromDB);
   // Priorité : dashboard > collector > hosting > about > admin
-    const priority: TabType[] = ['dashboard', 'collector', 'hosting', 'about', 'admin', 'profile'];
+    const priority: TabType[] = ['dashboard', 'collector', 'hosting', 'about', 'admin', 'profile', 'third-party-docs'];
   for (const tab of priority) {
     if (accessibleTabs.includes(tab)) {
       return tab;

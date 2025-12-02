@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@apollo/client';
+import { GET_COMPANY_NAME } from './graphql/queries';
 import CollectorStepper from './components/CollectorStepper';
 import Login from './pages/Login';
 import AccountSelection from './pages/AccountSelection';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import About from './pages/About';
+import ThirdPartyDocs from './pages/ThirdPartyDocs';
 import HostingView from './pages/HostingView';
 import Dashboard from './pages/Dashboard';
 import MyProfile from './pages/MyProfile';
@@ -26,6 +29,13 @@ const AppShell: React.FC = () => {
   
   // Charger les permissions d'accès aux pages depuis la base de données
   const { permissions: pagePermissions, loading: permissionsLoading } = usePagePermissions(user?.role);
+  
+  // Charger le nom de l'entreprise depuis les paramètres
+  const { data: settingsData, loading: settingsLoading } = useQuery(GET_COMPANY_NAME, {
+    fetchPolicy: 'cache-first', // Utiliser le cache si disponible, sinon faire une requête
+    errorPolicy: 'ignore', // Ignorer les erreurs pour ne pas bloquer l'affichage
+  });
+  const companyName = settingsData?.companyName || 'mlog capital'; // Fallback vers la valeur par défaut
 
   // Gérer la navigation vers le profil
   useEffect(() => {
@@ -40,7 +50,7 @@ const AppShell: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated && user && !permissionsLoading) {
       // Le profil est toujours accessible, ne pas rediriger
-      if (activeTab === 'profile') {
+      if (activeTab === 'profile' || activeTab === 'third-party-docs' || activeTab === 'admin') {
         return;
       }
       // Si l'utilisateur n'a pas accès à l'onglet actuel, rediriger vers un onglet autorisé
@@ -58,6 +68,10 @@ const AppShell: React.FC = () => {
   // Lors de la connexion, rediriger vers un onglet autorisé
   useEffect(() => {
     if (isAuthenticated && user && !permissionsLoading) {
+      // Le profil, docs tiers et admin sont toujours accessibles si l'utilisateur a cliqué dessus, ne pas rediriger
+      if (activeTab === 'profile' || activeTab === 'third-party-docs' || activeTab === 'admin') {
+        return;
+      }
       // Si l'utilisateur arrive sur collector mais a accès au dashboard, rediriger vers dashboard
       if (activeTab === 'collector' && hasAccessToTab(user.role, 'dashboard', pagePermissions)) {
         setActiveTab('dashboard');
@@ -125,7 +139,7 @@ const AppShell: React.FC = () => {
 
     // Double vérification de sécurité avant de rendre le contenu
     // Le profil est toujours accessible, ne pas bloquer
-    if (!user || (activeTab !== 'profile' && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
+    if (!user || (activeTab !== 'profile' && activeTab !== 'third-party-docs' && activeTab !== 'admin' && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
       return (
           <div className="space-y-6">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -174,6 +188,21 @@ const AppShell: React.FC = () => {
         return <HostingView />;
       case 'about':
         return <About />;
+      case 'third-party-docs':
+        // Vérification supplémentaire pour la page docs tiers (Admin uniquement)
+        if (user.role !== 'Admin') {
+          return (
+            <div className="space-y-6">
+              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center transition-colors duration-200">
+                <p className="text-red-700 dark:text-red-300 font-semibold">{t('app.accessDenied')}</p>
+                <p className="text-red-600 dark:text-red-400 text-sm mt-2">
+                  {t('app.adminOnly')}
+                </p>
+              </div>
+            </div>
+          );
+        }
+        return <ThirdPartyDocs />;
       default:
         return null;
     }
@@ -197,9 +226,15 @@ const AppShell: React.FC = () => {
 
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-            {t('app.footer')}
-          </p>
+          <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+            <span>{t('app.footerCopyright', { companyName })}</span>
+            <span className="mx-2">|</span>
+            <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-gray-700 dark:hover:text-gray-300 underline cursor-not-allowed">{t('app.footerLegal')}</a>
+            <span className="mx-2">|</span>
+            <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-gray-700 dark:hover:text-gray-300 underline cursor-not-allowed">{t('app.footerTerms')}</a>
+            <span className="mx-2">|</span>
+            <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-gray-700 dark:hover:text-gray-300 underline cursor-not-allowed">{t('app.footerPrivacy')}</a>
+          </div>
         </div>
       </footer>
     </div>
