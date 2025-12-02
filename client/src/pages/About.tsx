@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Types pour les onglets
-type AboutTab = 'overview' | 'data-model' | 'audit-trail' | 'hosting-view' | 'user-profile';
+type AboutTab = 'overview' | 'data-model' | 'audit-trail' | 'hosting-view' | 'user-profile' | 'collector-workflow';
 
 // Composants personnalisés pour le rendu Markdown
 const MarkdownComponents = {
@@ -157,6 +157,7 @@ const About: React.FC = () => {
   const [auditContent, setAuditContent] = useState<string>('');
   const [hostingViewContent, setHostingViewContent] = useState<string>('');
   const [userProfileContent, setUserProfileContent] = useState<string>('');
+  const [collectorWorkflowContent, setCollectorWorkflowContent] = useState<string>('');
 
   // Charger le README.md
   useEffect(() => {
@@ -202,12 +203,24 @@ const About: React.FC = () => {
       });
   }, []);
 
+  // Charger COLLECTOR_WORKFLOW.md
+  useEffect(() => {
+    fetch('/docs/COLLECTOR_WORKFLOW.md')
+      .then((res) => res.text())
+      .then((text) => setCollectorWorkflowContent(text))
+      .catch((err) => {
+        console.error('Erreur lors du chargement de la doc collector workflow:', err);
+        setCollectorWorkflowContent('# Workflow de Collecte des Données\n\nDocumentation non disponible.');
+      });
+  }, []);
+
   const tabs = [
     { id: 'overview' as AboutTab, label: 'Vue d\'ensemble', icon: '📖' },
     { id: 'data-model' as AboutTab, label: 'Données collectées', icon: '📊' },
     { id: 'audit-trail' as AboutTab, label: 'Pistes d\'audit', icon: '🔍' },
     { id: 'hosting-view' as AboutTab, label: 'Vue d\'hébergement', icon: '🏗️' },
     { id: 'user-profile' as AboutTab, label: 'Gestion des profils', icon: '👤' },
+    { id: 'collector-workflow' as AboutTab, label: 'Workflow de collecte', icon: '📋' },
   ];
 
   const renderTabContent = () => {
@@ -253,6 +266,14 @@ const About: React.FC = () => {
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
               {userProfileContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
+      case 'collector-workflow':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {collectorWorkflowContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );
