@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Types pour les onglets
-type AboutTab = 'overview' | 'data-model' | 'audit-trail' | 'hosting-view' | 'user-profile' | 'collector-workflow';
+type AboutTab = 'overview' | 'data-model' | 'collector-workflow' | 'dd-tech-view' | 'hosting-view' | 'audit-trail' | 'user-profile';
 
 // Composants personnalisés pour le rendu Markdown
 const MarkdownComponents = {
@@ -158,6 +158,7 @@ const About: React.FC = () => {
   const [hostingViewContent, setHostingViewContent] = useState<string>('');
   const [userProfileContent, setUserProfileContent] = useState<string>('');
   const [collectorWorkflowContent, setCollectorWorkflowContent] = useState<string>('');
+  const [ddTechViewContent, setDdTechViewContent] = useState<string>('');
 
   // Charger le README.md
   useEffect(() => {
@@ -214,13 +215,25 @@ const About: React.FC = () => {
       });
   }, []);
 
+  // Charger DD_TECH_VIEW.md
+  useEffect(() => {
+    fetch('/docs/DD_TECH_VIEW.md')
+      .then((res) => res.text())
+      .then((text) => setDdTechViewContent(text))
+      .catch((err) => {
+        console.error('Erreur lors du chargement de la doc DD Tech View:', err);
+        setDdTechViewContent('# Vue DD Tech\n\nDocumentation non disponible.');
+      });
+  }, []);
+
   const tabs = [
     { id: 'overview' as AboutTab, label: 'Vue d\'ensemble', icon: '📖' },
     { id: 'data-model' as AboutTab, label: 'Données collectées', icon: '📊' },
-    { id: 'audit-trail' as AboutTab, label: 'Pistes d\'audit', icon: '🔍' },
-    { id: 'hosting-view' as AboutTab, label: 'Vue d\'hébergement', icon: '🏗️' },
-    { id: 'user-profile' as AboutTab, label: 'Gestion des profils', icon: '👤' },
     { id: 'collector-workflow' as AboutTab, label: 'Workflow de collecte', icon: '📋' },
+    { id: 'dd-tech-view' as AboutTab, label: 'DD Tech (Vue)', icon: '🔍' },
+    { id: 'hosting-view' as AboutTab, label: 'Hébergement (Vue)', icon: '🏗️' },
+    { id: 'audit-trail' as AboutTab, label: 'Pistes d\'audit', icon: '🔍' },
+    { id: 'user-profile' as AboutTab, label: 'Profils', icon: '👤' },
   ];
 
   const renderTabContent = () => {
@@ -245,11 +258,19 @@ const About: React.FC = () => {
         );
       case 'data-model':
         return <DataModelContent />;
-      case 'audit-trail':
+      case 'collector-workflow':
         return (
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
-              {auditContent || 'Chargement...'}
+              {collectorWorkflowContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
+      case 'dd-tech-view':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {ddTechViewContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );
@@ -261,19 +282,19 @@ const About: React.FC = () => {
             </ReactMarkdown>
           </div>
         );
+      case 'audit-trail':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {auditContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
       case 'user-profile':
         return (
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
               {userProfileContent || 'Chargement...'}
-            </ReactMarkdown>
-          </div>
-        );
-      case 'collector-workflow':
-        return (
-          <div className="markdown-content">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
-              {collectorWorkflowContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );
