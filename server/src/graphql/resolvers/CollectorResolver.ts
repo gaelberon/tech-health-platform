@@ -99,6 +99,7 @@ const CollectorResolver = {
         hosting: HostingInputP1;
         environment: EnvironmentInputP1;
         security: SecurityInputP1;
+        collection_type: string;
       },
       ctx: any
     ) => {
@@ -565,6 +566,7 @@ const CollectorResolver = {
           solutionId: solution._id,
           envId: environment._id,
           date: new Date(),
+          collection_type: args.collection_type || 'snapshot', // Type de collecte : snapshot ou DD
           scores: {
             security: 0, // Sera calculé par le scoring engine
             resilience: 0,

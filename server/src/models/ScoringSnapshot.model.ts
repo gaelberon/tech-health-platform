@@ -12,6 +12,9 @@ interface ICategoricalScores {
     compliance: number; // 20% [4]
 }
 
+// Types Enum
+type CollectionType = 'snapshot' | 'DD'; // Type de collecte : snapshot (instantané) ou DD (Due Diligence)
+
 // 1. Définition de l'Interface TypeScript pour l'entité ScoringSnapshot
 export interface IScoringSnapshot extends Document {
     scoreId: string; // Identifiant unique (PK) [1]
@@ -19,6 +22,7 @@ export interface IScoringSnapshot extends Document {
     envId: Types.ObjectId; // Lien vers l'Environnement (FK, car le scoring est souvent lié à l'environnement Prod) [7, 8]
     
     date: Date; // Date du snapshot (P1) [1]
+    collection_type: CollectionType; // Type de collecte : snapshot ou DD
     
     scores: ICategoricalScores; // Scores par catégorie [1]
     global_score: number; // Score global normalisé (0-100) (P1) [1, 6]
@@ -52,6 +56,15 @@ const ScoringSnapshotSchema = new Schema<IScoringSnapshot>({
     date: { 
         type: Date, 
         required: true 
+    },
+    
+    // Type de collecte (P1)
+    collection_type: {
+        type: String,
+        enum: ['snapshot', 'DD'],
+        required: true,
+        default: 'snapshot',
+        description: "Type de collecte : snapshot (instantané) ou DD (Due Diligence)"
     },
     
     // Scores par catégorie (Stocké comme un objet imbriqué ou 'Mixed')

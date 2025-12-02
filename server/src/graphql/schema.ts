@@ -332,6 +332,7 @@ const typeDefs = gql`
         solutionId: ID! # FK vers Solution (P1) [7]
         envId: ID # FK vers Environment (optionnel) [7]
         date: String! # Date du snapshot (datetime) (P1) [7]
+        collection_type: String! # snapshot ou DD
         scores: CategoryScores! # Scores par catégorie (P1) [7]
         global_score: Float! # Score global normalisé (P1) [7]
         risk_level: RiskLevel! # Niveau de risque (P1) [7]
@@ -1020,6 +1021,7 @@ const typeDefs = gql`
             hosting: HostingInputP1!
             environment: EnvironmentInputP1!
             security: SecurityInputP1!
+            collection_type: String! # snapshot ou DD
         ): SubmitP1DataResponse! # P1 - Collecte initiale depuis Tech Profiler
         saveCollectorDraft(input: SaveCollectorDraftInput!): CollectorDraft! # Sauvegarder un brouillon
         deleteCollectorDraft(draftId: ID!): Boolean! # Supprimer un brouillon
