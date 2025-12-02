@@ -781,11 +781,16 @@ const typeDefs = gql`
     }
 
     # Inputs P1 pour la collecte initiale (Tech Profiler)
+    # Les champs DD sont optionnels et peuvent être remplis en mode "Complet DD Tech"
     input EditorInputP1 {
         name: String!
         business_criticality: String! # Low/Medium/High/Critical
         country: String
         size: String # Micro/SME/Mid/Enterprise
+        # Champs DD (optionnels)
+        internal_it_systems: [String]
+        it_security_strategy: String
+        contracts_for_review: [ContractForReviewInput]
     }
 
     input SolutionInputP1 {
@@ -794,6 +799,12 @@ const typeDefs = gql`
         product_criticality: String! # Low/Medium/High/Critical
         main_use_case: String!
         description: String
+        # Champs DD (optionnels)
+        api_robustness: String
+        api_documentation_quality: String
+        ip_ownership_clear: Boolean
+        licensing_model: String
+        license_compliance_assured: Boolean
     }
 
     input HostingInputP1 {
@@ -801,6 +812,8 @@ const typeDefs = gql`
         region: String! # Pays/Région
         tier: String! # datacenter/private/public/cloud
         certifications: [String!]
+        # Champs DD (optionnels)
+        contact: ContactDetailsInput
     }
 
     input EnvironmentInputP1 {
@@ -811,6 +824,11 @@ const typeDefs = gql`
         deployment_type: String # monolith/microservices/hybrid
         virtualization: String # physical/VM/container/k8s
         tech_stack: [String!]
+        # Champs DD (optionnels)
+        network_security_mechanisms: [String]
+        db_scaling_mechanism: String
+        disaster_recovery_plan: String
+        sla_offered: String
     }
 
     input BackupInputP1 {
@@ -827,6 +845,13 @@ const typeDefs = gql`
         patching: String # ad_hoc/scheduled/automated
         pentest_freq: String # never/annual/quarterly
         vuln_mgmt: String # none/manual/automated
+        # Champs DD (optionnels)
+        access_control: String
+        internal_audits_recent: String
+        centralized_monitoring: Boolean
+        pentest_results_summary: String
+        known_security_flaws: String
+        incident_reporting_process: String
     }
 
     # Type de retour pour submitP1Data
