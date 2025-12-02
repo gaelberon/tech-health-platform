@@ -1,3 +1,6 @@
 /* Fichier : /client/src/index.css */
 
 @import "tailwindcss";
+
+/* Pour Tailwind v4, déclarer explicitement la variante dark */
+@custom-variant dark (&:where(.dark, .dark *));
