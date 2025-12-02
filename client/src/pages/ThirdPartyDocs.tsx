@@ -143,6 +143,7 @@ const MarkdownComponents = {
 const ThirdPartyDocs: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ThirdPartyDocsTab>('dd-tech');
   const [ddTechContent, setDdTechContent] = useState<string>('');
+  const [showCiecCategory, setShowCiecCategory] = useState<boolean>(false);
 
   // Charger dd-tech.md
   useEffect(() => {
@@ -154,6 +155,30 @@ const ThirdPartyDocs: React.FC = () => {
         setDdTechContent('# Technical Due Diligence\n\nDocumentation non disponible.');
       });
   }, []);
+
+  // Injecter le style CSS pour masquer/afficher la colonne Catégorie CIEC
+  useEffect(() => {
+    const styleId = 'ciec-category-column-style';
+    let styleElement = document.getElementById(styleId) as HTMLStyleElement;
+    
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = styleId;
+      document.head.appendChild(styleElement);
+    }
+    
+    if (showCiecCategory) {
+      styleElement.textContent = '';
+    } else {
+      // Masquer la dernière colonne (5ème colonne) des tableaux
+      styleElement.textContent = `
+        .markdown-content table th:nth-child(5),
+        .markdown-content table td:nth-child(5) {
+          display: none;
+        }
+      `;
+    }
+  }, [showCiecCategory]);
 
   const tabs = [
     { id: 'dd-tech' as ThirdPartyDocsTab, label: 'Tech DD - Mapping', icon: '📋' },
@@ -206,6 +231,18 @@ const ThirdPartyDocs: React.FC = () => {
 
       {/* Contenu de l'onglet actif */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 md:p-8 transition-colors">
+        {/* Bouton pour afficher/masquer la colonne Catégorie CIEC */}
+        {activeTab === 'dd-tech' && (
+          <div className="mb-4 flex justify-end">
+            <button
+              onClick={() => setShowCiecCategory(!showCiecCategory)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-300 dark:border-gray-600"
+              title={showCiecCategory ? 'Masquer la colonne Catégorie CIEC' : 'Afficher la colonne Catégorie CIEC'}
+            >
+              {showCiecCategory ? '👁️ Masquer Catégorie CIEC' : '👁️‍🗨️ Afficher Catégorie CIEC'}
+            </button>
+          </div>
+        )}
         {renderTabContent()}
       </div>
 
