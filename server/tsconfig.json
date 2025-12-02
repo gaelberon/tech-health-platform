@@ -18,7 +18,7 @@
     "target": "es2020", // Cibler une version moderne d'ECMAScript
     "forceConsistentCasingInFileNames": true,
     /* Pour corriger l'erreur spécifique */
-    "types": [],
+    "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
