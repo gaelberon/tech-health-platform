@@ -11,6 +11,7 @@ import { useSession } from '../session/SessionContext';
 const CollectorStepper: React.FC = () => {
   // État du formulaire
     const [formData, setFormData] = useState<any>({
+    collectionType: 'snapshot', // Type de collecte : snapshot ou DD
     selectedEditorId: '', // ID de l'éditeur sélectionné (si existant)
     useExistingEditor: false, // Mode: éditeur existant ou nouveau
     editorName: '',
@@ -95,7 +96,6 @@ const CollectorStepper: React.FC = () => {
   });
 
     const [step, setStep] = useState(1);
-  const [ddMode, setDdMode] = useState(false); // Toggle Mode Complet DD Tech
   const [showP2Details, setShowP2Details] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
@@ -177,7 +177,7 @@ const CollectorStepper: React.FC = () => {
               draftId: currentDraftId || undefined,
               status,
               step,
-              formData: { ...formData, ddMode }, // Inclure ddMode dans formData
+              formData: { ...formData }, // Sauvegarder formData
             },
           },
         }).then((result) => {
@@ -216,9 +216,7 @@ const CollectorStepper: React.FC = () => {
         const draft = data.getCollectorDraft;
         setFormData(draft.formData);
         // Restaurer le mode DD si présent dans le brouillon
-        if (draft.formData.ddMode !== undefined) {
-          setDdMode(draft.formData.ddMode);
-        }
+        // Le collectionType est déjà restauré via formData
         setStep(draft.step);
         setCurrentDraftId(draft.draftId);
         setSubmissionError(draft.errorMessage || null);
@@ -383,13 +381,18 @@ const CollectorStepper: React.FC = () => {
               draftId: currentDraftId,
               status: 'in_progress',
               step,
-              formData: { ...formData, ddMode }, // Inclure ddMode dans formData
+              formData: { ...formData }, // Sauvegarder formData
             },
           },
         });
       }
 
-            const result = await submitP1Data({ variables: inputs });
+            const result = await submitP1Data({ 
+              variables: {
+                ...inputs,
+                collectionType: formData.collectionType || 'snapshot',
+              }
+            });
             
       if (result.data?.submitP1Data) {
         setSubmissionSuccess(true);
@@ -420,7 +423,7 @@ const CollectorStepper: React.FC = () => {
                 draftId: currentDraftId || undefined,
                 status: 'failed',
                 step,
-                formData: { ...formData, ddMode }, // Inclure ddMode dans formData
+                formData: { ...formData }, // Sauvegarder formData
                 errorMessage,
               },
             },
@@ -539,24 +542,48 @@ const CollectorStepper: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('collector.solution.step1Title')}</h2>
 
-            {/* Toggle Mode Complet DD Tech */}
-            <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={ddMode}
-                  onChange={(e) => setDdMode(e.target.checked)}
-                  className="mr-2 w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
-                />
-                <span className="font-medium text-gray-900 dark:text-gray-100">
-                  {t('collector.ddMode.enable')}
-                </span>
-                <AssistanceTooltip content={t('collector.ddMode.tooltip')} />
+            {/* Type de collecte */}
+            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors">
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                {t('collector.collectionType.label')} *
+                <AssistanceTooltip content={t('collector.collectionType.tooltip')} />
               </label>
+              <select
+                value={formData.collectionType || 'snapshot'}
+                onChange={(e) => setFormData({ ...formData, collectionType: e.target.value })}
+                className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+              >
+                <option value="snapshot">{t('collector.collectionType.snapshot')}</option>
+                <option value="DD">{t('collector.collectionType.dd')}</option>
+              </select>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                {t('collector.ddMode.description')}
+                {t('collector.collectionType.description')}
               </p>
             </div>
+
+            {/* Message informatif selon le type de collecte */}
+            {formData.collectionType === 'DD' ? (
+              <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg border border-purple-200 dark:border-purple-800 transition-colors">
+                <div className="flex items-start">
+                  <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 mr-2 mt-0.5">DD</span>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                      {t('collector.collectionType.ddModeTitle')}
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      {t('collector.collectionType.ddModeDescription')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {t('collector.collectionType.snapshotModeDescription')}
+                </p>
+              </div>
+            )}
 
             {/* Choix: éditeur existant ou nouveau */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-gray-50 dark:bg-gray-800 transition-colors">
@@ -698,7 +725,7 @@ const CollectorStepper: React.FC = () => {
             />
 
             {/* Section DD Éditeur/Solution (Optionnel) */}
-            {ddMode && (
+            {formData.collectionType === 'DD' && (
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
                   <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">DD</span>
@@ -992,7 +1019,7 @@ const CollectorStepper: React.FC = () => {
             )}
 
             {/* Section DD Hébergement/Environnement (Optionnel) */}
-            {ddMode && (
+            {formData.collectionType === 'DD' && (
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
                   <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">DD</span>
@@ -1149,7 +1176,7 @@ const CollectorStepper: React.FC = () => {
             </div>
 
             {/* Section DD Sécurité (Optionnel) */}
-            {ddMode && (
+            {formData.collectionType === 'DD' && (
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
                   <span className="px-2 py-1 text-xs font-semibold rounded bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">DD</span>
