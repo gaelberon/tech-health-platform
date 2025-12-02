@@ -24,7 +24,7 @@
   },
   "navigation": {
     "dashboard": "Tableau de bord",
-    "collector": "Bilan Tech Instantané",
+    "collector": "Bilan Tech",
     "admin": "Administration",
     "hosting": "Hébergement",
     "about": "À propos"
@@ -255,6 +255,16 @@
     "hide": "Masquer",
     "showMore": "Voir plus de détails P2/P3 (Certifications, Tech Stack)",
     "p2Fields": "Champs P2 : Architecture et Certifications",
+    "collectionType": {
+      "label": "Type de collecte",
+      "tooltip": "Sélectionnez le type de collecte : Snapshot (instantané) pour une évaluation rapide ou DD (Due Diligence) pour une analyse complète",
+      "snapshot": "Snapshot (Instantané)",
+      "dd": "DD (Due Diligence)",
+      "description": "Le type de collecte détermine le contexte et l'objectif de l'évaluation.",
+      "ddModeTitle": "Mode Complet DD Tech",
+      "ddModeDescription": "Les champs DD enrichissent l'évaluation de façon optionnelle et peuvent être remplis plus tard. Ils ne bloquent pas la soumission. Les champs P1 restent requis pour la soumission rapide mais sont insuffisants à la complétion de la Due Diligence.",
+      "snapshotModeDescription": "Les champs P1 sont requis pour la soumission rapide et la génération d'un snapshot de scoring."
+    },
     "ddMode": {
       "enable": "Mode Complet DD Tech",
       "tooltip": "Activez ce mode pour collecter tous les champs de la Due Diligence Technique. Les champs DD sont optionnels et peuvent être remplis plus tard.",
@@ -453,7 +463,7 @@
     "noPermission": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
     "adminOnly": "Seuls les administrateurs peuvent accéder à cette page.",
     "collectorTitle": "Formulaire d'Évaluation Technique MVS",
-    "collectorSubtitle": "Collecte des données de Priorité 1 (P1) pour l'évaluation technique",
+    "collectorSubtitle": "Collecte des données techniques (Snapshot ou Due Diligence) pour l'évaluation de santé technique",
     "footer": "© 2025 {{companyName}}. Tous droits réservés. | Mentions Légales | CGU/CGV | Politique de Confidentialité",
     "footerCopyright": "© 2025 {{companyName}}. Tous droits réservés.",
     "footerLegal": "Mentions Légales",

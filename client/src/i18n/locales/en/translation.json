@@ -226,6 +226,16 @@
     "hide": "Hide",
     "showMore": "Show more P2/P3 details (Certifications, Tech Stack)",
     "p2Fields": "P2 Fields: Architecture and Certifications",
+    "collectionType": {
+      "label": "Collection Type",
+      "tooltip": "Select the collection type: Snapshot for a quick assessment or DD (Due Diligence) for a complete analysis",
+      "snapshot": "Snapshot",
+      "dd": "DD (Due Diligence)",
+      "description": "The collection type determines the context and purpose of the assessment.",
+      "ddModeTitle": "Full Tech DD Mode",
+      "ddModeDescription": "DD fields enrich the assessment optionally and can be filled later. They do not block submission. P1 fields remain required for quick submission but are insufficient for completing the Due Diligence.",
+      "snapshotModeDescription": "P1 fields are required for quick submission and scoring snapshot generation."
+    },
     "ddMode": {
       "enable": "Full Tech DD Mode",
       "tooltip": "Enable this mode to collect all Technical Due Diligence fields. DD fields are optional and can be filled later.",
@@ -424,7 +434,7 @@
     "noPermission": "You do not have the necessary permissions to access this page.",
     "adminOnly": "Only administrators can access this page.",
     "collectorTitle": "Technical MVS Assessment Form",
-    "collectorSubtitle": "Collection of Priority 1 (P1) data for technical assessment",
+    "collectorSubtitle": "Collection of technical data (Snapshot or Due Diligence) for technical health assessment",
     "footer": "© 2025 {{companyName}}. All rights reserved. | Privacy Policy | Terms of Service | Cookie Settings",
     "footerCopyright": "© 2025 {{companyName}}. All rights reserved.",
     "footerLegal": "Privacy Policy",

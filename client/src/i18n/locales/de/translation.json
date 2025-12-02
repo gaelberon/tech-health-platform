@@ -226,6 +226,16 @@
     "hide": "Ausblenden",
     "showMore": "Weitere P2/P3-Details anzeigen (Zertifizierungen, Tech Stack)",
     "p2Fields": "P2-Felder: Architektur und Zertifizierungen",
+    "collectionType": {
+      "label": "Erfassungstyp",
+      "tooltip": "Wählen Sie den Erfassungstyp: Snapshot für eine schnelle Bewertung oder DD (Due Diligence) für eine vollständige Analyse",
+      "snapshot": "Snapshot",
+      "dd": "DD (Due Diligence)",
+      "description": "Der Erfassungstyp bestimmt den Kontext und Zweck der Bewertung.",
+      "ddModeTitle": "Vollständiger Tech DD-Modus",
+      "ddModeDescription": "DD-Felder bereichern die Bewertung optional und können später ausgefüllt werden. Sie blockieren die Übermittlung nicht. P1-Felder bleiben für die schnelle Übermittlung erforderlich, sind aber für die Vollendung der Due Diligence unzureichend.",
+      "snapshotModeDescription": "P1-Felder sind für die schnelle Übermittlung und die Generierung eines Scoring-Snapshots erforderlich."
+    },
     "ddMode": {
       "enable": "Vollständiger Tech DD-Modus",
       "tooltip": "Aktivieren Sie diesen Modus, um alle Technical Due Diligence-Felder zu erfassen. DD-Felder sind optional und können später ausgefüllt werden.",
@@ -424,7 +434,7 @@
     "noPermission": "Sie haben nicht die erforderlichen Berechtigungen, um auf diese Seite zuzugreifen.",
     "adminOnly": "Nur Administratoren können auf diese Seite zugreifen.",
     "collectorTitle": "Technisches MVS-Bewertungsformular",
-    "collectorSubtitle": "Sammlung von Priorität 1 (P1) Daten für die technische Bewertung",
+    "collectorSubtitle": "Sammlung technischer Daten (Snapshot oder Due Diligence) für die technische Gesundheitsbewertung",
     "footer": "© 2025 {{companyName}}. Alle Rechte vorbehalten. | Datenschutzerklärung | Allgemeine Geschäftsbedingungen | Cookie-Einstellungen",
     "footerCopyright": "© 2025 {{companyName}}. Alle Rechte vorbehalten.",
     "footerLegal": "Datenschutzerklärung",
