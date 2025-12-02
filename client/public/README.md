@@ -281,6 +281,7 @@ tech-health-platform/
 - **Données collectées** : Documentation complète des entités et champs (onglet "Données collectées")
 - **Pistes d'audit** : Bonnes pratiques et implémentation (onglet "Pistes d'audit" ou `docs/AUDIT_TRAIL_BEST_PRACTICES.md`)
 - **Vue d'hébergement** : Guide d'utilisation de la vue d'hébergement (onglet "Vue d'hébergement" ou `docs/HOSTING_VIEW.md`)
+- **Gestion des profils** : Documentation complète sur la gestion des profils utilisateur, photos de profil, préférences de thème (onglet "Gestion des profils" ou `docs/USER_PROFILE_MANAGEMENT.md`)
 
 ## Développement
 

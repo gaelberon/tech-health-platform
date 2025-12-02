@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Types pour les onglets
-type AboutTab = 'overview' | 'data-model' | 'audit-trail' | 'hosting-view';
+type AboutTab = 'overview' | 'data-model' | 'audit-trail' | 'hosting-view' | 'user-profile';
 
 // Composants personnalisés pour le rendu Markdown
 const MarkdownComponents = {
@@ -156,6 +156,7 @@ const About: React.FC = () => {
   const [readmeContent, setReadmeContent] = useState<string>('');
   const [auditContent, setAuditContent] = useState<string>('');
   const [hostingViewContent, setHostingViewContent] = useState<string>('');
+  const [userProfileContent, setUserProfileContent] = useState<string>('');
 
   // Charger le README.md
   useEffect(() => {
@@ -190,11 +191,23 @@ const About: React.FC = () => {
       });
   }, []);
 
+  // Charger USER_PROFILE_MANAGEMENT.md
+  useEffect(() => {
+    fetch('/docs/USER_PROFILE_MANAGEMENT.md')
+      .then((res) => res.text())
+      .then((text) => setUserProfileContent(text))
+      .catch((err) => {
+        console.error('Erreur lors du chargement de la doc user profile:', err);
+        setUserProfileContent('# Gestion des Profils Utilisateur\n\nDocumentation non disponible.');
+      });
+  }, []);
+
   const tabs = [
     { id: 'overview' as AboutTab, label: 'Vue d\'ensemble', icon: '📖' },
     { id: 'data-model' as AboutTab, label: 'Données collectées', icon: '📊' },
     { id: 'audit-trail' as AboutTab, label: 'Pistes d\'audit', icon: '🔍' },
     { id: 'hosting-view' as AboutTab, label: 'Vue d\'hébergement', icon: '🏗️' },
+    { id: 'user-profile' as AboutTab, label: 'Gestion des profils', icon: '👤' },
   ];
 
   const renderTabContent = () => {
@@ -232,6 +245,14 @@ const About: React.FC = () => {
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
               {hostingViewContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
+      case 'user-profile':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {userProfileContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );
