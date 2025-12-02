@@ -44,6 +44,9 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Support de plusieurs comptes par email (sélection de compte)
 - ✅ Gestion complète des utilisateurs (création, édition, archivage, restauration)
 - ✅ Contrôle d'accès basé sur les rôles (RBAC)
+- ✅ Photos de profil utilisateur (stockage base64 dans MongoDB)
+- ✅ Menu contextuel utilisateur style Google Workspace avec accès rapide aux fonctionnalités
+- ✅ **Préférence de thème** : Gestion du thème light/dark au niveau du profil utilisateur (stockée en base de données, appliquée automatiquement à la connexion)
 
 #### Administration Modulaire
 - ✅ **Gestion des Permissions** : Configuration des permissions par rôle et opération
