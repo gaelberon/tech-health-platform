@@ -8,27 +8,27 @@ type AboutTab = 'overview' | 'data-model' | 'audit-trail' | 'hosting-view';
 // Composants personnalisés pour le rendu Markdown
 const MarkdownComponents = {
   h1: ({ children }: any) => (
-    <h1 className="text-3xl font-bold text-gray-900 mt-8 mb-4 border-b border-gray-200 pb-2">
+    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
       {children}
     </h1>
   ),
   h2: ({ children }: any) => (
-    <h2 className="text-2xl font-bold text-gray-900 mt-6 mb-3 border-b border-gray-200 pb-2">
+    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-6 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">
       {children}
     </h2>
   ),
   h3: ({ children }: any) => (
-    <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
+    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-4 mb-2">
       {children}
     </h3>
   ),
   h4: ({ children }: any) => (
-    <h4 className="text-lg font-semibold text-gray-900 mt-3 mb-2">
+    <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-3 mb-2">
       {children}
     </h4>
   ),
   p: ({ children }: any) => (
-    <p className="text-gray-700 leading-relaxed mb-4">
+    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
       {children}
     </p>
   ),
@@ -43,17 +43,17 @@ const MarkdownComponents = {
     </ol>
   ),
   li: ({ children }: any) => (
-    <li className="text-gray-700 mb-1 pl-2">
+    <li className="text-gray-700 dark:text-gray-300 mb-1 pl-2">
       {children}
     </li>
   ),
   strong: ({ children }: any) => (
-    <strong className="font-semibold text-gray-900">
+    <strong className="font-semibold text-gray-900 dark:text-gray-100">
       {children}
     </strong>
   ),
   em: ({ children }: any) => (
-    <em className="italic text-gray-700">
+    <em className="italic text-gray-700 dark:text-gray-300">
       {children}
     </em>
   ),
@@ -85,7 +85,7 @@ const MarkdownComponents = {
     // Par défaut, traiter comme code inline (backticks simples dans le texte)
     // C'est le cas le plus courant : `Scoring Engine`, `ScoringSnapshot`, etc.
     return (
-      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800" {...rest}>
+      <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800 dark:text-gray-200" {...rest}>
         {children}
       </code>
     );
@@ -100,14 +100,14 @@ const MarkdownComponents = {
     );
   },
   blockquote: ({ children }: any) => (
-    <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4">
+    <blockquote className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 italic text-gray-600 dark:text-gray-400 my-4">
       {children}
     </blockquote>
   ),
   a: ({ href, children }: any) => (
     <a
       href={href}
-      className="text-blue-600 hover:text-blue-800 hover:underline"
+      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline"
       target={href?.startsWith('http') ? '_blank' : undefined}
       rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
     >
@@ -116,23 +116,23 @@ const MarkdownComponents = {
   ),
   table: ({ children }: any) => (
     <div className="overflow-x-auto mb-6">
-      <table className="min-w-full divide-y divide-gray-200 border-collapse">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border-collapse">
         {children}
       </table>
     </div>
   ),
   thead: ({ children }: any) => (
-    <thead className="bg-gradient-to-r from-blue-500 to-teal-500">
+    <thead className="bg-gradient-to-r from-blue-500 to-teal-500 dark:from-blue-600 dark:to-teal-600">
       {children}
     </thead>
   ),
   tbody: ({ children }: any) => (
-    <tbody className="bg-white divide-y divide-gray-200">
+    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
       {children}
     </tbody>
   ),
   tr: ({ children }: any) => (
-    <tr className="hover:bg-gray-50">
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
       {children}
     </tr>
   ),
@@ -142,12 +142,12 @@ const MarkdownComponents = {
     </th>
   ),
   td: ({ children }: any) => (
-    <td className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
       {children}
     </td>
   ),
   hr: () => (
-    <hr className="border-gray-300 my-8" />
+    <hr className="border-gray-300 dark:border-gray-600 my-8" />
   ),
 };
 
@@ -203,7 +203,7 @@ const About: React.FC = () => {
         return (
           <div className="markdown-content">
             {/* Logo uniquement dans Vue d'ensemble */}
-            <div className="text-center space-y-4 mb-8 pb-8 border-b border-gray-200">
+            <div className="text-center space-y-4 mb-8 pb-8 border-b border-gray-200 dark:border-gray-700">
               <div className="flex justify-center">
                 <img
                   src="/Final_visual.png"
@@ -244,14 +244,14 @@ const About: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header sans logo (logo uniquement dans Vue d'ensemble) */}
       <div className="text-center space-y-4 py-6">
-        <h1 className="text-4xl font-bold text-gray-900">Tech Health Platform</h1>
-        <p className="text-xl text-gray-600">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Tech Health Platform</h1>
+        <p className="text-xl text-gray-600 dark:text-gray-400">
           Standardized Technical Health Assessment and Monitoring Platform
         </p>
       </div>
 
       {/* Navigation par onglets */}
-      <div className="border-b border-gray-200 bg-white rounded-t-lg">
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-lg transition-colors">
         <nav className="flex space-x-1 px-4" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
@@ -259,8 +259,8 @@ const About: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`px-6 py-4 text-sm font-medium rounded-t-lg transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b-2 border-blue-600 dark:border-blue-400'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <span className="mr-2">{tab.icon}</span>
@@ -271,12 +271,12 @@ const About: React.FC = () => {
       </div>
 
       {/* Contenu de l'onglet actif */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 md:p-8 transition-colors">
         {renderTabContent()}
       </div>
 
       {/* Footer note */}
-      <div className="text-center text-sm text-gray-500 pt-4 border-t border-gray-200">
+      <div className="text-center text-sm text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
         <p>Centre d'Opérations Techniques (COT) - Tech Health Platform</p>
       </div>
     </div>
@@ -520,18 +520,18 @@ const DataModelContent: React.FC = () => {
   const selectedEntityData = entities.find((e) => e.id === selectedEntity);
 
   const getPriorityColor = (priority: string) => {
-    if (priority.startsWith('P1')) return 'bg-red-100 text-red-800';
-    if (priority.startsWith('P2')) return 'bg-orange-100 text-orange-800';
-    if (priority.startsWith('P3')) return 'bg-yellow-100 text-yellow-800';
-    if (priority.startsWith('P4')) return 'bg-blue-100 text-blue-800';
-    return 'bg-gray-100 text-gray-800';
+    if (priority.startsWith('P1')) return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+    if (priority.startsWith('P2')) return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
+    if (priority.startsWith('P3')) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+    if (priority.startsWith('P4')) return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+    return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300';
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Modèle de Données</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Modèle de Données</h2>
+        <p className="text-gray-600 dark:text-gray-400">
           Description complète des entités et des champs collectés pour l'évaluation de la santé technique.
           Les priorités P1 à P4 indiquent l'importance pour le scoring, tandis que DD indique les données de Due Diligence.
         </p>
@@ -540,8 +540,8 @@ const DataModelContent: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Liste des entités */}
         <div className="lg:col-span-1">
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Entités</h3>
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Entités</h3>
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
               {entities.map((entity) => (
                 <button
@@ -549,8 +549,8 @@ const DataModelContent: React.FC = () => {
                   onClick={() => setSelectedEntity(entity.id)}
                   className={`w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                     selectedEntity === entity.id
-                      ? 'bg-blue-100 text-blue-700 border-2 border-blue-500'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-500 dark:border-blue-400'
+                      : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -568,60 +568,60 @@ const DataModelContent: React.FC = () => {
         {/* Détails de l'entité sélectionnée */}
         <div className="lg:col-span-2">
           {selectedEntityData ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 transition-colors">
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-bold text-gray-900">{selectedEntityData.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{selectedEntityData.name}</h3>
                   <span className={`px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(selectedEntityData.priority)}`}>
                     {selectedEntityData.priority}
                   </span>
                 </div>
-                <p className="text-gray-600">{selectedEntityData.description}</p>
+                <p className="text-gray-600 dark:text-gray-400">{selectedEntityData.description}</p>
               </div>
 
               <div className="mt-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Champs</h4>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Champs</h4>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-900">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Champ
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Type
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Priorité
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Requis
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Description
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                       {selectedEntityData.fields.map((field, idx) => (
-                        <tr key={idx} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900">{field.name}</td>
-                          <td className="px-4 py-3 text-sm text-gray-700">
-                            <code className="bg-gray-100 px-2 py-1 rounded text-xs">{field.type}</code>
+                        <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                          <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{field.name}</td>
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                            <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs text-gray-800 dark:text-gray-200">{field.type}</code>
                           </td>
                           <td className="px-4 py-3 text-sm">
                             <span className={`px-2 py-0.5 text-xs rounded-full ${getPriorityColor(field.priority)}`}>
                               {field.priority}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-700">
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                             {field.required ? (
-                              <span className="text-red-600 font-medium">Oui</span>
+                              <span className="text-red-600 dark:text-red-400 font-medium">Oui</span>
                             ) : (
-                              <span className="text-gray-400">Non</span>
+                              <span className="text-gray-400 dark:text-gray-500">Non</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">{field.description}</td>
+                          <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{field.description}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -630,8 +630,8 @@ const DataModelContent: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 text-center">
-              <p className="text-gray-500">Sélectionnez une entité pour voir ses champs</p>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center transition-colors">
+              <p className="text-gray-500 dark:text-gray-400">Sélectionnez une entité pour voir ses champs</p>
             </div>
           )}
         </div>

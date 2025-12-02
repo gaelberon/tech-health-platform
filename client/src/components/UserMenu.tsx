@@ -16,9 +16,15 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
   const { user, logout } = useSession();
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Fermer le menu si on clique en dehors
+  // Fermer le menu si on clique en dehors (mais pas sur le bouton toggle)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Ne pas fermer si on clique sur le bouton toggle dark mode
+      if (target.closest('button') && target.closest('button')?.textContent?.includes('Mode')) {
+        return;
+      }
+      
       if (
         menuRef.current &&
         !menuRef.current.contains(event.target as Node) &&
@@ -30,8 +36,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Utiliser un délai pour permettre au toggle de se déclencher avant la fermeture
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 100);
+      
       return () => {
+        clearTimeout(timeoutId);
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
@@ -97,39 +108,45 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
       {/* Overlay pour fermer le menu */}
       <div
         className="fixed inset-0 z-40"
-        onClick={onClose}
+        onClick={(e) => {
+          // Ne pas fermer si on clique sur le bouton toggle
+          if ((e.target as HTMLElement).closest('button[type="button"]')) {
+            return;
+          }
+          onClose();
+        }}
       />
       
       {/* Menu contextuel */}
       <div
         ref={menuRef}
-        className="fixed z-50 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+        className="fixed z-50 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 transition-colors duration-200"
         style={{ minWidth: '280px' }}
       >
         {/* En-tête avec email */}
-        <div className="px-4 py-3 border-b border-gray-200">
-          <div className="text-sm font-medium text-gray-900">{user.email}</div>
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.email}</div>
         </div>
 
         {/* Titre accrocheur */}
-        <div className="px-4 py-3 border-b border-gray-200">
-          <div className="text-lg font-semibold text-gray-900">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Hi, {displayName}!
           </div>
         </div>
 
         {/* Lien Gérer le compte */}
-        <div className="px-4 py-2 border-b border-gray-200">
+        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={() => {
               // TODO: Implémenter la page de gestion de profil
               alert('Fonctionnalité "Gérer le compte" en cours de développement');
               onClose();
             }}
-            className="w-full text-left text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1.5 rounded transition-colors"
+            className="w-full text-left text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-2 py-1.5 rounded transition-colors"
           >
             Gérer le compte
-            <span className="ml-2 text-xs text-gray-500">(in progress)</span>
+            <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">(in progress)</span>
           </button>
         </div>
 
@@ -143,7 +160,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
                 }
                 onClose();
               }}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
             >
               <span className="mr-2">⚙️</span>
               Console d'administration
@@ -155,15 +172,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
               // TODO: Ajouter d'autres fonctionnalités du profil
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
           >
             <span className="mr-2">👤</span>
             Mon profil
           </button>
+
         </div>
 
         {/* Séparateur */}
-        <div className="border-t border-gray-200 my-1" />
+        <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
 
         {/* Déconnexion */}
         <div className="px-4 py-1">
@@ -172,7 +190,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, anchorElement, onN
               logout();
               onClose();
             }}
-            className="w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+            className="w-full text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           >
             Déconnexion
           </button>

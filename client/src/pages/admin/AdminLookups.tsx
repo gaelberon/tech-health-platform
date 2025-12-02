@@ -221,16 +221,16 @@ const AdminLookups: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-8 text-gray-500">Chargement des lookups...</div>;
+    return <div className="text-center py-8 text-gray-500 dark:text-gray-400">Chargement des lookups...</div>;
   }
 
   return (
     <div className="space-y-6">
       {/* Barre de recherche et filtres */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm">
         {/* Moteur de recherche */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             🔍 Rechercher une liste de valeurs
           </label>
           <input
@@ -238,10 +238,10 @@ const AdminLookups: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Rechercher par nom (ex: 'Mode Logiciel (Type)'), clé technique, ou valeur..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
           />
           {searchQuery && (
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               {filteredLookups.length} résultat{filteredLookups.length !== 1 ? 's' : ''} trouvé{filteredLookups.length !== 1 ? 's' : ''}
             </p>
           )}
@@ -251,13 +251,13 @@ const AdminLookups: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Filtre par entité */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Entité
             </label>
             <select
               value={selectedEntity}
               onChange={(e) => setSelectedEntity(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             >
               <option value="all">Toutes les entités</option>
               {entities.map((entity) => (
@@ -270,13 +270,13 @@ const AdminLookups: React.FC = () => {
 
           {/* Filtre par criticité */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Criticité
             </label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             >
               <option value="all">Toutes les criticités</option>
               {categories.map((cat) => (
@@ -291,8 +291,8 @@ const AdminLookups: React.FC = () => {
 
       {/* Vue organisée par entité et criticité */}
       {Object.keys(organizedLookups).length === 0 ? (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-          <p className="text-yellow-800">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+          <p className="text-yellow-800 dark:text-yellow-300">
             Aucune liste de valeurs ne correspond aux critères de recherche.
           </p>
         </div>
@@ -302,7 +302,7 @@ const AdminLookups: React.FC = () => {
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([entity, categoriesMap]) => (
               <div key={entity} className="space-y-4">
-                <h3 className="text-xl font-bold text-gray-900 border-b-2 border-blue-500 pb-2">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 border-b-2 border-blue-500 dark:border-blue-400 pb-2">
                   📦 {entity}
                 </h3>
 
@@ -310,21 +310,21 @@ const AdminLookups: React.FC = () => {
                   .sort(([a], [b]) => a.localeCompare(b))
                   .map(([category, lookups]) => (
                     <div key={category} className="ml-4 space-y-4">
-                      <h4 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                      <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                         <span
                           className={`px-2 py-1 text-xs font-bold rounded ${
                             category === 'P1'
-                              ? 'bg-red-100 text-red-800'
+                              ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                               : category === 'P2'
-                              ? 'bg-orange-100 text-orange-800'
+                              ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300'
                               : category === 'P3'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
+                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                           }`}
                         >
                           {category}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           ({lookups.length} liste{lookups.length !== 1 ? 's' : ''})
                         </span>
                       </h4>
@@ -333,27 +333,27 @@ const AdminLookups: React.FC = () => {
                         {lookups.map((lookup) => (
                           <div
                             key={lookup.id}
-                            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+                            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
                           >
                             <div className="flex items-start justify-between mb-4">
                               <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-2">
-                                  <h5 className="text-lg font-semibold text-gray-900">
+                                  <h5 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                                     {lookup.formLabel || lookup.key}
                                   </h5>
-                                  <code className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                  <code className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                                     {lookup.key}
                                   </code>
                                 </div>
                                 {lookup.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{lookup.description}</p>
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{lookup.description}</p>
                                 )}
                               </div>
                               <button
                                 onClick={() =>
                                   setEditingLookup(editingLookup?.id === lookup.id ? null : lookup)
                                 }
-                                className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 whitespace-nowrap"
+                                className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 whitespace-nowrap"
                               >
                                 {editingLookup?.id === lookup.id ? 'Annuler' : 'Modifier'}
                               </button>
@@ -362,13 +362,13 @@ const AdminLookups: React.FC = () => {
                             {editingLookup?.id === lookup.id ? (
                               <div className="space-y-4">
                                 {/* Métadonnées du lookup */}
-                                <div className="p-4 bg-gray-50 rounded-md border border-gray-200">
-                                  <h6 className="text-sm font-semibold text-gray-900 mb-3">
+                                <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
+                                  <h6 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
                                     Métadonnées
                                   </h6>
                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Nom dans le formulaire
                                       </label>
                                       <input
@@ -380,12 +380,12 @@ const AdminLookups: React.FC = () => {
                                             formLabel: e.target.value,
                                           })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                         placeholder="ex: Mode Logiciel (Type)"
                                       />
                                     </div>
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Entité
                                       </label>
                                       <select
@@ -396,7 +396,7 @@ const AdminLookups: React.FC = () => {
                                             entity: e.target.value,
                                           })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                       >
                                         <option value="">Sélectionner...</option>
                                         {entities.map((e) => (
@@ -407,7 +407,7 @@ const AdminLookups: React.FC = () => {
                                       </select>
                                     </div>
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Criticité
                                       </label>
                                       <select
@@ -418,7 +418,7 @@ const AdminLookups: React.FC = () => {
                                             category: e.target.value,
                                           })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                       >
                                         <option value="">Sélectionner...</option>
                                         {categories.map((c) => (
@@ -433,28 +433,28 @@ const AdminLookups: React.FC = () => {
 
                                 {/* Liste des valeurs existantes */}
                                 <div className="space-y-2">
-                                  <h6 className="text-sm font-semibold text-gray-900">
+                                  <h6 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                     Valeurs ({editingLookup.values.length})
                                   </h6>
                                   {editingLookup.values.map((value) => (
                                     <div
                                       key={value.code}
-                                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-md border border-gray-200"
+                                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600"
                                     >
                                       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2">
                                         <div>
-                                          <span className="text-xs text-gray-500">Code</span>
-                                          <div className="font-mono text-sm text-gray-900">
+                                          <span className="text-xs text-gray-500 dark:text-gray-400">Code</span>
+                                          <div className="font-mono text-sm text-gray-900 dark:text-gray-100">
                                             {value.code}
                                           </div>
                                         </div>
                                         <div>
-                                          <span className="text-xs text-gray-500">Label</span>
-                                          <div className="text-sm text-gray-900">{value.label}</div>
+                                          <span className="text-xs text-gray-500 dark:text-gray-400">Label</span>
+                                          <div className="text-sm text-gray-900 dark:text-gray-100">{value.label}</div>
                                         </div>
                                         <div>
-                                          <span className="text-xs text-gray-500">Description</span>
-                                          <div className="text-sm text-gray-600">
+                                          <span className="text-xs text-gray-500 dark:text-gray-400">Description</span>
+                                          <div className="text-sm text-gray-600 dark:text-gray-400">
                                             {value.description || '-'}
                                           </div>
                                         </div>
@@ -464,15 +464,15 @@ const AdminLookups: React.FC = () => {
                                           onClick={() => handleToggleValueActive(value.code)}
                                           className={`px-3 py-1 text-xs font-medium rounded ${
                                             value.active
-                                              ? 'bg-green-100 text-green-700'
-                                              : 'bg-gray-100 text-gray-500'
+                                              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                                              : 'bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400'
                                           }`}
                                         >
                                           {value.active ? 'Actif' : 'Inactif'}
                                         </button>
                                         <button
                                           onClick={() => handleRemoveValue(value.code)}
-                                          className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded hover:bg-red-100"
+                                          className="px-3 py-1 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded hover:bg-red-100 dark:hover:bg-red-900/30"
                                         >
                                           Supprimer
                                         </button>
@@ -482,13 +482,13 @@ const AdminLookups: React.FC = () => {
                                 </div>
 
                                 {/* Formulaire d'ajout de valeur */}
-                                <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
-                                  <h6 className="text-sm font-semibold text-gray-900 mb-3">
+                                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                                  <h6 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
                                     Ajouter une valeur
                                   </h6>
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Code *
                                       </label>
                                       <input
@@ -497,12 +497,12 @@ const AdminLookups: React.FC = () => {
                                         onChange={(e) =>
                                           setNewValue({ ...newValue, code: e.target.value })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                         placeholder="ex: VeryHigh"
                                       />
                                     </div>
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Label *
                                       </label>
                                       <input
@@ -511,12 +511,12 @@ const AdminLookups: React.FC = () => {
                                         onChange={(e) =>
                                           setNewValue({ ...newValue, label: e.target.value })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                         placeholder="ex: Très Élevée"
                                       />
                                     </div>
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Description
                                       </label>
                                       <input
@@ -525,12 +525,12 @@ const AdminLookups: React.FC = () => {
                                         onChange={(e) =>
                                           setNewValue({ ...newValue, description: e.target.value })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                         placeholder="Texte pour l'infobulle"
                                       />
                                     </div>
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Ordre
                                       </label>
                                       <input
@@ -542,14 +542,14 @@ const AdminLookups: React.FC = () => {
                                             order: parseInt(e.target.value) || 0,
                                           })
                                         }
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                                       />
                                     </div>
                                   </div>
                                   <button
                                     onClick={handleAddValue}
                                     disabled={!newValue.code || !newValue.label}
-                                    className="mt-3 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="mt-3 px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
                                     Ajouter
                                   </button>
@@ -558,7 +558,7 @@ const AdminLookups: React.FC = () => {
                                 <button
                                   onClick={handleSaveLookup}
                                   disabled={saving}
-                                  className="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50"
+                                  className="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50"
                                 >
                                   {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
                                 </button>
@@ -570,22 +570,22 @@ const AdminLookups: React.FC = () => {
                                   .map((value) => (
                                     <div
                                       key={value.code}
-                                      className="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-200"
+                                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600"
                                     >
                                       <div>
-                                        <span className="font-mono text-sm font-medium text-gray-900">
+                                        <span className="font-mono text-sm font-medium text-gray-900 dark:text-gray-100">
                                           {value.code}
                                         </span>
-                                        <span className="ml-3 text-sm text-gray-700">
+                                        <span className="ml-3 text-sm text-gray-700 dark:text-gray-300">
                                           {value.label}
                                         </span>
                                         {value.description && (
-                                          <p className="mt-1 text-xs text-gray-500">
+                                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                             {value.description}
                                           </p>
                                         )}
                                       </div>
-                                      <span className="text-xs text-gray-500">
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">
                                         Ordre: {value.order || 0}
                                       </span>
                                     </div>

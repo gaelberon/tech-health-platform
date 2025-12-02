@@ -66,21 +66,21 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
-        <h1 className="text-2xl font-bold mb-2 text-center">Connexion</h1>
-        <p className="text-sm text-gray-500 mb-6 text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 transition-colors duration-200">
+        <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-gray-100">Connexion</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center">
           Accédez au tableau de bord de scoring et au Tech Profiler.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email
             </label>
             <input
               type="email"
-              className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -88,12 +88,12 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Mot de passe
             </label>
             <input
               type="password"
-              className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -101,7 +101,7 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
           </div>
 
           {errorMsg && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">
+            <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 rounded px-3 py-2">
               {errorMsg}
             </p>
           )}

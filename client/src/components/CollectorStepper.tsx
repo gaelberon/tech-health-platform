@@ -9,7 +9,7 @@ import { useSession } from '../session/SessionContext';
 
 const CollectorStepper: React.FC = () => {
   // État du formulaire
-  const [formData, setFormData] = useState<any>({
+    const [formData, setFormData] = useState<any>({
     selectedEditorId: '', // ID de l'éditeur sélectionné (si existant)
     useExistingEditor: false, // Mode: éditeur existant ou nouveau
     editorName: '',
@@ -42,7 +42,7 @@ const CollectorStepper: React.FC = () => {
     vulnMgmt: 'none',
   });
 
-  const [step, setStep] = useState(1);
+    const [step, setStep] = useState(1);
   const [showP2Details, setShowP2Details] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
@@ -173,7 +173,7 @@ const CollectorStepper: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
+    const handleSubmit = async () => {
     if (submitting) return;
 
     setSubmissionError(null);
@@ -225,7 +225,7 @@ const CollectorStepper: React.FC = () => {
     }
 
     // Préparation des inputs
-    const inputs = {
+        const inputs = {
       editorInput: {
         name: formData.useExistingEditor && formData.selectedEditorId
           ? editors.find((e: any) => e.editorId === formData.selectedEditorId)?.name || formData.editorName
@@ -272,9 +272,9 @@ const CollectorStepper: React.FC = () => {
         pentest_freq: formData.pentestFreq || 'never',
         vuln_mgmt: formData.vulnMgmt || 'none',
       },
-    };
+        };
 
-    try {
+        try {
       // Sauvegarder le brouillon avec statut "in_progress" avant la soumission
       if (user && currentDraftId) {
         await saveDraft({
@@ -289,8 +289,8 @@ const CollectorStepper: React.FC = () => {
         });
       }
 
-      const result = await submitP1Data({ variables: inputs });
-      
+            const result = await submitP1Data({ variables: inputs });
+            
       if (result.data?.submitP1Data) {
         setSubmissionSuccess(true);
         setStep(5); // Étape de succès
@@ -369,7 +369,7 @@ const CollectorStepper: React.FC = () => {
           <h2 className="text-xl font-semibold">Reprendre un brouillon</h2>
           <button
             onClick={() => setShowDraftSelector(false)}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
+            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
           >
             Nouveau formulaire
           </button>
@@ -379,7 +379,7 @@ const CollectorStepper: React.FC = () => {
           {drafts.map((draft: any) => (
             <div
               key={draft.draftId}
-              className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
+              className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer bg-white dark:bg-gray-800 transition-colors"
               onClick={() => loadDraft(draft.draftId)}
             >
               <div className="flex items-start justify-between">
@@ -399,12 +399,12 @@ const CollectorStepper: React.FC = () => {
                     <span className="text-sm text-gray-500">Étape {draft.step}/4</span>
                   </div>
                   {draft.formData.solutionName && (
-                    <p className="font-medium text-gray-900 mb-1">
+                    <p className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                       {draft.formData.solutionName}
                     </p>
                   )}
                   {draft.formData.editorName && (
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                       Éditeur: {draft.formData.editorName}
                     </p>
                   )}
@@ -413,7 +413,7 @@ const CollectorStepper: React.FC = () => {
                       Erreur: {draft.errorMessage}
                     </p>
                   )}
-                  <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                     Sauvegardé le {new Date(draft.lastSavedAt).toLocaleString('fr-FR')}
                   </p>
                 </div>
@@ -432,16 +432,16 @@ const CollectorStepper: React.FC = () => {
     );
   }
 
-  const renderStep = () => {
+    const renderStep = () => {
     switch (step) {
       case 1:
         return (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">1. Identification de la Solution (P1)</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">1. Identification de la Solution (P1)</h2>
 
             {/* Choix: éditeur existant ou nouveau */}
-            <div className="border p-4 rounded bg-gray-50">
-              <label className="flex items-center mb-3">
+            <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-gray-50 dark:bg-gray-800 transition-colors">
+              <label className="flex items-center mb-3 text-gray-700 dark:text-gray-300">
                 <input
                   type="checkbox"
                   checked={formData.useExistingEditor}
@@ -476,26 +476,26 @@ const CollectorStepper: React.FC = () => {
               )}
 
               {formData.useExistingEditor && editors.length === 0 && (
-                <p className="text-sm text-gray-500 mt-2">Aucun éditeur disponible. Créez-en un nouveau.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Aucun éditeur disponible. Créez-en un nouveau.</p>
               )}
             </div>
 
             {/* Editor.name (P1) */}
-            <label className="block">
+            <label className="block text-gray-700 dark:text-gray-300">
               Nom de l'Éditeur {formData.useExistingEditor ? '(pré-rempli)' : '*'}
-              <AssistanceTooltip content="Nom légal de l'entreprise éditrice du logiciel." />
+                <AssistanceTooltip content="Nom légal de l'entreprise éditrice du logiciel." />
             </label>
             <input
               type="text"
               value={formData.editorName}
               onChange={(e) => setFormData({ ...formData, editorName: e.target.value })}
               disabled={formData.useExistingEditor}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             />
 
             {/* Editor.business_criticality (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Criticité Métier *
               <AssistanceTooltip content="Évalue l'impact métier si l'éditeur devenait indisponible (définitions standardisées). P1 pour le score global : fixe la tolérance au risque et les exigences de product_criticality." />
             </label>
@@ -503,7 +503,7 @@ const CollectorStepper: React.FC = () => {
               value={formData.editorCriticality}
               onChange={(e) => setFormData({ ...formData, editorCriticality: e.target.value })}
               disabled={formData.useExistingEditor}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="">Sélectionner...</option>
@@ -515,7 +515,7 @@ const CollectorStepper: React.FC = () => {
             </select>
 
             {/* Solution.name (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Nom de la Solution *
               <AssistanceTooltip content="Nom de la solution logicielle évaluée." />
             </label>
@@ -523,19 +523,19 @@ const CollectorStepper: React.FC = () => {
               type="text"
               value={formData.solutionName}
               onChange={(e) => setFormData({ ...formData, solutionName: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             />
 
             {/* Solution.type (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Mode Logiciel (Type) *
-              <AssistanceTooltip content="Modèle de livraison du logiciel. Crucial pour les enjeux d'hébergement." />
+                <AssistanceTooltip content="Modèle de livraison du logiciel. Crucial pour les enjeux d'hébergement." />
             </label>
             <select
               value={formData.solutionType}
               onChange={(e) => setFormData({ ...formData, solutionType: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="">Sélectionner...</option>
@@ -547,14 +547,14 @@ const CollectorStepper: React.FC = () => {
             </select>
 
             {/* Solution.product_criticality (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Criticité Produit *
               <AssistanceTooltip content="Criticité de la solution pour l'organisation." />
             </label>
             <select
               value={formData.solutionCriticality}
               onChange={(e) => setFormData({ ...formData, solutionCriticality: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="">Sélectionner...</option>
@@ -566,14 +566,14 @@ const CollectorStepper: React.FC = () => {
             </select>
 
             {/* Solution.main_use_case (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Cas d'usage principal *
               <AssistanceTooltip content="Description du cas d'usage principal de la solution." />
             </label>
             <textarea
               value={formData.solutionMainUseCase}
               onChange={(e) => setFormData({ ...formData, solutionMainUseCase: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               rows={3}
               required
             />
@@ -583,43 +583,43 @@ const CollectorStepper: React.FC = () => {
       case 2:
         return (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">2. Hébergement & Résilience (P1)</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">2. Hébergement & Résilience (P1)</h2>
 
             {/* Hosting.provider (P1) */}
-            <label className="block">
+            <label className="block text-gray-700 dark:text-gray-300">
               Fournisseur Cloud/Hébergeur *
-              <AssistanceTooltip content="Nom du fournisseur technique (ex: OVH, Azure, GCP). Champ conditionnel si SaaS ou Hébergé." />
+                <AssistanceTooltip content="Nom du fournisseur technique (ex: OVH, Azure, GCP). Champ conditionnel si SaaS ou Hébergé." />
             </label>
             <input
               type="text"
               value={formData.provider}
               onChange={(e) => setFormData({ ...formData, provider: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             />
 
             {/* Hosting.region (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Région d'Hébergement *
-              <AssistanceTooltip content="Pays/Région où les données sont hébergées. Nécessaire pour la conformité RGPD." />
+                <AssistanceTooltip content="Pays/Région où les données sont hébergées. Nécessaire pour la conformité RGPD." />
             </label>
             <input
               type="text"
               value={formData.region}
               onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             />
 
             {/* Hosting.tier (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Type d'infrastructure *
               <AssistanceTooltip content="Type d'infrastructure d'hébergement." />
             </label>
             <select
               value={formData.hostingTier}
               onChange={(e) => setFormData({ ...formData, hostingTier: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="datacenter">Datacenter</option>
@@ -629,7 +629,7 @@ const CollectorStepper: React.FC = () => {
             </select>
 
             {/* Environment.data_types (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Types de Données Hébergées (P1) *
               <AssistanceTooltip content="Indique si des données réglementées sont traitées (Santé, Finance, RGPD). Critique pour le score de conformité (20%) et justifie les exigences de certifications (HDS, Ségur)." />
             </label>
@@ -640,7 +640,7 @@ const CollectorStepper: React.FC = () => {
                 const selected = Array.from(e.target.selectedOptions, option => option.value);
                 setFormData({ ...formData, dataTypes: selected });
               }}
-              className="w-full border p-2 rounded min-h-[100px]"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded min-h-[100px] bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               {lookups.dataTypes.map((item: any) => (
@@ -649,17 +649,17 @@ const CollectorStepper: React.FC = () => {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-gray-500 mt-1">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs types</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs types</p>
 
             {/* Environment.redundancy (P1) */}
-            <label className="block pt-2">
+            <label className="block pt-2 text-gray-700 dark:text-gray-300">
               Niveau de Redondance *
               <AssistanceTooltip content="Niveau de redondance de l'infrastructure." />
             </label>
             <select
               value={formData.redundancy}
               onChange={(e) => setFormData({ ...formData, redundancy: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="">Sélectionner...</option>
@@ -671,8 +671,8 @@ const CollectorStepper: React.FC = () => {
             </select>
 
             {/* Environment.backup (exists, RTO, RPO) (P1) */}
-            <div className="border p-4 rounded mt-4">
-              <label className="block font-medium">Politique de Sauvegarde (Backup) :</label>
+            <div className="border border-gray-200 dark:border-gray-700 p-4 rounded mt-4 bg-white dark:bg-gray-800 transition-colors">
+              <label className="block font-medium text-gray-700 dark:text-gray-300">Politique de Sauvegarde (Backup) :</label>
               <div className="flex items-center pt-2">
                 <input
                   type="checkbox"
@@ -681,44 +681,44 @@ const CollectorStepper: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, backupExists: e.target.checked })}
                   className="mr-2"
                 />
-                <label htmlFor="backupExists">Existe-t-elle ? (P1)</label>
+                <label htmlFor="backupExists" className="text-gray-700 dark:text-gray-300">Existe-t-elle ? (P1)</label>
               </div>
 
               {formData.backupExists && (
                 <>
-                  <label className="block pt-2">
+                  <label className="block pt-2 text-gray-700 dark:text-gray-300">
                     RTO (Heures) :
                     <AssistanceTooltip content="Recovery Time Objective : durée maximale pour rétablir le service après un incident critique. P1 pour le score Résilience (20%). Un RTO court est attendu pour un score élevé." />
-                  </label>
+              </label>
                   <input
                     type="number"
                     min="0"
                     value={formData.rto}
                     onChange={(e) => setFormData({ ...formData, rto: parseFloat(e.target.value) || 0 })}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     placeholder="Ex: 24 (heures)"
                   />
 
-                  <label className="block pt-2">
+                  <label className="block pt-2 text-gray-700 dark:text-gray-300">
                     RPO (Heures) :
-                    <AssistanceTooltip content="Recovery Point Objective: Perte de données maximale acceptable (en heures)." />
-                  </label>
+                <AssistanceTooltip content="Recovery Point Objective: Perte de données maximale acceptable (en heures)." />
+              </label>
                   <input
                     type="number"
                     min="0"
                     value={formData.rpo}
                     onChange={(e) => setFormData({ ...formData, rpo: parseFloat(e.target.value) || 0 })}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     placeholder="Ex: 4 (heures)"
                   />
 
-                  <label className="block pt-2">
+                  <label className="block pt-2 text-gray-700 dark:text-gray-300">
                     Fréquence de test de restauration :
                   </label>
                   <select
                     value={formData.restorationTestFrequency}
                     onChange={(e) => setFormData({ ...formData, restorationTestFrequency: e.target.value })}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="never">Jamais</option>
                     <option value="annual">Annuel</option>
@@ -737,9 +737,9 @@ const CollectorStepper: React.FC = () => {
             </button>
 
             {showP2Details && (
-              <div className="border p-4 rounded bg-gray-50 mt-2">
+              <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-gray-50 dark:bg-gray-800 mt-2 transition-colors">
                 <h3 className="font-semibold mb-2">Champs P2 : Architecture et Certifications</h3>
-                <label className="block">Certifications (P2) :</label>
+                <label className="block text-gray-700 dark:text-gray-300 font-medium">Certifications (P2) :</label>
                 <select
                   multiple
                   value={formData.certifications}
@@ -747,17 +747,17 @@ const CollectorStepper: React.FC = () => {
                     const selected = Array.from(e.target.selectedOptions, option => option.value);
                     setFormData({ ...formData, certifications: selected });
                   }}
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="ISO27001">ISO 27001</option>
                   <option value="HDS">HDS</option>
                   <option value="SOC2">SOC 2</option>
                 </select>
-                <label className="block pt-2">Type de déploiement (P2) :</label>
+                <label className="block pt-2 text-gray-700 dark:text-gray-300">Type de déploiement (P2) :</label>
                 <select
                   value={formData.deploymentType}
                   onChange={(e) => setFormData({ ...formData, deploymentType: e.target.value })}
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="">Sélectionner...</option>
                   <option value="monolith">Monolith</option>
@@ -772,17 +772,17 @@ const CollectorStepper: React.FC = () => {
       case 3:
         return (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">3. Sécurité Minimale (P1)</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">3. Sécurité Minimale (P1)</h2>
 
             {/* SecurityProfile.auth (P1) */}
-            <label className="block">
+            <label className="block text-gray-700 dark:text-gray-300">
               Authentification *
               <AssistanceTooltip content="Méthode pour valider l'identité des utilisateurs (Passwords/MFA/SSO). P1 pour le score Sécurité (30%) : MFA ou SSO requis pour atteindre le maximum." />
             </label>
             <select
               value={formData.auth}
               onChange={(e) => setFormData({ ...formData, auth: e.target.value })}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
               <option value="">Sélectionner...</option>
@@ -795,7 +795,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* SecurityProfile.encryption (in_transit, at_rest) (P1) */}
             <div className="border p-4 rounded mt-4">
-              <label className="block font-medium mb-2">Chiffrement des Données (P1) :</label>
+              <label className="block font-medium mb-2 text-gray-700 dark:text-gray-300">Chiffrement des Données (P1) :</label>
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -823,11 +823,11 @@ const CollectorStepper: React.FC = () => {
       case 4:
         return (
           <div className="text-center space-y-4">
-            <h2 className="text-2xl font-semibold mb-6">Prêt à soumettre les données P1</h2>
-            <p className="mb-8">Confirmez la soumission pour déclencher le premier Scoring Snapshot de la solution.</p>
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">Prêt à soumettre les données P1</h2>
+            <p className="mb-8 text-gray-700 dark:text-gray-300">Confirmez la soumission pour déclencher le premier Scoring Snapshot de la solution.</p>
             
             {submissionError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mb-4">
+              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-700 dark:text-red-300 mb-4 transition-colors">
                 <p className="font-semibold">Erreur de soumission</p>
                 <p className="text-sm">{submissionError}</p>
               </div>
@@ -846,9 +846,9 @@ const CollectorStepper: React.FC = () => {
       case 5:
         return (
           <div className="text-center space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <h2 className="text-2xl font-semibold text-green-800 mb-4">✅ Soumission réussie !</h2>
-              <p className="text-green-700 mb-4">
+            <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-6 transition-colors">
+              <h2 className="text-2xl font-semibold text-green-800 dark:text-green-200 mb-4">✅ Soumission réussie !</h2>
+              <p className="text-green-700 dark:text-green-300 mb-4">
                 Les données P1 ont été enregistrées avec succès. Un snapshot de scoring initial a été créé.
               </p>
               <button
@@ -902,24 +902,24 @@ const CollectorStepper: React.FC = () => {
     }
   };
 
-  return (
-    <div>
+    return (
+      <div>
       {/* En-tête avec bouton pour voir les brouillons */}
       {user && drafts.length > 0 && !showDraftSelector && (
-        <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="mb-4 flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 transition-colors">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-blue-700">
+            <span className="text-sm text-blue-700 dark:text-blue-300">
               {drafts.length} brouillon{drafts.length > 1 ? 's' : ''} disponible{drafts.length > 1 ? 's' : ''}
             </span>
             {currentDraftId && (
-              <span className="text-xs text-blue-600">
+              <span className="text-xs text-blue-600 dark:text-blue-400">
                 (Brouillon actif sauvegardé automatiquement)
               </span>
             )}
           </div>
           <button
             onClick={() => setShowDraftSelector(true)}
-            className="px-3 py-1 text-sm text-blue-700 hover:text-blue-900 font-medium"
+            className="px-3 py-1 text-sm text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-200 font-medium"
           >
             Voir les brouillons
           </button>
@@ -928,8 +928,8 @@ const CollectorStepper: React.FC = () => {
 
       {/* Bouton pour voir les brouillons au démarrage si aucun brouillon n'est chargé */}
       {user && drafts.length > 0 && !currentDraftId && !showDraftSelector && step === 1 && (
-        <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-          <p className="text-sm text-yellow-800 mb-2">
+        <div className="mb-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 transition-colors">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
             Vous avez {drafts.length} brouillon{drafts.length > 1 ? 's' : ''} enregistré{drafts.length > 1 ? 's' : ''}. Souhaitez-vous reprendre un brouillon existant ?
           </p>
           <button
@@ -947,35 +947,35 @@ const CollectorStepper: React.FC = () => {
         </div>
       )}
 
-      {renderStep()}
+        {renderStep()}
 
-      <div className="flex justify-between mt-8 pt-4 border-t">
+        <div className="flex justify-between mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
         {step > 1 && step < 5 && (
-          <button
+            <button
             onClick={() => {
               setStep(step - 1);
               setSubmissionError(null);
             }}
-            className="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100"
-          >
-            Précédent
-          </button>
-        )}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              Précédent
+            </button>
+          )}
 
-        {step < 4 && (
-          <button
+          {step < 4 && (
+            <button
             onClick={() => {
               setStep(step + 1);
               setSubmissionError(null);
             }}
-            className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 ml-auto"
-          >
-            Suivant
-          </button>
-        )}
+              className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 ml-auto"
+            >
+              Suivant
+            </button>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default CollectorStepper;

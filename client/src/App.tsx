@@ -10,6 +10,7 @@ import HostingView from './pages/HostingView';
 import Dashboard from './pages/Dashboard';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions';
 import { usePagePermissions } from './hooks/usePagePermissions';
 
@@ -107,10 +108,10 @@ const AppShell: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 Formulaire d'Évaluation Technique MVS
               </h2>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
                 Collecte des données de Priorité 1 (P1) pour l'évaluation technique
               </p>
             </div>
@@ -122,9 +123,9 @@ const AppShell: React.FC = () => {
         if (user.role !== 'Admin') {
           return (
             <div className="space-y-6">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <p className="text-red-700 font-semibold">Accès refusé</p>
-                <p className="text-red-600 text-sm mt-2">
+              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center transition-colors duration-200">
+                <p className="text-red-700 dark:text-red-300 font-semibold">Accès refusé</p>
+                <p className="text-red-600 dark:text-red-400 text-sm mt-2">
                   Seuls les administrateurs peuvent accéder à cette page.
                 </p>
               </div>
@@ -144,7 +145,7 @@ const AppShell: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} onNavigate={setActiveTab} />
       
       <main className="flex-1">
@@ -152,16 +153,16 @@ const AppShell: React.FC = () => {
           renderContent()
         ) : (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 md:p-8 transition-colors duration-200">
               {renderContent()}
             </div>
           </div>
         )}
       </main>
 
-      <footer className="bg-white border-t border-gray-200 py-4">
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-xs text-gray-500">
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
             Centre d'Opérations Techniques (COT) - Tech Health Platform
           </p>
         </div>
@@ -173,7 +174,9 @@ const AppShell: React.FC = () => {
 function App() {
   return (
     <SessionProvider>
-      <AppShell />
+      <ThemeProvider>
+        <AppShell />
+      </ThemeProvider>
     </SessionProvider>
   );
 }

@@ -10,10 +10,10 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
   // Fonction pour obtenir le badge de type d'environnement
   const getEnvTypeBadge = (envType: string) => {
     const badges: Record<string, { label: string; className: string }> = {
-      production: { label: 'PRODUCTION', className: 'bg-red-100 text-red-800 border-red-200' },
-      test: { label: 'TEST', className: 'bg-orange-100 text-orange-800 border-orange-200' },
-      dev: { label: 'DEV', className: 'bg-blue-100 text-blue-800 border-blue-200' },
-      backup: { label: 'BACKUP', className: 'bg-gray-100 text-gray-800 border-gray-200' },
+      production: { label: 'PRODUCTION', className: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800' },
+      test: { label: 'TEST', className: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800' },
+      dev: { label: 'DEV', className: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800' },
+      backup: { label: 'BACKUP', className: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600' },
     };
     return badges[envType] || badges.dev;
   };
@@ -21,10 +21,10 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
   // Fonction pour obtenir le badge de redondance
   const getRedundancyBadge = (redundancy: string) => {
     const badges: Record<string, { label: string; className: string }> = {
-      none: { label: 'Aucune', className: 'bg-red-100 text-red-800' },
-      minimal: { label: 'Minimale', className: 'bg-orange-100 text-orange-800' },
-      'geo-redundant': { label: 'Geo-redondant', className: 'bg-green-100 text-green-800' },
-      high: { label: 'Élevée', className: 'bg-green-200 text-green-900' },
+      none: { label: 'Aucune', className: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' },
+      minimal: { label: 'Minimale', className: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300' },
+      'geo-redundant': { label: 'Geo-redondant', className: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' },
+      high: { label: 'Élevée', className: 'bg-green-200 dark:bg-green-800/30 text-green-900 dark:text-green-200' },
     };
     return badges[redundancy] || badges.none;
   };
@@ -42,11 +42,11 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
       environment.securityProfile.encryption?.at_rest;
 
     if (hasGoodRedundancy && hasGoodBackup && hasGoodSecurity) {
-      return { label: 'Optimal', className: 'bg-green-100 text-green-800', icon: '✅' };
+      return { label: 'Optimal', className: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300', icon: '✅' };
     } else if (hasBackup && (environment.redundancy === 'minimal' || !hasGoodSecurity)) {
-      return { label: 'À améliorer', className: 'bg-orange-100 text-orange-800', icon: '⚠️' };
+      return { label: 'À améliorer', className: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300', icon: '⚠️' };
     } else {
-      return { label: 'Critique', className: 'bg-red-100 text-red-800', icon: '❌' };
+      return { label: 'Critique', className: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300', icon: '❌' };
     }
   };
 
@@ -55,9 +55,9 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
   const healthIndicator = calculateHealthIndicator();
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow">
       {/* En-tête */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded border ${envTypeBadge.className}`}>
             {envTypeBadge.label}
@@ -66,7 +66,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
             {healthIndicator.icon} {healthIndicator.label}
           </span>
         </div>
-        <div className="text-sm font-medium text-gray-900">
+        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
           {environment.envId}
         </div>
       </div>
@@ -75,26 +75,26 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
       <div className="p-4 space-y-3">
         {/* Hébergement */}
         <div>
-          <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Hébergement</h4>
+          <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Hébergement</h4>
           <div className="space-y-1 text-sm">
             <div className="flex items-center gap-2">
-              <span className="text-gray-600">🏢</span>
-              <span className="text-gray-900">{environment.hosting?.provider || 'N/A'}</span>
+              <span className="text-gray-600 dark:text-gray-400">🏢</span>
+              <span className="text-gray-900 dark:text-gray-100">{environment.hosting?.provider || 'N/A'}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-gray-600">📍</span>
-              <span className="text-gray-900">{environment.hosting?.region || 'N/A'}</span>
+              <span className="text-gray-600 dark:text-gray-400">📍</span>
+              <span className="text-gray-900 dark:text-gray-100">{environment.hosting?.region || 'N/A'}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-gray-600">☁️</span>
-              <span className="text-gray-900 capitalize">{environment.hosting?.tier || 'N/A'}</span>
+              <span className="text-gray-600 dark:text-gray-400">☁️</span>
+              <span className="text-gray-900 dark:text-gray-100 capitalize">{environment.hosting?.tier || 'N/A'}</span>
             </div>
             {environment.hosting?.certifications && environment.hosting.certifications.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {environment.hosting.certifications.map((cert: string, idx: number) => (
                   <span
                     key={idx}
-                    className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded"
+                    className="px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded"
                   >
                     🏅 {cert}
                   </span>
@@ -106,7 +106,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
 
         {/* Redondance */}
         <div>
-          <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Redondance</h4>
+          <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Redondance</h4>
           <span className={`px-2 py-1 text-xs font-medium rounded ${redundancyBadge.className}`}>
             {redundancyBadge.label}
           </span>
@@ -114,27 +114,27 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
 
         {/* Backup */}
         <div>
-          <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Backup</h4>
+          <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Backup</h4>
           <div className="text-sm space-y-1">
             {environment.backup?.exists ? (
               <>
                 <div className="flex items-center gap-2">
                   <span className="text-green-600">✅</span>
-                  <span className="text-gray-900">Sauvegarde active</span>
+                  <span className="text-gray-900 dark:text-gray-100">Sauvegarde active</span>
                 </div>
                 {environment.backup.rto_hours && (
-                  <div className="text-gray-600">
-                    RTO: <span className="font-medium text-gray-900">{environment.backup.rto_hours}h</span>
+                  <div className="text-gray-600 dark:text-gray-400">
+                    RTO: <span className="font-medium text-gray-900 dark:text-gray-100">{environment.backup.rto_hours}h</span>
                   </div>
                 )}
                 {environment.backup.rpo_hours && (
-                  <div className="text-gray-600">
-                    RPO: <span className="font-medium text-gray-900">{environment.backup.rpo_hours}h</span>
+                  <div className="text-gray-600 dark:text-gray-400">
+                    RPO: <span className="font-medium text-gray-900 dark:text-gray-100">{environment.backup.rpo_hours}h</span>
                   </div>
                 )}
               </>
             ) : (
-              <div className="flex items-center gap-2 text-red-600">
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <span>❌</span>
                 <span>Aucune sauvegarde</span>
               </div>
@@ -144,10 +144,10 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
       </div>
 
       {/* Bouton pour voir les détails */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center justify-center gap-2"
+          className="w-full text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center justify-center gap-2"
         >
           {isExpanded ? (
             <>
@@ -169,11 +169,11 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
 
       {/* Détails expandables */}
       {isExpanded && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50 space-y-4">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 space-y-4 transition-colors">
           {/* Architecture */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-2">Architecture</h4>
-            <div className="text-sm space-y-1 text-gray-700">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Architecture</h4>
+            <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
               {environment.deployment_type && (
                 <div>Type de déploiement: <span className="font-medium capitalize">{environment.deployment_type}</span></div>
               )}
@@ -196,8 +196,8 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
           {/* Sécurité */}
           {environment.securityProfile && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Sécurité</h4>
-              <div className="text-sm space-y-1 text-gray-700">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Sécurité</h4>
+            <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
                 <div>Authentification: <span className="font-medium">{environment.securityProfile.auth}</span></div>
                 <div>
                   Chiffrement: 
@@ -219,8 +219,8 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
           {/* Monitoring */}
           {environment.monitoringObservability && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Monitoring</h4>
-              <div className="text-sm space-y-1 text-gray-700">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Monitoring</h4>
+              <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
                 <div>Monitoring de performance: <span className="font-medium">{environment.monitoringObservability.perf_monitoring}</span></div>
                 <div>Centralisation des logs: <span className="font-medium">{environment.monitoringObservability.log_centralization}</span></div>
                 {environment.monitoringObservability.tools && environment.monitoringObservability.tools.length > 0 && (
@@ -235,8 +235,8 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
           {/* Coûts */}
           {environment.costs && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Coûts</h4>
-              <div className="text-sm space-y-1 text-gray-700">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Coûts</h4>
+              <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
                 {environment.costs.hosting_monthly && (
                   <div>Hébergement mensuel: <span className="font-medium">{environment.costs.hosting_monthly.toLocaleString('fr-FR')} €</span></div>
                 )}
@@ -244,7 +244,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
                   <div>Licences mensuelles: <span className="font-medium">{environment.costs.licenses_monthly.toLocaleString('fr-FR')} €</span></div>
                 )}
                 {environment.costs.comments && (
-                  <div className="text-gray-600 italic">{environment.costs.comments}</div>
+                  <div className="text-gray-600 dark:text-gray-400 italic">{environment.costs.comments}</div>
                 )}
               </div>
             </div>
@@ -253,8 +253,8 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ environment }) => {
           {/* Plan de reprise */}
           {environment.disaster_recovery_plan && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Plan de reprise</h4>
-              <div className="text-sm text-gray-700">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Plan de reprise</h4>
+              <div className="text-sm text-gray-700 dark:text-gray-300">
                 {environment.disaster_recovery_plan}
               </div>
             </div>

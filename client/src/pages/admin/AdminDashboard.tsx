@@ -23,12 +23,12 @@ const AdminDashboard: React.FC = () => {
   if (!user || user.role !== 'Admin') {
     return (
       <div className="space-y-6">
-        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-8 text-center">
-          <h3 className="text-lg font-semibold text-red-800 mb-2">Accès refusé</h3>
-          <p className="text-red-700">
+        <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg p-8 text-center">
+          <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Accès refusé</h3>
+          <p className="text-red-700 dark:text-red-300">
             Vous devez être administrateur pour accéder à cette page.
           </p>
-          <p className="text-red-600 text-sm mt-2">
+          <p className="text-red-600 dark:text-red-400 text-sm mt-2">
             Rôle actuel : {user?.role || 'Non authentifié'}
           </p>
         </div>
@@ -59,8 +59,8 @@ const AdminDashboard: React.FC = () => {
         return <AdminAuditLogs />;
       case 'settings':
         return (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
-            <p className="text-blue-700">Cette section sera disponible prochainement.</p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-8 text-center">
+            <p className="text-blue-700 dark:text-blue-300">Cette section sera disponible prochainement.</p>
           </div>
         );
       default:
@@ -71,15 +71,15 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* En-tête */}
-      <div className="border-b border-gray-200 pb-4">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Module d'Administration</h2>
-        <p className="text-gray-600 text-sm">
+      <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Module d'Administration</h2>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
           Gérez les permissions, les listes de valeurs, les utilisateurs et les paramètres de la plateforme
         </p>
       </div>
 
       {/* Navigation par onglets */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="flex space-x-1" aria-label="Tabs">
           {sections.map((section) => (
             <button
@@ -87,8 +87,8 @@ const AdminDashboard: React.FC = () => {
               onClick={() => setActiveSection(section.id)}
               className={`px-4 py-3 text-sm font-medium rounded-t-lg transition-colors ${
                 activeSection === section.id
-                  ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b-2 border-blue-600 dark:border-blue-400'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
             >
               <span className="mr-2">{section.icon}</span>

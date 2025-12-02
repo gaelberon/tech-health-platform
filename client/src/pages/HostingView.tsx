@@ -131,16 +131,16 @@ const HostingView: React.FC = () => {
   if (editorsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">Chargement des éditeurs...</div>
+        <div className="text-gray-500 dark:text-gray-400">Chargement des éditeurs...</div>
       </div>
     );
   }
 
   if (!editorsData?.listEditorsForUser || editorsData.listEditorsForUser.length === 0) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-        <p className="text-yellow-800 font-semibold">Aucun éditeur disponible</p>
-        <p className="text-yellow-600 text-sm mt-2">
+      <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center transition-colors">
+        <p className="text-yellow-800 dark:text-yellow-200 font-semibold">Aucun éditeur disponible</p>
+        <p className="text-yellow-600 dark:text-yellow-300 text-sm mt-2">
           Vous n'avez pas accès à des éditeurs pour le moment.
         </p>
       </div>
@@ -151,18 +151,18 @@ const HostingView: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Vue d'Hébergement</h2>
-        <p className="text-gray-600 text-sm">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Vue d'Hébergement</h2>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
           Visualisation et analyse de l'infrastructure d'hébergement des solutions
         </p>
       </div>
 
       {/* Navigation hiérarchique */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4 transition-colors">
         {/* Sélecteur d'éditeur */}
         {shouldSelectEditor ? (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Éditeur
             </label>
             <select
@@ -171,7 +171,7 @@ const HostingView: React.FC = () => {
                 setSelectedEditorId(e.target.value);
                 setSelectedSolutionId(''); // Reset solution quand éditeur change
               }}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               <option value="">Sélectionner un éditeur...</option>
               {editorsData.listEditorsForUser.map((editor: Editor) => (
@@ -183,10 +183,10 @@ const HostingView: React.FC = () => {
           </div>
         ) : (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Éditeur
             </label>
-            <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-700">
+            <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300">
               {selectedEditor?.name || editorsData.listEditorsForUser[0]?.name}
             </div>
           </div>
@@ -195,13 +195,13 @@ const HostingView: React.FC = () => {
         {/* Sélecteur de solution */}
         {selectedEditor && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Solution
             </label>
             <select
               value={selectedSolutionId}
               onChange={(e) => setSelectedSolutionId(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               <option value="">Sélectionner une solution...</option>
               {selectedEditor.solutions?.map((solution: any) => (
@@ -217,31 +217,31 @@ const HostingView: React.FC = () => {
       {/* Vue d'ensemble */}
       {selectedSolutionId && solutionData?.getSolution && (
         <>
-          <div className="bg-gradient-to-r from-blue-50 to-teal-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-gradient-to-r from-blue-50 to-teal-50 dark:from-blue-900/30 dark:to-teal-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6 transition-colors">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Vue d'ensemble - {solutionData.getSolution.name}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="text-2xl font-bold text-gray-900">{overviewMetrics.totalEnvs}</div>
-                <div className="text-sm text-gray-600">Environnements</div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{overviewMetrics.totalEnvs}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Environnements</div>
               </div>
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="text-2xl font-bold text-red-600">{overviewMetrics.byType.production}</div>
-                <div className="text-sm text-gray-600">Production</div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400">{overviewMetrics.byType.production}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Production</div>
               </div>
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="text-2xl font-bold text-orange-600">{overviewMetrics.byType.test}</div>
-                <div className="text-sm text-gray-600">Test</div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{overviewMetrics.byType.test}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Test</div>
               </div>
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="text-2xl font-bold text-blue-600">{overviewMetrics.byType.dev}</div>
-                <div className="text-sm text-gray-600">Développement</div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{overviewMetrics.byType.dev}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Développement</div>
               </div>
             </div>
             {overviewMetrics.totalCost > 0 && (
-              <div className="mt-4 pt-4 border-t border-blue-200">
-                <div className="text-lg font-semibold text-gray-900">
+              <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+                <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Coût total mensuel estimé : {overviewMetrics.totalCost.toLocaleString('fr-FR')} €
                 </div>
               </div>
@@ -249,13 +249,13 @@ const HostingView: React.FC = () => {
           </div>
 
           {/* Filtres et actions */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 flex flex-wrap items-center gap-4">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex flex-wrap items-center gap-4 transition-colors">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Filtres :</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filtres :</label>
               <select
                 value={envTypeFilter}
                 onChange={(e) => setEnvTypeFilter(e.target.value as EnvTypeFilter)}
-                className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               >
                 <option value="all">Tous</option>
                 <option value="production">Production</option>
@@ -265,13 +265,13 @@ const HostingView: React.FC = () => {
               </select>
             </div>
             <div className="flex items-center gap-2 ml-auto">
-              <label className="text-sm font-medium text-gray-700">Vue :</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Vue :</label>
               <button
                 onClick={() => setViewMode('cards')}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   viewMode === 'cards'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-blue-600 dark:bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Cartes
@@ -280,8 +280,8 @@ const HostingView: React.FC = () => {
                 onClick={() => setViewMode('table')}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   viewMode === 'table'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-blue-600 dark:bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Tableau
@@ -292,11 +292,11 @@ const HostingView: React.FC = () => {
           {/* Contenu : Cartes ou Tableau */}
           {solutionLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="text-gray-500">Chargement des environnements...</div>
+              <div className="text-gray-500 dark:text-gray-400">Chargement des environnements...</div>
             </div>
           ) : filteredEnvironments.length === 0 ? (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-              <p className="text-gray-600">Aucun environnement trouvé pour les filtres sélectionnés.</p>
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center transition-colors">
+              <p className="text-gray-600 dark:text-gray-400">Aucun environnement trouvé pour les filtres sélectionnés.</p>
             </div>
           ) : viewMode === 'cards' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -312,8 +312,8 @@ const HostingView: React.FC = () => {
 
       {/* Message si aucune solution sélectionnée */}
       {selectedEditorId && !selectedSolutionId && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <p className="text-blue-800">Veuillez sélectionner une solution pour afficher les environnements.</p>
+        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center transition-colors">
+          <p className="text-blue-800 dark:text-blue-200">Veuillez sélectionner une solution pour afficher les environnements.</p>
         </div>
       )}
     </div>

@@ -113,13 +113,13 @@ const ENTITY_TYPES: EntityType[] = [
 ];
 
 const actionColors: Record<AuditAction, string> = {
-  CREATE: 'bg-green-100 text-green-800',
-  UPDATE: 'bg-blue-100 text-blue-800',
-  DELETE: 'bg-red-100 text-red-800',
-  ARCHIVE: 'bg-orange-100 text-orange-800',
-  RESTORE: 'bg-purple-100 text-purple-800',
-  LOGIN: 'bg-indigo-100 text-indigo-800',
-  LOGOUT: 'bg-gray-100 text-gray-800',
+  CREATE: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+  UPDATE: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+  DELETE: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+  ARCHIVE: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
+  RESTORE: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
+  LOGIN: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
+  LOGOUT: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300',
 };
 
 const AdminAuditLogs: React.FC = () => {
