@@ -47,6 +47,8 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Contrôle d'accès basé sur les rôles (RBAC)
 - ✅ Photos de profil utilisateur (stockage base64 dans MongoDB)
 - ✅ Menu contextuel utilisateur style Google Workspace avec accès rapide aux fonctionnalités
+- ✅ Préférence de thème (light/dark) stockée dans le profil utilisateur
+- ✅ **Multilinguisme** : Support de trois langues (Français, Anglais, Allemand) avec préférence de langue stockée dans le profil utilisateur
 
 #### Administration Modulaire
 - ✅ **Gestion des Permissions** : Configuration des permissions par rôle et opération
@@ -296,6 +298,31 @@ tech-health-platform/
 └── README.md              # Ce fichier
 ```
 
+## Multilinguisme
+
+La plateforme supporte désormais **trois langues** : **Français** (par défaut), **Anglais** et **Allemand**.
+
+### Architecture Multilingue
+
+L'implémentation suit les bonnes pratiques de l'industrie avec une séparation claire entre :
+
+1. **Contenu Statique/UI (Frontend)** :
+   - Géré via `react-i18next` avec des fichiers JSON de traduction
+   - Tous les labels, titres, messages d'erreur et textes d'assistance sont traduits
+   - Fichiers de traduction : `/client/src/i18n/locales/{fr,en,de}/translation.json`
+
+2. **Contenu Dynamique/Base de Données (Backend)** :
+   - Les listes de valeurs (lookups) stockent les traductions directement dans MongoDB
+   - Chaque valeur de lookup contient `label_fr`, `label_en`, `label_de` et `description_fr`, `description_en`, `description_de`
+   - Le resolver GraphQL `getLookups` accepte un paramètre `lang` et retourne les traductions appropriées
+
+### Préférence de Langue
+
+- La préférence de langue de l'utilisateur est stockée dans le profil utilisateur (`User.languagePreference`)
+- La langue est appliquée automatiquement lors de la connexion
+- Les utilisateurs peuvent modifier leur préférence de langue dans le module d'administration
+- Fallback : Si aucune préférence n'est définie, la langue du navigateur est utilisée (ou Français par défaut)
+
 ## Documentation
 
 - **Vue d'ensemble** : Page "About" de l'application
@@ -303,6 +330,7 @@ tech-health-platform/
 - **Pistes d'audit** : Bonnes pratiques et implémentation (onglet "Pistes d'audit" ou `docs/AUDIT_TRAIL_BEST_PRACTICES.md`)
 - **Vue d'hébergement** : Guide d'utilisation de la vue d'hébergement (onglet "Vue d'hébergement" ou `docs/HOSTING_VIEW.md`)
 - **Gestion des brouillons** : Documentation du système de sauvegarde et de reprise des workflows (onglet "Gestion des brouillons" ou `docs/DRAFT_MANAGEMENT.md`)
+- **Gestion des profils** : Documentation de la gestion des profils utilisateur (onglet "Gestion des profils" ou `docs/USER_PROFILE_MANAGEMENT.md`)
 
 ## Développement
 

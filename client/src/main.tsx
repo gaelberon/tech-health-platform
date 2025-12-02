@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css'; // Pour importer les styles TailwindCSS
+import './i18n/config'; // Initialiser i18n
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client'; // Installation précédente
 
 // L'URI standard pour le backend Apollo Server en environnement de développement

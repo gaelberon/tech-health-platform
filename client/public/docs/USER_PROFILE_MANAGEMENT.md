@@ -180,3 +180,4 @@ La gestion des utilisateurs est accessible via :
 2. Vérifier que l'utilisateur n'est pas archivé (si vous essayez de modifier un utilisateur archivé)
 3. Vérifier les permissions dans la console d'administration
 
+

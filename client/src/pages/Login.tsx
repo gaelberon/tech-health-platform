@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { gql, useMutation } from '@apollo/client';
 
 const LOGIN_MUTATION = gql`
@@ -31,6 +32,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -56,7 +58,7 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
       console.error('[LOGIN CLIENT] Erreur:', err);
       console.error('[LOGIN CLIENT] Network error:', err.networkError);
       console.error('[LOGIN CLIENT] GraphQL errors:', err.graphQLErrors);
-      setErrorMsg(err.message || err.networkError?.message || 'Erreur de connexion');
+      setErrorMsg(err.message || err.networkError?.message || t('login.error'));
     },
   });
 
@@ -68,15 +70,15 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 transition-colors duration-200">
-        <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-gray-100">Connexion</h1>
+        <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-gray-100">{t('login.title')}</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center">
-          Accédez au tableau de bord de scoring et au Tech Profiler.
+          {t('login.subtitle')}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Email
+              {t('login.email')}
             </label>
             <input
               type="email"
@@ -89,7 +91,7 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Mot de passe
+              {t('login.password')}
             </label>
             <input
               type="password"
@@ -111,7 +113,7 @@ const Login: React.FC<LoginProps> = ({ onLoggedIn, onAccountSelectionRequired })
             disabled={loading}
             className="w-full py-2.5 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
           >
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? t('common.loading') : t('login.submit')}
           </button>
         </form>
       </div>

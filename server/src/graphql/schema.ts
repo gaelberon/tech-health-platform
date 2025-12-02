@@ -339,6 +339,7 @@ const typeDefs = gql`
         associatedEditorIds: [ID!] # Pour Supervisor (portefeuille d'éditeurs)
         profilePicture: String # Photo de profil (base64 ou URL)
         themePreference: String # Préférence de thème (light/dark)
+        languagePreference: String # Préférence de langue (fr/en/de)
         archived: Boolean
         archivedAt: String
         archivedBy: ID
@@ -360,7 +361,11 @@ const typeDefs = gql`
         label: String!
         label_fr: String
         label_en: String
+        label_de: String
         description: String
+        description_fr: String
+        description_en: String
+        description_de: String
         order: Int
         active: Boolean
     }
@@ -727,6 +732,7 @@ const typeDefs = gql`
 
     # User Inputs
     input CreateUserInput {
+        languagePreference: String # Préférence de langue (fr/en/de)
         email: String!
         password: String!
         firstName: String
@@ -750,6 +756,7 @@ const typeDefs = gql`
         associatedEditorIds: [ID!] # Pour Supervisor (portefeuille)
         profilePicture: String # Photo de profil (base64 ou URL)
         themePreference: String # Préférence de thème (light/dark)
+        languagePreference: String # Préférence de langue (fr/en/de)
         password: String # Optionnel, pour changer le mot de passe
     }
 
@@ -857,7 +864,7 @@ const typeDefs = gql`
         listPageAccessPermissions(role: UserRole!): [PageAccessPermission!]!
         
         # Lookups / Dictionnaires
-        getLookups(keys: [String!]!): [Lookup!]!
+        getLookups(keys: [String!]!, lang: String!): [Lookup!]!
         listAllLookups(category: String): [Lookup!]!
         
         # Users / Administration

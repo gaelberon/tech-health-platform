@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { I18nProvider } from './i18n/I18nProvider';
 import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions';
 import { usePagePermissions } from './hooks/usePagePermissions';
 
@@ -174,9 +175,11 @@ const AppShell: React.FC = () => {
 function App() {
   return (
     <SessionProvider>
-      <ThemeProvider>
-        <AppShell />
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider>
+          <AppShell />
+        </ThemeProvider>
+      </I18nProvider>
     </SessionProvider>
   );
 }

@@ -7,13 +7,50 @@ import { logAudit, extractAuditContext, getObjectDifferences } from '../../servi
 const LookupResolver = {
   Query: {
     // Récupère les lookups par leurs clés (pour le frontend)
-    getLookups: async (_parent: any, { keys }: { keys: string[] }, ctx: any) => {
+    getLookups: async (_parent: any, { keys, lang }: { keys: string[]; lang: string }, ctx: any) => {
       const lookups = await LookupModel.find({ key: { $in: keys } });
-      // S'assurer que les IDs sont bien retournés
-      return lookups.map(lookup => ({
-        ...lookup.toObject(),
-        id: lookup._id.toString(),
-      }));
+      
+      // Normaliser la langue (fr, en, de)
+      const normalizedLang = lang === 'fr' || lang === 'en' || lang === 'de' ? lang : 'fr';
+      
+      // S'assurer que les IDs sont bien retournés et appliquer les traductions
+      return lookups.map(lookup => {
+        const lookupObj = lookup.toObject();
+        
+        // Appliquer les traductions aux valeurs
+        if (lookupObj.values && Array.isArray(lookupObj.values)) {
+          lookupObj.values = lookupObj.values.map((value: any) => {
+            const translatedValue = { ...value };
+            
+            // Utiliser le label traduit si disponible, sinon le label par défaut
+            if (normalizedLang === 'fr' && value.label_fr) {
+              translatedValue.label = value.label_fr;
+            } else if (normalizedLang === 'en' && value.label_en) {
+              translatedValue.label = value.label_en;
+            } else if (normalizedLang === 'de' && value.label_de) {
+              translatedValue.label = value.label_de;
+            }
+            // Sinon, garder le label par défaut
+            
+            // Utiliser la description traduite si disponible
+            if (normalizedLang === 'fr' && value.description_fr) {
+              translatedValue.description = value.description_fr;
+            } else if (normalizedLang === 'en' && value.description_en) {
+              translatedValue.description = value.description_en;
+            } else if (normalizedLang === 'de' && value.description_de) {
+              translatedValue.description = value.description_de;
+            }
+            // Sinon, garder la description par défaut
+            
+            return translatedValue;
+          });
+        }
+        
+        return {
+          ...lookupObj,
+          id: lookup._id.toString(),
+        };
+      });
     },
 
     // Liste tous les lookups (pour l'administration)

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useMutation, useQuery, useLazyQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import AssistanceTooltip from './AssistanceTooltip';
 import { GET_P1_LOOKUPS, LIST_EDITORS_FOR_USER, LIST_COLLECTOR_DRAFTS, GET_COLLECTOR_DRAFT } from '../graphql/queries';
 import { CREATE_SOLUTION_ENVIRONMENT_P1, SAVE_COLLECTOR_DRAFT, DELETE_COLLECTOR_DRAFT } from '../graphql/mutations';
@@ -50,9 +51,15 @@ const CollectorStepper: React.FC = () => {
   const [showDraftSelector, setShowDraftSelector] = useState(false);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useSession();
+  const { i18n } = useTranslation();
 
-  // Chargement des lookups P1
-  const { data: lookupsData, loading: lookupsLoading } = useQuery(GET_P1_LOOKUPS);
+  // Déterminer la langue à utiliser (préférence utilisateur ou langue i18n actuelle)
+  const currentLang = user?.languagePreference || i18n.language || 'fr';
+
+  // Chargement des lookups P1 avec la langue de l'utilisateur
+  const { data: lookupsData, loading: lookupsLoading } = useQuery(GET_P1_LOOKUPS, {
+    variables: { lang: currentLang },
+  });
 
   // Chargement des éditeurs existants
   const { data: editorsData, loading: editorsLoading } = useQuery(LIST_EDITORS_FOR_USER);

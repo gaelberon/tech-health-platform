@@ -1,0 +1,167 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "submit": "Soumettre",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "actions": "Actions"
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "collector": "Tech Profiler",
+    "admin": "Administration",
+    "hosting": "Hébergement",
+    "about": "About"
+  },
+  "login": {
+    "title": "Connexion",
+    "subtitle": "Accédez au tableau de bord de scoring et au Tech Profiler.",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "error": "Erreur de connexion"
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Vue d'ensemble Administrateur",
+      "platformManagement": "Gestion de la Plateforme",
+      "platformManagementDesc": "Accédez à tous les modules d'administration pour gérer les utilisateurs, permissions, listes de valeurs et pistes d'audit.",
+      "fullAccess": "Accès Complet",
+      "fullAccessDesc": "Visualisez tous les éditeurs, solutions et données collectées sur la plateforme.",
+      "quickActions": "Actions Rapides",
+      "quickActionsDesc": "Créez des utilisateurs, configurez les permissions et administrez les données.",
+      "recommendedActions": "Actions Recommandées",
+      "viewData": "Consulter les données collectées via le Tech Profiler",
+      "manageUsers": "Gérer les utilisateurs et leurs permissions",
+      "viewAudit": "Consulter les pistes d'audit pour la traçabilité",
+      "configureLookups": "Configurer les listes de valeurs dynamiques"
+    },
+    "supervisor": {
+      "title": "Tableau de bord Superviseur",
+      "editorsCount": "Vous supervisez {{count}} éditeur dans votre portefeuille.",
+      "editorsCount_plural": "Vous supervisez {{count}} éditeurs dans votre portefeuille.",
+      "loadingEditors": "Chargement des éditeurs...",
+      "criticality": "Criticité",
+      "country": "Pays",
+      "size": "Taille",
+      "solutionsCount": "{{count}} solution",
+      "solutionsCount_plural": "{{count}} solutions"
+    },
+    "entityDirector": {
+      "title": "Tableau de bord Directeur d'Entité",
+      "editorInfo": "Vous êtes associé à l'éditeur suivant :",
+      "noEditor": "Aucun éditeur associé à votre compte."
+    },
+    "editor": {
+      "title": "Tableau de bord Éditeur",
+      "editorInfo": "Vous êtes associé à l'éditeur suivant :",
+      "noEditor": "Aucun éditeur associé à votre compte."
+    }
+  },
+  "collector": {
+    "title": "Formulaire d'Évaluation Technique MVS",
+    "step": "Étape {{current}} sur {{total}}",
+    "editor": {
+      "title": "Informations Éditeur",
+      "useExisting": "Utiliser un éditeur existant",
+      "createNew": "Créer un nouvel éditeur",
+      "name": "Nom de l'Éditeur",
+      "criticality": "Criticité Business",
+      "country": "Pays",
+      "size": "Taille"
+    },
+    "solution": {
+      "title": "Informations Solution",
+      "name": "Nom de la Solution",
+      "type": "Type de Solution",
+      "criticality": "Criticité Produit",
+      "mainUseCase": "Cas d'usage principal",
+      "description": "Description"
+    },
+    "hosting": {
+      "title": "Informations Hébergement",
+      "provider": "Fournisseur",
+      "region": "Région",
+      "tier": "Niveau",
+      "certifications": "Certifications"
+    },
+    "environment": {
+      "title": "Informations Environnement",
+      "dataTypes": "Types de données",
+      "redundancy": "Redondance",
+      "backup": "Sauvegarde",
+      "backupExists": "Sauvegarde existante",
+      "rto": "RTO (heures)",
+      "rpo": "RPO (heures)",
+      "restorationTestFrequency": "Fréquence des tests de restauration"
+    },
+    "security": {
+      "title": "Profil de Sécurité",
+      "auth": "Authentification",
+      "encryptTransit": "Chiffrement en transit",
+      "encryptRest": "Chiffrement au repos",
+      "patching": "Gestion des patchs",
+      "pentestFreq": "Fréquence des tests d'intrusion",
+      "vulnMgmt": "Gestion des vulnérabilités"
+    },
+    "submit": "Soumettre",
+    "saveDraft": "Enregistrer comme brouillon",
+    "submitting": "Soumission en cours...",
+    "success": "Données soumises avec succès !",
+    "error": "Erreur lors de la soumission"
+  },
+  "admin": {
+    "title": "Administration",
+    "users": {
+      "title": "Utilisateurs Actifs",
+      "create": "Créer un utilisateur",
+      "edit": "Modifier l'utilisateur",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "themePreference": "Préférence de thème",
+      "light": "Mode clair",
+      "dark": "Mode sombre"
+    },
+    "lookups": {
+      "title": "Listes de Valeurs",
+      "key": "Clé",
+      "values": "Valeurs",
+      "category": "Catégorie",
+      "entity": "Entité"
+    },
+    "audit": {
+      "title": "Pistes d'Audit",
+      "action": "Action",
+      "entityType": "Type d'entité",
+      "entityId": "ID Entité",
+      "timestamp": "Date/Heure",
+      "user": "Utilisateur"
+    }
+  },
+  "hosting": {
+    "title": "Détails d'Hébergement",
+    "provider": "Fournisseur",
+    "region": "Région",
+    "tier": "Niveau",
+    "certifications": "Certifications",
+    "contact": "Contact"
+  },
+  "about": {
+    "title": "À propos",
+    "documentation": "Documentation"
+  }
+}
+

@@ -5,7 +5,11 @@ export interface ILookupValue {
   label: string; // Valeur affichée (ex: 'Software as a Service', 'Critique')
   label_fr?: string; // Traduction française optionnelle
   label_en?: string; // Traduction anglaise optionnelle
+  label_de?: string; // Traduction allemande optionnelle
   description?: string; // Texte pour l'infobulle (Mode Assistance)
+  description_fr?: string; // Description en français
+  description_en?: string; // Description en anglais
+  description_de?: string; // Description en allemand
   order?: number; // Ordre d'affichage
   active?: boolean; // Permet de désactiver une valeur sans la supprimer
 }
@@ -25,7 +29,11 @@ const LookupValueSchema = new Schema<ILookupValue>(
     label: { type: String, required: true },
     label_fr: { type: String, required: false },
     label_en: { type: String, required: false },
+    label_de: { type: String, required: false },
     description: { type: String, required: false },
+    description_fr: { type: String, required: false },
+    description_en: { type: String, required: false },
+    description_de: { type: String, required: false },
     order: { type: Number, default: 0 },
     active: { type: Boolean, default: true },
   },

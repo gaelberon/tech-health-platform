@@ -1,0 +1,167 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "submit": "Absenden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "close": "Schließen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "actions": "Aktionen"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "collector": "Tech Profiler",
+    "admin": "Administration",
+    "hosting": "Hosting",
+    "about": "Über"
+  },
+  "login": {
+    "title": "Anmeldung",
+    "subtitle": "Zugriff auf das Scoring-Dashboard und den Tech Profiler.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "error": "Anmeldefehler"
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Administrator-Übersicht",
+      "platformManagement": "Plattform-Verwaltung",
+      "platformManagementDesc": "Zugriff auf alle Administrationsmodule zur Verwaltung von Benutzern, Berechtigungen, Wertelisten und Audit-Protokollen.",
+      "fullAccess": "Vollzugriff",
+      "fullAccessDesc": "Alle Herausgeber, Lösungen und auf der Plattform gesammelten Daten anzeigen.",
+      "quickActions": "Schnellaktionen",
+      "quickActionsDesc": "Benutzer erstellen, Berechtigungen konfigurieren und Daten verwalten.",
+      "recommendedActions": "Empfohlene Aktionen",
+      "viewData": "Gesammelte Daten über Tech Profiler anzeigen",
+      "manageUsers": "Benutzer und ihre Berechtigungen verwalten",
+      "viewAudit": "Audit-Protokolle für Nachverfolgbarkeit anzeigen",
+      "configureLookups": "Dynamische Wertelisten konfigurieren"
+    },
+    "supervisor": {
+      "title": "Supervisor-Dashboard",
+      "editorsCount": "Sie betreuen {{count}} Herausgeber in Ihrem Portfolio.",
+      "editorsCount_plural": "Sie betreuen {{count}} Herausgeber in Ihrem Portfolio.",
+      "loadingEditors": "Herausgeber werden geladen...",
+      "criticality": "Kritikalität",
+      "country": "Land",
+      "size": "Größe",
+      "solutionsCount": "{{count}} Lösung",
+      "solutionsCount_plural": "{{count}} Lösungen"
+    },
+    "entityDirector": {
+      "title": "Entitäts-Direktor-Dashboard",
+      "editorInfo": "Sie sind mit dem folgenden Herausgeber verknüpft:",
+      "noEditor": "Kein Herausgeber mit Ihrem Konto verknüpft."
+    },
+    "editor": {
+      "title": "Herausgeber-Dashboard",
+      "editorInfo": "Sie sind mit dem folgenden Herausgeber verknüpft:",
+      "noEditor": "Kein Herausgeber mit Ihrem Konto verknüpft."
+    }
+  },
+  "collector": {
+    "title": "Technisches MVS-Bewertungsformular",
+    "step": "Schritt {{current}} von {{total}}",
+    "editor": {
+      "title": "Herausgeber-Informationen",
+      "useExisting": "Vorhandenen Herausgeber verwenden",
+      "createNew": "Neuen Herausgeber erstellen",
+      "name": "Herausgeber-Name",
+      "criticality": "Geschäftskritikalität",
+      "country": "Land",
+      "size": "Größe"
+    },
+    "solution": {
+      "title": "Lösungs-Informationen",
+      "name": "Lösungs-Name",
+      "type": "Lösungstyp",
+      "criticality": "Produktkritikalität",
+      "mainUseCase": "Hauptanwendungsfall",
+      "description": "Beschreibung"
+    },
+    "hosting": {
+      "title": "Hosting-Informationen",
+      "provider": "Anbieter",
+      "region": "Region",
+      "tier": "Stufe",
+      "certifications": "Zertifizierungen"
+    },
+    "environment": {
+      "title": "Umgebungs-Informationen",
+      "dataTypes": "Datentypen",
+      "redundancy": "Redundanz",
+      "backup": "Backup",
+      "backupExists": "Backup vorhanden",
+      "rto": "RTO (Stunden)",
+      "rpo": "RPO (Stunden)",
+      "restorationTestFrequency": "Häufigkeit der Wiederherstellungstests"
+    },
+    "security": {
+      "title": "Sicherheitsprofil",
+      "auth": "Authentifizierung",
+      "encryptTransit": "Verschlüsselung während der Übertragung",
+      "encryptRest": "Verschlüsselung im Ruhezustand",
+      "patching": "Patch-Verwaltung",
+      "pentestFreq": "Häufigkeit von Penetrationstests",
+      "vulnMgmt": "Schwachstellenverwaltung"
+    },
+    "submit": "Absenden",
+    "saveDraft": "Als Entwurf speichern",
+    "submitting": "Wird übermittelt...",
+    "success": "Daten erfolgreich übermittelt!",
+    "error": "Fehler beim Übermitteln der Daten"
+  },
+  "admin": {
+    "title": "Administration",
+    "users": {
+      "title": "Aktive Benutzer",
+      "create": "Benutzer erstellen",
+      "edit": "Benutzer bearbeiten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "themePreference": "Theme-Präferenz",
+      "light": "Hellmodus",
+      "dark": "Dunkelmodus"
+    },
+    "lookups": {
+      "title": "Wertelisten",
+      "key": "Schlüssel",
+      "values": "Werte",
+      "category": "Kategorie",
+      "entity": "Entität"
+    },
+    "audit": {
+      "title": "Audit-Protokolle",
+      "action": "Aktion",
+      "entityType": "Entitätstyp",
+      "entityId": "Entitäts-ID",
+      "timestamp": "Datum/Uhrzeit",
+      "user": "Benutzer"
+    }
+  },
+  "hosting": {
+    "title": "Hosting-Details",
+    "provider": "Anbieter",
+    "region": "Region",
+    "tier": "Stufe",
+    "certifications": "Zertifizierungen",
+    "contact": "Kontakt"
+  },
+  "about": {
+    "title": "Über",
+    "documentation": "Dokumentation"
+  }
+}
+

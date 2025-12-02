@@ -16,6 +16,7 @@ const LIST_USERS = gql`
       associatedEditorIds
       profilePicture
       themePreference
+      languagePreference
       archived
       archivedAt
       archivedBy
@@ -112,6 +113,7 @@ interface User {
   associatedEditorId?: string;
   associatedEditorIds?: string[];
   themePreference?: 'light' | 'dark';
+  languagePreference?: 'fr' | 'en' | 'de';
   archived?: boolean;
   archivedAt?: string;
   archivedBy?: string;
@@ -198,6 +200,7 @@ const AdminUsers: React.FC = () => {
     phone: '',
     profilePicture: '',
     themePreference: 'light' as 'light' | 'dark',
+    languagePreference: 'fr' as 'fr' | 'en' | 'de',
     role: 'Editor' as UserRole,
     associatedEditorId: '', // Pour Editor/EntityDirector
     associatedEditorIds: [] as string[], // Pour Supervisor
@@ -212,6 +215,7 @@ const AdminUsers: React.FC = () => {
       phone: '',
       profilePicture: '',
       themePreference: 'light',
+      languagePreference: 'fr',
       role: 'Editor',
       associatedEditorId: '',
       associatedEditorIds: [],
@@ -264,6 +268,7 @@ const AdminUsers: React.FC = () => {
         phone: formData.phone || null,
         profilePicture: formData.profilePicture || null,
         themePreference: formData.themePreference || 'light',
+        languagePreference: formData.languagePreference || 'fr',
         role: formData.role,
         password: formData.password || undefined, // Optionnel
       };
@@ -286,11 +291,17 @@ const AdminUsers: React.FC = () => {
       await updateUser({ variables: { input } });
       await refetch();
       
-      // Si l'utilisateur modifié est l'utilisateur connecté, rafraîchir la session pour appliquer le nouveau thème
-      if (editingUser.userId === currentUser?.userId && formData.themePreference !== currentUser?.themePreference) {
-        // Rafraîchir la session pour que le nouveau thème soit appliqué immédiatement
+      // Si l'utilisateur modifié est l'utilisateur connecté, rafraîchir la session pour appliquer le nouveau thème/langue
+      if (editingUser.userId === currentUser?.userId && 
+          (formData.themePreference !== currentUser?.themePreference || 
+           formData.languagePreference !== currentUser?.languagePreference)) {
+        // Rafraîchir la session pour que le nouveau thème/langue soit appliqué immédiatement
         await refetchSession();
-        // Le ThemeContext détectera automatiquement le changement via useEffect
+        // Le ThemeContext et I18nProvider détecteront automatiquement le changement via useEffect
+        if (formData.languagePreference !== currentUser?.languagePreference) {
+          // Recharger la page pour appliquer la nouvelle langue
+          window.location.reload();
+        }
       }
       
       resetForm();
@@ -354,6 +365,7 @@ const AdminUsers: React.FC = () => {
       phone: user.phone || '',
       profilePicture: user.profilePicture || '',
       themePreference: (user.themePreference || 'light') as 'light' | 'dark',
+      languagePreference: (user.languagePreference || 'fr') as 'fr' | 'en' | 'de',
       role: user.role,
       associatedEditorId: user.associatedEditorId || '',
       associatedEditorIds: user.associatedEditorIds || [],
@@ -690,6 +702,50 @@ const AdminUsers: React.FC = () => {
               </div>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Le thème sélectionné sera appliqué lors de la prochaine connexion de l'utilisateur
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Préférence de langue
+              </label>
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="languagePreference"
+                    value="fr"
+                    checked={formData.languagePreference === 'fr'}
+                    onChange={(e) => setFormData({ ...formData, languagePreference: e.target.value as 'fr' | 'en' | 'de' })}
+                    className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Français</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="languagePreference"
+                    value="en"
+                    checked={formData.languagePreference === 'en'}
+                    onChange={(e) => setFormData({ ...formData, languagePreference: e.target.value as 'fr' | 'en' | 'de' })}
+                    className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">English</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="languagePreference"
+                    value="de"
+                    checked={formData.languagePreference === 'de'}
+                    onChange={(e) => setFormData({ ...formData, languagePreference: e.target.value as 'fr' | 'en' | 'de' })}
+                    className="w-4 h-4 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Deutsch</span>
+                </label>
+              </div>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                La langue sélectionnée sera appliquée lors de la prochaine connexion de l'utilisateur
               </p>
             </div>
 

@@ -99,3 +99,4 @@ Décembre 2024
 - L'initialisation automatique garantit que l'application est prête à l'emploi au premier démarrage
 - La page About est extensible : tout nouveau fichier dans `docs/` devient automatiquement un onglet
 
+

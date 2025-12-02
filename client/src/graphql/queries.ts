@@ -4,8 +4,8 @@ import { gql } from '@apollo/client';
 
 // Query pour récupérer les lookups P1 nécessaires au CollectorStepper
 export const GET_P1_LOOKUPS = gql`
-  query GetP1Lookups {
-    businessCriticality: getLookups(keys: ["BUSINESS_CRITICALITY"]) {
+  query GetP1Lookups($lang: String!) {
+    businessCriticality: getLookups(keys: ["BUSINESS_CRITICALITY"], lang: $lang) {
       key
       values {
         code
@@ -15,7 +15,7 @@ export const GET_P1_LOOKUPS = gql`
         active
       }
     }
-    solutionTypes: getLookups(keys: ["SOLUTION_TYPES"]) {
+    solutionTypes: getLookups(keys: ["SOLUTION_TYPES"], lang: $lang) {
       key
       values {
         code
@@ -25,7 +25,7 @@ export const GET_P1_LOOKUPS = gql`
         active
       }
     }
-    dataTypes: getLookups(keys: ["DATA_TYPES"]) {
+    dataTypes: getLookups(keys: ["DATA_TYPES"], lang: $lang) {
       key
       values {
         code
@@ -35,7 +35,7 @@ export const GET_P1_LOOKUPS = gql`
         active
       }
     }
-    redundancyLevels: getLookups(keys: ["REDUNDANCY_LEVELS"]) {
+    redundancyLevels: getLookups(keys: ["REDUNDANCY_LEVELS"], lang: $lang) {
       key
       values {
         code
@@ -45,7 +45,7 @@ export const GET_P1_LOOKUPS = gql`
         active
       }
     }
-    authTypes: getLookups(keys: ["AUTH_TYPES"]) {
+    authTypes: getLookups(keys: ["AUTH_TYPES"], lang: $lang) {
       key
       values {
         code

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSession } from '../session/SessionContext';
 import { TAB_METADATA, hasAccessToTab, type TabType } from '../utils/permissions';
 import { usePagePermissions } from '../hooks/usePagePermissions';
@@ -11,6 +12,7 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavigate }) => {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userButtonRef = useRef<HTMLDivElement>(null);
@@ -29,7 +31,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
     })
     .map((tab) => ({
       id: tab,
-      label: TAB_METADATA[tab].label,
+      label: t(`navigation.${tab}`),
       subtitle: TAB_METADATA[tab].subtitle,
       icon: TAB_METADATA[tab].icon,
     }));

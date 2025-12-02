@@ -1,0 +1,167 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "collector": "Tech Profiler",
+    "admin": "Administration",
+    "hosting": "Hosting",
+    "about": "About"
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Access the scoring dashboard and Tech Profiler.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "error": "Login error"
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Administrator Overview",
+      "platformManagement": "Platform Management",
+      "platformManagementDesc": "Access all administration modules to manage users, permissions, value lists and audit trails.",
+      "fullAccess": "Full Access",
+      "fullAccessDesc": "View all editors, solutions and data collected on the platform.",
+      "quickActions": "Quick Actions",
+      "quickActionsDesc": "Create users, configure permissions and administer data.",
+      "recommendedActions": "Recommended Actions",
+      "viewData": "View collected data via Tech Profiler",
+      "manageUsers": "Manage users and their permissions",
+      "viewAudit": "View audit trails for traceability",
+      "configureLookups": "Configure dynamic value lists"
+    },
+    "supervisor": {
+      "title": "Supervisor Dashboard",
+      "editorsCount": "You supervise {{count}} editor in your portfolio.",
+      "editorsCount_plural": "You supervise {{count}} editors in your portfolio.",
+      "loadingEditors": "Loading editors...",
+      "criticality": "Criticality",
+      "country": "Country",
+      "size": "Size",
+      "solutionsCount": "{{count}} solution",
+      "solutionsCount_plural": "{{count}} solutions"
+    },
+    "entityDirector": {
+      "title": "Entity Director Dashboard",
+      "editorInfo": "You are associated with the following editor:",
+      "noEditor": "No editor associated with your account."
+    },
+    "editor": {
+      "title": "Editor Dashboard",
+      "editorInfo": "You are associated with the following editor:",
+      "noEditor": "No editor associated with your account."
+    }
+  },
+  "collector": {
+    "title": "Technical MVS Assessment Form",
+    "step": "Step {{current}} of {{total}}",
+    "editor": {
+      "title": "Editor Information",
+      "useExisting": "Use an existing editor",
+      "createNew": "Create a new editor",
+      "name": "Editor Name",
+      "criticality": "Business Criticality",
+      "country": "Country",
+      "size": "Size"
+    },
+    "solution": {
+      "title": "Solution Information",
+      "name": "Solution Name",
+      "type": "Solution Type",
+      "criticality": "Product Criticality",
+      "mainUseCase": "Main use case",
+      "description": "Description"
+    },
+    "hosting": {
+      "title": "Hosting Information",
+      "provider": "Provider",
+      "region": "Region",
+      "tier": "Tier",
+      "certifications": "Certifications"
+    },
+    "environment": {
+      "title": "Environment Information",
+      "dataTypes": "Data types",
+      "redundancy": "Redundancy",
+      "backup": "Backup",
+      "backupExists": "Backup exists",
+      "rto": "RTO (hours)",
+      "rpo": "RPO (hours)",
+      "restorationTestFrequency": "Restoration test frequency"
+    },
+    "security": {
+      "title": "Security Profile",
+      "auth": "Authentication",
+      "encryptTransit": "Encryption in transit",
+      "encryptRest": "Encryption at rest",
+      "patching": "Patch management",
+      "pentestFreq": "Penetration test frequency",
+      "vulnMgmt": "Vulnerability management"
+    },
+    "submit": "Submit",
+    "saveDraft": "Save as draft",
+    "submitting": "Submitting...",
+    "success": "Data submitted successfully!",
+    "error": "Error submitting data"
+  },
+  "admin": {
+    "title": "Administration",
+    "users": {
+      "title": "Active Users",
+      "create": "Create user",
+      "edit": "Edit user",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "role": "Role",
+      "themePreference": "Theme preference",
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "lookups": {
+      "title": "Value Lists",
+      "key": "Key",
+      "values": "Values",
+      "category": "Category",
+      "entity": "Entity"
+    },
+    "audit": {
+      "title": "Audit Trails",
+      "action": "Action",
+      "entityType": "Entity type",
+      "entityId": "Entity ID",
+      "timestamp": "Date/Time",
+      "user": "User"
+    }
+  },
+  "hosting": {
+    "title": "Hosting Details",
+    "provider": "Provider",
+    "region": "Region",
+    "tier": "Tier",
+    "certifications": "Certifications",
+    "contact": "Contact"
+  },
+  "about": {
+    "title": "About",
+    "documentation": "Documentation"
+  }
+}
+

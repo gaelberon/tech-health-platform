@@ -11,6 +11,7 @@ const ME_QUERY = gql`
       lastName
       profilePicture
       themePreference
+      languagePreference
       role
       associatedEditorId
       associatedEditorIds
@@ -31,6 +32,7 @@ export type SessionUser = {
   lastName?: string | null;
   profilePicture?: string | null;
   themePreference?: 'light' | 'dark' | null;
+  languagePreference?: 'fr' | 'en' | 'de' | null;
   role: UserRole;
   associatedEditorId?: string | null;
   associatedEditorIds?: string[] | null;

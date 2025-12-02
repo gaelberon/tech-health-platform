@@ -196,3 +196,4 @@ L'indicateur de santé est calculé automatiquement selon 3 critères :
 - Alertes sur environnements critiques
 - Comparaison entre solutions
 
+
