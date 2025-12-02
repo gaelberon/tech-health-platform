@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Le système de gestion des brouillons permet de sauvegarder automatiquement les données saisies dans le workflow de collecte (Tech Profiler) et de reprendre un workflow interrompu ou ayant échoué.
+Le système de gestion des brouillons permet de sauvegarder automatiquement les données saisies dans le workflow de collecte (Bilan Tech Instantané) et de reprendre un workflow interrompu ou ayant échoué.
 
 ## Fonctionnalités
 
@@ -59,7 +59,7 @@ En cas d'échec lors de la soumission :
 
 ```typescript
 {
-  draftId: string;           // Identifiant unique
+  draftId: string;           // Identifiant unique (format: draft-{ObjectId})
   userId: string;            // Utilisateur propriétaire
   status: 'draft' | 'in_progress' | 'failed' | 'completed';
   step: number;              // Étape actuelle (1-4)
@@ -70,6 +70,13 @@ En cas d'échec lors de la soumission :
   updatedAt: Date;
 }
 ```
+
+### Génération des Identifiants
+
+Le `draftId` est généré à partir d'un **ObjectId MongoDB** pour garantir l'unicité et éviter les collisions lors de sauvegardes simultanées :
+- **Format** : `draft-{ObjectId}` (ex: `draft-507f1f77bcf86cd799439011`)
+- **Avantage** : Garantit l'unicité même en cas de requêtes simultanées
+- **Protection** : Mécanisme de retry en cas de collision rare (moins de 0.01% de probabilité)
 
 ## API GraphQL
 

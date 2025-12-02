@@ -30,11 +30,12 @@ Le scoring est calculé par un service backend (`Scoring Engine`) qui génère u
 
 L'application supporte plusieurs interfaces utilisateur :
 
-- **Collector UI** : Formulaire guidé (stepper) utilisant la *Progressive Disclosure* pour une collecte progressive des données (priorités P1 à P5)
+- **Bilan Tech Instantané** (anciennement "Tech Profiler") : Formulaire guidé multi-étapes utilisant la *Progressive Disclosure* pour une collecte progressive des données critiques (priorités P1). Permet de créer un snapshot initial de la santé technique d'une solution.
 - **Vue d'Hébergement** : Visualisation et analyse de l'infrastructure d'hébergement des solutions (environnements, redondance, backup, sécurité, coûts)
 - **Portfolio View** : Permet la comparaison, le filtrage et l'affichage de *heatmaps* (maturité / risque / coûts) pour toutes les solutions du groupe
 - **Technical DD View** : Vue agrégée de tous les champs pertinents pour l'évaluation pré-acquisition
 - **Administration** : Module d'administration modulaire pour gérer les utilisateurs, permissions, listes de valeurs et pistes d'audit
+- **Mon Profil** : Page permettant à chaque utilisateur de modifier son propre profil (informations personnelles, préférences de thème et de langue)
 
 ### 3. Fonctionnalités Récentes
 
@@ -47,6 +48,9 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Photos de profil utilisateur (stockage base64 dans MongoDB)
 - ✅ Menu contextuel utilisateur style Google Workspace avec accès rapide aux fonctionnalités
 - ✅ **Préférence de thème** : Gestion du thème light/dark au niveau du profil utilisateur (stockée en base de données, appliquée automatiquement à la connexion)
+- ✅ **Préférence de langue** : Gestion de la langue d'interface (FR, EN, DE) au niveau du profil utilisateur
+- ✅ **Page "Mon Profil"** : Permet à chaque utilisateur de modifier son propre profil (nom, prénom, téléphone, photo, thème, langue)
+- ✅ **Gestion des Editors par Supervisors** : Les Supervisors peuvent modifier les profils des utilisateurs Editor associés à leurs éditeurs
 
 #### Administration Modulaire
 - ✅ **Gestion des Permissions** : Configuration des permissions par rôle et opération
@@ -66,11 +70,22 @@ L'application supporte plusieurs interfaces utilisateur :
 - ✅ Organisation hiérarchique : Lookups organisés par entité et criticité (P1, P2, etc.)
 - ✅ Recherche avancée : Recherche par nom de formulaire, clé technique, description
 
+#### Multilinguisme (i18n)
+- ✅ Support de 3 langues : Français (FR), Anglais (EN), Allemand (DE)
+- ✅ Traduction de l'interface utilisateur via `react-i18next`
+- ✅ Traduction des listes de valeurs (lookups) stockées en base de données
+- ✅ Préférence de langue stockée dans le profil utilisateur
+- ✅ Détection automatique de la langue du navigateur
+- ✅ Script de traduction automatique pour les lookups existants
+
 #### Page About et Documentation Interactive
 - ✅ Système d'onglets pour organiser la documentation
 - ✅ **Vue d'ensemble** : Affichage du README.md avec rendu Markdown complet
 - ✅ **Données collectées** : Documentation interactive des 13 entités avec navigation et tableaux détaillés
 - ✅ **Pistes d'audit** : Affichage de la documentation des bonnes pratiques
+- ✅ **Vue d'hébergement** : Documentation de la vue d'hébergement
+- ✅ **Gestion des profils** : Documentation complète sur la gestion des profils utilisateur
+- ✅ **Workflow de collecte** : Documentation détaillée du processus de collecte des données P1
 - ✅ Extension automatique : Tout nouveau fichier dans `docs/` devient automatiquement un onglet
 - ✅ Rendu Markdown optimisé avec composants personnalisés (titres, tableaux, code inline/blocs)
 
@@ -284,7 +299,8 @@ tech-health-platform/
 - **Données collectées** : Documentation complète des entités et champs (onglet "Données collectées")
 - **Pistes d'audit** : Bonnes pratiques et implémentation (onglet "Pistes d'audit" ou `docs/AUDIT_TRAIL_BEST_PRACTICES.md`)
 - **Vue d'hébergement** : Guide d'utilisation de la vue d'hébergement (onglet "Vue d'hébergement" ou `docs/HOSTING_VIEW.md`)
-- **Gestion des profils** : Documentation complète sur la gestion des profils utilisateur, photos de profil, préférences de thème (onglet "Gestion des profils" ou `docs/USER_PROFILE_MANAGEMENT.md`)
+- **Gestion des profils** : Documentation complète sur la gestion des profils utilisateur, photos de profil, préférences de thème et langue (onglet "Gestion des profils" ou `docs/USER_PROFILE_MANAGEMENT.md`)
+- **Workflow de collecte** : Documentation détaillée du processus de collecte des données P1 via le Bilan Tech Instantané (onglet "Workflow de collecte" ou `docs/COLLECTOR_WORKFLOW.md`)
 
 ## Développement
 

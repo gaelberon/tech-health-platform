@@ -40,14 +40,52 @@ La plateforme supporte deux thèmes visuels :
 - **Stockage** : La préférence de thème est stockée dans le profil utilisateur en base de données
 - **Priorité** : La préférence utilisateur a la priorité absolue sur toute autre configuration
 - **Application** : Le thème est appliqué automatiquement lors de la connexion
-- **Gestion** : Modifiable uniquement via la console d'administration (section Utilisateurs)
+- **Gestion** : Modifiable via la page "Mon Profil" ou la console d'administration (section Utilisateurs)
+- **Application immédiate** : Si vous modifiez votre propre préférence, le thème est appliqué immédiatement sans rechargement
+
+### 4. Préférence de Langue
+
+#### Fonctionnalité
+La plateforme supporte trois langues :
+- **Français (FR)** : Langue par défaut
+- **Anglais (EN)** : Traduction complète de l'interface
+- **Allemand (DE)** : Traduction complète de l'interface
+
+#### Configuration
+- **Stockage** : La préférence de langue est stockée dans le profil utilisateur en base de données
+- **Application** : La langue est appliquée après rechargement de la page
+- **Gestion** : Modifiable via la page "Mon Profil" ou la console d'administration (section Utilisateurs)
+- **Détection automatique** : Si aucune préférence n'est définie, la langue du navigateur est utilisée (avec fallback sur FR)
 
 #### Technique
 - **Framework** : Tailwind CSS v4 avec variante `dark:` basée sur la classe `dark` sur l'élément `<html>`
 - **Configuration** : Déclaration explicite `@custom-variant dark` requise pour Tailwind v4
 - **Persistance** : Synchronisation avec `localStorage` pour éviter le flash de thème au chargement
 
-### 4. Associations et Permissions
+### 5. Page "Mon Profil"
+
+#### Fonctionnalité
+Chaque utilisateur peut modifier son propre profil via la page "Mon Profil", accessible depuis le menu utilisateur (icône en haut à droite).
+
+#### Informations Modifiables
+- **Prénom et Nom** : Informations personnelles
+- **Téléphone** : Numéro de téléphone
+- **Photo de profil** : Upload d'une nouvelle image (base64)
+- **Préférence de thème** : Mode clair ou sombre (appliqué immédiatement)
+- **Préférence de langue** : Français, Anglais, ou Allemand (appliquée après rechargement)
+
+#### Restrictions
+- **Email** : Ne peut pas être modifié (réservé aux administrateurs)
+- **Rôle** : Ne peut pas être modifié par l'utilisateur lui-même (réservé aux administrateurs)
+- **Éditeur associé** : Ne peut pas être modifié par l'utilisateur lui-même (réservé aux administrateurs)
+
+#### Gestion des Editors par Supervisors
+Les utilisateurs avec le rôle **Supervisor** ont des fonctionnalités supplémentaires :
+- **Voir les utilisateurs Editor** : Affichage de tous les utilisateurs Editor associés aux éditeurs gérés par le Supervisor
+- **Modifier les Editors** : Possibilité de modifier les informations des utilisateurs Editor (nom, prénom, téléphone, photo, thème, langue, éditeur associé)
+- **Restriction** : Un Supervisor ne peut pas modifier le rôle d'un Editor
+
+### 6. Associations et Permissions
 
 #### Éditeurs Associés
 - **Supervisor** : Peut être associé à plusieurs éditeurs (`associatedEditorIds`)
@@ -57,7 +95,7 @@ La plateforme supporte deux thèmes visuels :
 
 #### Droits d'Accès aux Pages
 - Configuration granulaire des pages accessibles par rôle
-- Pages disponibles : Dashboard, Tech Profiler, Hosting, About, Administration
+- Pages disponibles : Dashboard, Bilan Tech Instantané, Hosting, About, Administration
 - Gestion via la console d'administration (section Permissions > Droits d'accès aux pages)
 
 ### 5. Multi-Comptes par Email
@@ -73,6 +111,32 @@ Lors de la connexion, si plusieurs comptes sont disponibles pour un email :
 - Présentation des comptes disponibles avec leur rôle
 - Sélection du compte souhaité
 - Si un seul compte : redirection directe vers le dashboard
+
+## Gestion du Profil
+
+### Accès à "Mon Profil"
+La page "Mon Profil" est accessible via :
+- **Menu utilisateur** (icône en haut à droite) > **"Mon Profil"** ou **"Gérer le compte"**
+
+### Actions Disponibles dans "Mon Profil"
+
+#### Modification de Votre Profil
+1. Cliquer sur **"Mon Profil"** dans le menu utilisateur
+2. Modifier les champs souhaités :
+   - Prénom et Nom
+   - Téléphone
+   - Photo de profil (upload base64)
+   - Préférence de thème (Light/Dark)
+   - Préférence de langue (FR/EN/DE)
+3. Cliquer sur **"Mettre à jour"**
+4. **Note** : Le thème est appliqué immédiatement, la langue nécessite un rechargement de la page
+
+#### Gestion des Editors (Supervisors uniquement)
+1. Dans la page "Mon Profil", section **"Gestion des Utilisateurs Éditeurs"**
+2. Cliquer sur **"Afficher les utilisateurs éditeurs"**
+3. Sélectionner un utilisateur Editor dans la liste
+4. Modifier ses informations
+5. Cliquer sur **"Mettre à jour l'utilisateur éditeur"**
 
 ## Gestion via la Console d'Administration
 
@@ -91,6 +155,7 @@ La gestion des utilisateurs est accessible via :
    - Rôle (requis)
    - Photo de profil (optionnel, upload base64)
    - Préférence de thème (Light/Dark, par défaut : Light)
+   - Préférence de langue (FR/EN/DE, par défaut : FR)
    - Éditeurs associés (si Supervisor, EntityDirector, ou Editor)
    - Droits d'accès aux pages
 3. Cliquer sur **"Créer"**
@@ -123,6 +188,12 @@ La gestion des utilisateurs est accessible via :
 - Chaque utilisateur peut avoir sa propre préférence
 - Le thème est appliqué immédiatement après modification (si vous modifiez votre propre profil)
 
+### Préférence de Langue
+- La préférence est personnelle et stockée dans le profil
+- Chaque utilisateur peut avoir sa propre préférence
+- La langue est appliquée après rechargement de la page
+- Les listes de valeurs (lookups) sont également traduites selon la langue sélectionnée
+
 ### Sécurité
 - Seuls les **Admin** peuvent gérer les utilisateurs
 - Les mots de passe ne sont jamais affichés ni modifiables via l'interface
@@ -140,6 +211,7 @@ La gestion des utilisateurs est accessible via :
   lastName?: string;
   profilePicture?: string;      // Base64 encodé
   themePreference?: 'light' | 'dark';  // Préférence de thème
+  languagePreference?: 'fr' | 'en' | 'de';  // Préférence de langue
   associatedEditorId?: string; // Pour EntityDirector/Editor
   associatedEditorIds?: string[]; // Pour Supervisor
   archived: boolean;           // Soft delete
@@ -157,8 +229,10 @@ La gestion des utilisateurs est accessible via :
   - `restoreUser` - Restauration d'un utilisateur archivé
 
 ### Frontend
-- **SessionContext** : Gestion de la session utilisateur et récupération des données
+- **SessionContext** : Gestion de la session utilisateur et récupération des données (inclut `phone` et `languagePreference`)
 - **ThemeContext** : Application du thème basé sur la préférence utilisateur
+- **I18nProvider** : Gestion du multilinguisme basé sur la préférence de langue utilisateur
+- **MyProfile** : Composant de la page "Mon Profil" permettant aux utilisateurs de modifier leur propre profil
 - **AdminUsers** : Composant d'administration des utilisateurs
 
 ## Dépannage
