@@ -15,14 +15,19 @@
     "close": "Fermer",
     "search": "Rechercher",
     "filter": "Filtrer",
-    "actions": "Actions"
+    "actions": "Actions",
+    "yes": "Oui",
+    "no": "Non",
+    "confirm": "Confirmer",
+    "required": "Requis",
+    "optional": "Optionnel"
   },
   "navigation": {
     "dashboard": "Tableau de bord",
-    "collector": "Tech Profiler",
+    "collector": "Bilan Tech Instantané",
     "admin": "Administration",
     "hosting": "Hébergement",
-    "about": "About"
+    "about": "À propos"
   },
   "login": {
     "title": "Connexion",
@@ -32,7 +37,23 @@
     "submit": "Se connecter",
     "error": "Erreur de connexion"
   },
+  "accountSelection": {
+    "title": "Sélectionner un compte",
+    "subtitle": "Vous avez plusieurs comptes associés à cet email. Veuillez choisir celui que vous souhaitez utiliser.",
+    "connecting": "Connexion en cours...",
+    "associatedEditor": "Éditeur associé",
+    "id": "ID"
+  },
+  "userMenu": {
+    "manageAccount": "Gérer le compte",
+    "inProgress": "(en cours)",
+    "adminConsole": "Console d'administration",
+    "myProfile": "Mon profil",
+    "logout": "Déconnexion"
+  },
   "dashboard": {
+    "welcome": "Bienvenue, {{name}} !",
+    "role": "Rôle",
     "admin": {
       "title": "Vue d'ensemble Administrateur",
       "platformManagement": "Gestion de la Plateforme",
@@ -42,7 +63,7 @@
       "quickActions": "Actions Rapides",
       "quickActionsDesc": "Créez des utilisateurs, configurez les permissions et administrez les données.",
       "recommendedActions": "Actions Recommandées",
-      "viewData": "Consulter les données collectées via le Tech Profiler",
+      "viewData": "Consulter les données collectées via le Bilan Tech Instantané",
       "manageUsers": "Gérer les utilisateurs et leurs permissions",
       "viewAudit": "Consulter les pistes d'audit pour la traçabilité",
       "configureLookups": "Configurer les listes de valeurs dynamiques"
@@ -52,65 +73,118 @@
       "editorsCount": "Vous supervisez {{count}} éditeur dans votre portefeuille.",
       "editorsCount_plural": "Vous supervisez {{count}} éditeurs dans votre portefeuille.",
       "loadingEditors": "Chargement des éditeurs...",
+      "noEditors": "Aucun éditeur assigné à votre portefeuille.",
       "criticality": "Criticité",
       "country": "Pays",
       "size": "Taille",
       "solutionsCount": "{{count}} solution",
-      "solutionsCount_plural": "{{count}} solutions"
+      "solutionsCount_plural": "{{count}} solutions",
+      "availableActions": "Actions Disponibles",
+      "accessProfiler": "Accéder au Bilan Tech Instantané pour collecter de nouvelles données",
+      "viewHosting": "Visualiser les données d'hébergement de vos éditeurs",
+      "viewScores": "Consulter les scores et métriques de vos éditeurs"
     },
     "entityDirector": {
       "title": "Tableau de bord Directeur d'Entité",
       "editorInfo": "Vous êtes associé à l'éditeur suivant :",
-      "noEditor": "Aucun éditeur associé à votre compte."
+      "noEditor": "Aucun éditeur associé à votre compte.",
+      "businessCriticality": "Criticité métier",
+      "availableActions": "Actions Disponibles",
+      "useProfiler": "Utiliser le Bilan Tech Instantané pour mettre à jour vos données",
+      "viewHosting": "Consulter les informations d'hébergement",
+      "viewScores": "Visualiser vos scores de santé technique",
+      "contactAdmin": "Aucun éditeur associé à votre compte. Contactez un administrateur pour être assigné à un éditeur."
     },
     "editor": {
       "title": "Tableau de bord Éditeur",
       "editorInfo": "Vous êtes associé à l'éditeur suivant :",
-      "noEditor": "Aucun éditeur associé à votre compte."
-    }
+      "noEditor": "Aucun éditeur associé à votre compte.",
+      "businessCriticality": "Criticité métier",
+      "availableActions": "Actions Disponibles",
+      "useProfiler": "Utiliser le Bilan Tech Instantané pour mettre à jour vos données",
+      "viewHosting": "Consulter les informations d'hébergement",
+      "viewScores": "Visualiser vos scores de santé technique",
+      "contactAdmin": "Aucun éditeur associé à votre compte. Contactez un administrateur pour être assigné à un éditeur."
+    },
+    "unknownRole": "Rôle non reconnu."
   },
   "collector": {
     "title": "Formulaire d'Évaluation Technique MVS",
     "step": "Étape {{current}} sur {{total}}",
+    "loadingLookups": "Chargement des listes de valeurs...",
+    "resumeDraft": "Reprendre un brouillon",
+    "newForm": "Nouveau formulaire",
+    "draftStatus": {
+      "draft": "Brouillon",
+      "in_progress": "En cours",
+      "failed": "Échec",
+      "completed": "Terminé"
+    },
+    "lastSaved": "Dernière sauvegarde",
     "editor": {
       "title": "Informations Éditeur",
       "useExisting": "Utiliser un éditeur existant",
       "createNew": "Créer un nouvel éditeur",
       "name": "Nom de l'Éditeur",
+      "nameRequired": "Le nom de l'éditeur est requis",
       "criticality": "Criticité Business",
+      "criticalityLabel": "Criticité Métier",
+      "businessCriticalityRequired": "La criticité métier est requise",
+      "selectEditor": "Sélectionner un éditeur...",
+      "noEditorAvailable": "Aucun éditeur disponible. Créez-en un nouveau.",
+      "editorLabel": "Éditeur",
       "country": "Pays",
       "size": "Taille"
     },
     "solution": {
       "title": "Informations Solution",
       "name": "Nom de la Solution",
+      "nameRequired": "Le nom de la solution est requis",
       "type": "Type de Solution",
+      "typeLabel": "Mode Logiciel (Type)",
+      "typeRequired": "Le type de solution est requis",
       "criticality": "Criticité Produit",
+      "criticalityRequired": "La criticité produit est requise",
       "mainUseCase": "Cas d'usage principal",
-      "description": "Description"
+      "mainUseCaseRequired": "Le cas d'usage principal est requis",
+      "description": "Description",
+      "step1Title": "1. Identification de la Solution (P1)"
     },
     "hosting": {
       "title": "Informations Hébergement",
       "provider": "Fournisseur",
+      "providerLabel": "Fournisseur Cloud/Hébergeur",
       "region": "Région",
+      "regionLabel": "Région d'Hébergement",
       "tier": "Niveau",
-      "certifications": "Certifications"
+      "tierLabel": "Type d'infrastructure",
+      "certifications": "Certifications",
+      "step2Title": "2. Hébergement & Résilience (P1)"
     },
     "environment": {
       "title": "Informations Environnement",
       "dataTypes": "Types de données",
+      "dataTypesLabel": "Types de Données Hébergées (P1)",
+      "dataTypesRequired": "Au moins un type de données doit être sélectionné",
+      "dataTypesHint": "Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs types",
       "redundancy": "Redondance",
+      "redundancyLabel": "Niveau de Redondance",
+      "redundancyRequired": "Le niveau de redondance est requis",
       "backup": "Sauvegarde",
-      "backupExists": "Sauvegarde existante",
-      "rto": "RTO (heures)",
-      "rpo": "RPO (heures)",
-      "restorationTestFrequency": "Fréquence des tests de restauration"
+      "backupPolicy": "Politique de Sauvegarde (Backup)",
+      "backupExists": "Existe-t-elle ? (P1)",
+      "rto": "RTO (Heures)",
+      "rpo": "RPO (Heures)",
+      "restorationTestFrequency": "Fréquence de test de restauration"
     },
     "security": {
       "title": "Profil de Sécurité",
+      "step3Title": "3. Sécurité Minimale (P1)",
       "auth": "Authentification",
-      "encryptTransit": "Chiffrement en transit",
-      "encryptRest": "Chiffrement au repos",
+      "authRequired": "La méthode d'authentification est requise",
+      "encryption": "Chiffrement des Données (P1)",
+      "encryptTransit": "Chiffrement en Transit (ex: HTTPS) ?",
+      "encryptRest": "Chiffrement au Repos (base de données/disque) ?",
       "patching": "Gestion des patchs",
       "pentestFreq": "Fréquence des tests d'intrusion",
       "vulnMgmt": "Gestion des vulnérabilités"
@@ -119,21 +193,114 @@
     "saveDraft": "Enregistrer comme brouillon",
     "submitting": "Soumission en cours...",
     "success": "Données soumises avec succès !",
-    "error": "Erreur lors de la soumission"
+    "error": "Erreur lors de la soumission",
+    "autoSaveError": "Erreur lors de la sauvegarde automatique",
+    "select": "Sélectionner...",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "autoSaving": "💾 Sauvegarde automatique en cours...",
+    "draftsAvailable": "{{count}} brouillon disponible",
+    "draftsAvailable_plural": "{{count}} brouillons disponibles",
+    "draftActive": "(Brouillon actif sauvegardé automatiquement)",
+    "viewDrafts": "Voir les brouillons",
+    "viewMyDrafts": "Voir mes brouillons",
+    "draftsSaved": "Vous avez {{count}} brouillon enregistré. Souhaitez-vous reprendre un brouillon existant ?",
+    "draftsSaved_plural": "Vous avez {{count}} brouillons enregistrés. Souhaitez-vous reprendre un brouillon existant ?",
+    "errorLabel": "Erreur",
+    "deleteDraftConfirm": "Êtes-vous sûr de vouloir supprimer ce brouillon ?",
+    "loadDraftError": "Erreur lors du chargement du brouillon",
+    "deleteDraftError": "Erreur lors de la suppression",
+    "hide": "Masquer",
+    "showMore": "Voir plus de détails P2/P3 (Certifications, Tech Stack)",
+    "p2Fields": "Champs P2 : Architecture et Certifications"
   },
   "admin": {
     "title": "Administration",
+    "moduleTitle": "Module d'Administration",
+    "moduleDesc": "Gérez les permissions, les listes de valeurs, les utilisateurs et les paramètres de la plateforme",
+    "accessDenied": "Accès refusé",
+    "adminRequired": "Vous devez être administrateur pour accéder à cette page.",
+    "currentRole": "Rôle actuel",
+    "notAuthenticated": "Non authentifié",
+    "sections": {
+      "permissions": {
+        "label": "Permissions",
+        "icon": "🔐",
+        "description": "Gérer les permissions par rôle"
+      },
+      "lookups": {
+        "label": "Listes de Valeurs",
+        "icon": "📋",
+        "description": "Administrer les menus déroulants"
+      },
+      "users": {
+        "label": "Utilisateurs",
+        "icon": "👥",
+        "description": "Gérer les utilisateurs et leurs accès"
+      },
+      "data": {
+        "label": "Gestion des Données",
+        "icon": "💾",
+        "description": "Créer et modifier les éditeurs et données de test"
+      },
+      "audit": {
+        "label": "Pistes d'Audit",
+        "icon": "📊",
+        "description": "Consulter les logs d'audit et l'historique des modifications"
+      },
+      "settings": {
+        "label": "Paramètres",
+        "icon": "⚙️",
+        "description": "Configuration générale (à venir)",
+        "comingSoon": "Cette section sera disponible prochainement."
+      }
+    },
     "users": {
-      "title": "Utilisateurs Actifs",
+      "title": "Gestion des Utilisateurs",
+      "activeUsers": "{{count}} utilisateur actif",
+      "activeUsers_plural": "{{count}} utilisateurs actifs",
+      "archivedUsers": "{{count}} archivé",
+      "archivedUsers_plural": "{{count}} archivés",
+      "showArchived": "Afficher les archivés",
+      "newUser": "+ Nouvel utilisateur",
+      "loading": "Chargement des utilisateurs...",
       "create": "Créer un utilisateur",
       "edit": "Modifier l'utilisateur",
       "firstName": "Prénom",
       "lastName": "Nom",
       "email": "Email",
+      "phone": "Téléphone",
       "role": "Rôle",
+      "roleRequired": "Le rôle est requis",
       "themePreference": "Préférence de thème",
       "light": "Mode clair",
-      "dark": "Mode sombre"
+      "dark": "Mode sombre",
+      "themeDesc": "Le thème sélectionné sera appliqué lors de la prochaine connexion de l'utilisateur",
+      "languagePreference": "Préférence de langue",
+      "languageDesc": "La langue sélectionnée sera appliquée lors de la prochaine connexion de l'utilisateur",
+      "french": "Français",
+      "english": "English",
+      "german": "Deutsch",
+      "associatedEditor": "Éditeur associé",
+      "associatedEditors": "Éditeurs associés",
+      "password": "Mot de passe",
+      "passwordChange": "Laisser vide pour ne pas changer",
+      "createSuccess": "Utilisateur créé avec succès",
+      "updateSuccess": "Utilisateur modifié avec succès",
+      "createError": "Erreur lors de la création",
+      "updateError": "Erreur lors de la modification",
+      "pageAccess": "Droits d'accès aux pages",
+      "pageAccessDesc": "Configurez les pages accessibles pour chaque rôle",
+      "showPermissions": "Afficher les permissions",
+      "hidePermissions": "Masquer les permissions",
+      "selectRole": "Sélectionner un rôle",
+      "page": "Page",
+      "status": "Statut",
+      "action": "Action",
+      "allowed": "Autorisé",
+      "blocked": "Bloqué",
+      "toggle": "Basculer",
+      "loadingPermissions": "Chargement des permissions..."
     },
     "lookups": {
       "title": "Listes de Valeurs",
@@ -162,6 +329,20 @@
   "about": {
     "title": "À propos",
     "documentation": "Documentation"
+  },
+  "app": {
+    "sessionLoading": "Chargement de la session...",
+    "accessDenied": "Accès refusé",
+    "noPermission": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
+    "adminOnly": "Seuls les administrateurs peuvent accéder à cette page.",
+    "collectorTitle": "Formulaire d'Évaluation Technique MVS",
+    "collectorSubtitle": "Collecte des données de Priorité 1 (P1) pour l'évaluation technique",
+    "footer": "Centre d'Opérations Techniques (COT) - Tech Health Platform"
+  },
+  "roles": {
+    "Admin": "Administrateur",
+    "Supervisor": "Superviseur",
+    "EntityDirector": "Directeur d'Entité",
+    "Editor": "Éditeur"
   }
 }
-

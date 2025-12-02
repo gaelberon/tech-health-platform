@@ -15,7 +15,12 @@
     "close": "Schließen",
     "search": "Suchen",
     "filter": "Filtern",
-    "actions": "Aktionen"
+    "actions": "Aktionen",
+    "yes": "Ja",
+    "no": "Nein",
+    "confirm": "Bestätigen",
+    "required": "Erforderlich",
+    "optional": "Optional"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -32,7 +37,23 @@
     "submit": "Anmelden",
     "error": "Anmeldefehler"
   },
+  "accountSelection": {
+    "title": "Konto auswählen",
+    "subtitle": "Sie haben mehrere Konten, die mit dieser E-Mail verknüpft sind. Bitte wählen Sie das gewünschte Konto aus.",
+    "connecting": "Verbindung wird hergestellt...",
+    "associatedEditor": "Verknüpfter Herausgeber",
+    "id": "ID"
+  },
+  "userMenu": {
+    "manageAccount": "Konto verwalten",
+    "inProgress": "(in Bearbeitung)",
+    "adminConsole": "Administrationskonsole",
+    "myProfile": "Mein Profil",
+    "logout": "Abmelden"
+  },
   "dashboard": {
+    "welcome": "Willkommen, {{name}}!",
+    "role": "Rolle",
     "admin": {
       "title": "Administrator-Übersicht",
       "platformManagement": "Plattform-Verwaltung",
@@ -52,31 +73,60 @@
       "editorsCount": "Sie betreuen {{count}} Herausgeber in Ihrem Portfolio.",
       "editorsCount_plural": "Sie betreuen {{count}} Herausgeber in Ihrem Portfolio.",
       "loadingEditors": "Herausgeber werden geladen...",
+      "noEditors": "Kein Herausgeber Ihrem Portfolio zugewiesen.",
       "criticality": "Kritikalität",
       "country": "Land",
       "size": "Größe",
       "solutionsCount": "{{count}} Lösung",
-      "solutionsCount_plural": "{{count}} Lösungen"
+      "solutionsCount_plural": "{{count}} Lösungen",
+      "availableActions": "Verfügbare Aktionen",
+      "accessProfiler": "Auf Tech Profiler zugreifen, um neue Daten zu sammeln",
+      "viewHosting": "Hosting-Daten Ihrer Herausgeber anzeigen",
+      "viewScores": "Bewertungen und Metriken Ihrer Herausgeber anzeigen"
     },
     "entityDirector": {
       "title": "Entitäts-Direktor-Dashboard",
       "editorInfo": "Sie sind mit dem folgenden Herausgeber verknüpft:",
-      "noEditor": "Kein Herausgeber mit Ihrem Konto verknüpft."
+      "noEditor": "Kein Herausgeber mit Ihrem Konto verknüpft.",
+      "businessCriticality": "Geschäftskritikalität",
+      "availableActions": "Verfügbare Aktionen",
+      "useProfiler": "Tech Profiler verwenden, um Ihre Daten zu aktualisieren",
+      "viewHosting": "Hosting-Informationen anzeigen",
+      "viewScores": "Ihre technischen Gesundheitsbewertungen anzeigen",
+      "contactAdmin": "Kein Herausgeber mit Ihrem Konto verknüpft. Wenden Sie sich an einen Administrator, um einem Herausgeber zugewiesen zu werden."
     },
     "editor": {
       "title": "Herausgeber-Dashboard",
       "editorInfo": "Sie sind mit dem folgenden Herausgeber verknüpft:",
-      "noEditor": "Kein Herausgeber mit Ihrem Konto verknüpft."
-    }
+      "noEditor": "Kein Herausgeber mit Ihrem Konto verknüpft.",
+      "businessCriticality": "Geschäftskritikalität",
+      "availableActions": "Verfügbare Aktionen",
+      "useProfiler": "Tech Profiler verwenden, um Ihre Daten zu aktualisieren",
+      "viewHosting": "Hosting-Informationen anzeigen",
+      "viewScores": "Ihre technischen Gesundheitsbewertungen anzeigen",
+      "contactAdmin": "Kein Herausgeber mit Ihrem Konto verknüpft. Wenden Sie sich an einen Administrator, um einem Herausgeber zugewiesen zu werden."
+    },
+    "unknownRole": "Unbekannte Rolle."
   },
   "collector": {
     "title": "Technisches MVS-Bewertungsformular",
     "step": "Schritt {{current}} von {{total}}",
+    "loadingLookups": "Wertelisten werden geladen...",
+    "resumeDraft": "Entwurf fortsetzen",
+    "newForm": "Neues Formular",
+    "draftStatus": {
+      "draft": "Entwurf",
+      "in_progress": "In Bearbeitung",
+      "failed": "Fehlgeschlagen",
+      "completed": "Abgeschlossen"
+    },
+    "lastSaved": "Zuletzt gespeichert",
     "editor": {
       "title": "Herausgeber-Informationen",
       "useExisting": "Vorhandenen Herausgeber verwenden",
       "createNew": "Neuen Herausgeber erstellen",
       "name": "Herausgeber-Name",
+      "nameRequired": "Herausgeber-Name ist erforderlich",
       "criticality": "Geschäftskritikalität",
       "country": "Land",
       "size": "Größe"
@@ -84,9 +134,13 @@
     "solution": {
       "title": "Lösungs-Informationen",
       "name": "Lösungs-Name",
+      "nameRequired": "Lösungs-Name ist erforderlich",
       "type": "Lösungstyp",
+      "typeRequired": "Lösungstyp ist erforderlich",
       "criticality": "Produktkritikalität",
+      "criticalityRequired": "Produktkritikalität ist erforderlich",
       "mainUseCase": "Hauptanwendungsfall",
+      "mainUseCaseRequired": "Hauptanwendungsfall ist erforderlich",
       "description": "Beschreibung"
     },
     "hosting": {
@@ -99,7 +153,9 @@
     "environment": {
       "title": "Umgebungs-Informationen",
       "dataTypes": "Datentypen",
+      "dataTypesRequired": "Mindestens ein Datentyp muss ausgewählt werden",
       "redundancy": "Redundanz",
+      "redundancyRequired": "Redundanzstufe ist erforderlich",
       "backup": "Backup",
       "backupExists": "Backup vorhanden",
       "rto": "RTO (Stunden)",
@@ -109,6 +165,7 @@
     "security": {
       "title": "Sicherheitsprofil",
       "auth": "Authentifizierung",
+      "authRequired": "Authentifizierungsmethode ist erforderlich",
       "encryptTransit": "Verschlüsselung während der Übertragung",
       "encryptRest": "Verschlüsselung im Ruhezustand",
       "patching": "Patch-Verwaltung",
@@ -119,21 +176,96 @@
     "saveDraft": "Als Entwurf speichern",
     "submitting": "Wird übermittelt...",
     "success": "Daten erfolgreich übermittelt!",
-    "error": "Fehler beim Übermitteln der Daten"
+    "error": "Fehler beim Übermitteln der Daten",
+    "autoSaveError": "Fehler beim automatischen Speichern"
   },
   "admin": {
     "title": "Administration",
+    "moduleTitle": "Administrationsmodul",
+    "moduleDesc": "Berechtigungen, Wertelisten, Benutzer und Plattformeinstellungen verwalten",
+    "accessDenied": "Zugriff verweigert",
+    "adminRequired": "Sie müssen Administrator sein, um auf diese Seite zuzugreifen.",
+    "currentRole": "Aktuelle Rolle",
+    "notAuthenticated": "Nicht authentifiziert",
+    "sections": {
+      "permissions": {
+        "label": "Berechtigungen",
+        "icon": "🔐",
+        "description": "Berechtigungen nach Rolle verwalten"
+      },
+      "lookups": {
+        "label": "Wertelisten",
+        "icon": "📋",
+        "description": "Dropdown-Menüs verwalten"
+      },
+      "users": {
+        "label": "Benutzer",
+        "icon": "👥",
+        "description": "Benutzer und deren Zugriff verwalten"
+      },
+      "data": {
+        "label": "Datenverwaltung",
+        "icon": "💾",
+        "description": "Herausgeber und Testdaten erstellen und ändern"
+      },
+      "audit": {
+        "label": "Audit-Protokolle",
+        "icon": "📊",
+        "description": "Audit-Protokolle und Änderungshistorie anzeigen"
+      },
+      "settings": {
+        "label": "Einstellungen",
+        "icon": "⚙️",
+        "description": "Allgemeine Konfiguration (in Kürze)",
+        "comingSoon": "Dieser Abschnitt wird in Kürze verfügbar sein."
+      }
+    },
     "users": {
-      "title": "Aktive Benutzer",
+      "title": "Benutzerverwaltung",
+      "activeUsers": "{{count}} aktiver Benutzer",
+      "activeUsers_plural": "{{count}} aktive Benutzer",
+      "archivedUsers": "{{count}} archiviert",
+      "archivedUsers_plural": "{{count}} archiviert",
+      "showArchived": "Archivierte anzeigen",
+      "newUser": "+ Neuer Benutzer",
+      "loading": "Benutzer werden geladen...",
       "create": "Benutzer erstellen",
       "edit": "Benutzer bearbeiten",
       "firstName": "Vorname",
       "lastName": "Nachname",
       "email": "E-Mail",
+      "phone": "Telefon",
       "role": "Rolle",
+      "roleRequired": "Rolle ist erforderlich",
       "themePreference": "Theme-Präferenz",
       "light": "Hellmodus",
-      "dark": "Dunkelmodus"
+      "dark": "Dunkelmodus",
+      "themeDesc": "Das ausgewählte Theme wird beim nächsten Anmelden des Benutzers angewendet",
+      "languagePreference": "Sprachpräferenz",
+      "languageDesc": "Die ausgewählte Sprache wird beim nächsten Anmelden des Benutzers angewendet",
+      "french": "Français",
+      "english": "English",
+      "german": "Deutsch",
+      "associatedEditor": "Verknüpfter Herausgeber",
+      "associatedEditors": "Verknüpfte Herausgeber",
+      "password": "Passwort",
+      "passwordChange": "Leer lassen, um nicht zu ändern",
+      "createSuccess": "Benutzer erfolgreich erstellt",
+      "updateSuccess": "Benutzer erfolgreich aktualisiert",
+      "createError": "Fehler beim Erstellen des Benutzers",
+      "updateError": "Fehler beim Aktualisieren des Benutzers",
+      "pageAccess": "Seitenzugriffsrechte",
+      "pageAccessDesc": "Zugängliche Seiten für jede Rolle konfigurieren",
+      "showPermissions": "Berechtigungen anzeigen",
+      "hidePermissions": "Berechtigungen ausblenden",
+      "selectRole": "Rolle auswählen",
+      "page": "Seite",
+      "status": "Status",
+      "action": "Aktion",
+      "allowed": "Erlaubt",
+      "blocked": "Blockiert",
+      "toggle": "Umschalten",
+      "loadingPermissions": "Berechtigungen werden geladen..."
     },
     "lookups": {
       "title": "Wertelisten",
@@ -156,12 +288,26 @@
     "provider": "Anbieter",
     "region": "Region",
     "tier": "Stufe",
-    "certifications": "Zertifizierungen",
+    "certifications": "Certifications",
     "contact": "Kontakt"
   },
   "about": {
     "title": "Über",
     "documentation": "Dokumentation"
+  },
+  "app": {
+    "sessionLoading": "Sitzung wird geladen...",
+    "accessDenied": "Zugriff verweigert",
+    "noPermission": "Sie haben nicht die erforderlichen Berechtigungen, um auf diese Seite zuzugreifen.",
+    "adminOnly": "Nur Administratoren können auf diese Seite zugreifen.",
+    "collectorTitle": "Technisches MVS-Bewertungsformular",
+    "collectorSubtitle": "Sammlung von Priorität 1 (P1) Daten für die technische Bewertung",
+    "footer": "Technisches Betriebszentrum (TBZ) - Tech Health Platform"
+  },
+  "roles": {
+    "Admin": "Administrator",
+    "Supervisor": "Supervisor",
+    "EntityDirector": "Entitäts-Direktor",
+    "Editor": "Herausgeber"
   }
 }
-

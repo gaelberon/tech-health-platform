@@ -15,7 +15,12 @@
     "close": "Close",
     "search": "Search",
     "filter": "Filter",
-    "actions": "Actions"
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "required": "Required",
+    "optional": "Optional"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -32,7 +37,23 @@
     "submit": "Sign in",
     "error": "Login error"
   },
+  "accountSelection": {
+    "title": "Select an account",
+    "subtitle": "You have multiple accounts associated with this email. Please choose the one you want to use.",
+    "connecting": "Connecting...",
+    "associatedEditor": "Associated editor",
+    "id": "ID"
+  },
+  "userMenu": {
+    "manageAccount": "Manage account",
+    "inProgress": "(in progress)",
+    "adminConsole": "Administration console",
+    "myProfile": "My profile",
+    "logout": "Logout"
+  },
   "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "role": "Role",
     "admin": {
       "title": "Administrator Overview",
       "platformManagement": "Platform Management",
@@ -52,31 +73,60 @@
       "editorsCount": "You supervise {{count}} editor in your portfolio.",
       "editorsCount_plural": "You supervise {{count}} editors in your portfolio.",
       "loadingEditors": "Loading editors...",
+      "noEditors": "No editor assigned to your portfolio.",
       "criticality": "Criticality",
       "country": "Country",
       "size": "Size",
       "solutionsCount": "{{count}} solution",
-      "solutionsCount_plural": "{{count}} solutions"
+      "solutionsCount_plural": "{{count}} solutions",
+      "availableActions": "Available Actions",
+      "accessProfiler": "Access Tech Profiler to collect new data",
+      "viewHosting": "View hosting data for your editors",
+      "viewScores": "View scores and metrics for your editors"
     },
     "entityDirector": {
       "title": "Entity Director Dashboard",
       "editorInfo": "You are associated with the following editor:",
-      "noEditor": "No editor associated with your account."
+      "noEditor": "No editor associated with your account.",
+      "businessCriticality": "Business criticality",
+      "availableActions": "Available Actions",
+      "useProfiler": "Use Tech Profiler to update your data",
+      "viewHosting": "View hosting information",
+      "viewScores": "View your technical health scores",
+      "contactAdmin": "No editor associated with your account. Contact an administrator to be assigned to an editor."
     },
     "editor": {
       "title": "Editor Dashboard",
       "editorInfo": "You are associated with the following editor:",
-      "noEditor": "No editor associated with your account."
-    }
+      "noEditor": "No editor associated with your account.",
+      "businessCriticality": "Business criticality",
+      "availableActions": "Available Actions",
+      "useProfiler": "Use Tech Profiler to update your data",
+      "viewHosting": "View hosting information",
+      "viewScores": "View your technical health scores",
+      "contactAdmin": "No editor associated with your account. Contact an administrator to be assigned to an editor."
+    },
+    "unknownRole": "Unknown role."
   },
   "collector": {
     "title": "Technical MVS Assessment Form",
     "step": "Step {{current}} of {{total}}",
+    "loadingLookups": "Loading value lists...",
+    "resumeDraft": "Resume a draft",
+    "newForm": "New form",
+    "draftStatus": {
+      "draft": "Draft",
+      "in_progress": "In progress",
+      "failed": "Failed",
+      "completed": "Completed"
+    },
+    "lastSaved": "Last saved",
     "editor": {
       "title": "Editor Information",
       "useExisting": "Use an existing editor",
       "createNew": "Create a new editor",
       "name": "Editor Name",
+      "nameRequired": "Editor name is required",
       "criticality": "Business Criticality",
       "country": "Country",
       "size": "Size"
@@ -84,9 +134,13 @@
     "solution": {
       "title": "Solution Information",
       "name": "Solution Name",
+      "nameRequired": "Solution name is required",
       "type": "Solution Type",
+      "typeRequired": "Solution type is required",
       "criticality": "Product Criticality",
+      "criticalityRequired": "Product criticality is required",
       "mainUseCase": "Main use case",
+      "mainUseCaseRequired": "Main use case is required",
       "description": "Description"
     },
     "hosting": {
@@ -99,7 +153,9 @@
     "environment": {
       "title": "Environment Information",
       "dataTypes": "Data types",
+      "dataTypesRequired": "At least one data type must be selected",
       "redundancy": "Redundancy",
+      "redundancyRequired": "Redundancy level is required",
       "backup": "Backup",
       "backupExists": "Backup exists",
       "rto": "RTO (hours)",
@@ -109,6 +165,7 @@
     "security": {
       "title": "Security Profile",
       "auth": "Authentication",
+      "authRequired": "Authentication method is required",
       "encryptTransit": "Encryption in transit",
       "encryptRest": "Encryption at rest",
       "patching": "Patch management",
@@ -119,21 +176,96 @@
     "saveDraft": "Save as draft",
     "submitting": "Submitting...",
     "success": "Data submitted successfully!",
-    "error": "Error submitting data"
+    "error": "Error submitting data",
+    "autoSaveError": "Error during automatic save"
   },
   "admin": {
     "title": "Administration",
+    "moduleTitle": "Administration Module",
+    "moduleDesc": "Manage permissions, value lists, users and platform settings",
+    "accessDenied": "Access denied",
+    "adminRequired": "You must be an administrator to access this page.",
+    "currentRole": "Current role",
+    "notAuthenticated": "Not authenticated",
+    "sections": {
+      "permissions": {
+        "label": "Permissions",
+        "icon": "🔐",
+        "description": "Manage permissions by role"
+      },
+      "lookups": {
+        "label": "Value Lists",
+        "icon": "📋",
+        "description": "Administer dropdown menus"
+      },
+      "users": {
+        "label": "Users",
+        "icon": "👥",
+        "description": "Manage users and their access"
+      },
+      "data": {
+        "label": "Data Management",
+        "icon": "💾",
+        "description": "Create and modify editors and test data"
+      },
+      "audit": {
+        "label": "Audit Trails",
+        "icon": "📊",
+        "description": "View audit logs and modification history"
+      },
+      "settings": {
+        "label": "Settings",
+        "icon": "⚙️",
+        "description": "General configuration (coming soon)",
+        "comingSoon": "This section will be available soon."
+      }
+    },
     "users": {
-      "title": "Active Users",
+      "title": "User Management",
+      "activeUsers": "{{count}} active user",
+      "activeUsers_plural": "{{count}} active users",
+      "archivedUsers": "{{count}} archived",
+      "archivedUsers_plural": "{{count}} archived",
+      "showArchived": "Show archived",
+      "newUser": "+ New user",
+      "loading": "Loading users...",
       "create": "Create user",
       "edit": "Edit user",
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email",
+      "phone": "Phone",
       "role": "Role",
+      "roleRequired": "Role is required",
       "themePreference": "Theme preference",
       "light": "Light mode",
-      "dark": "Dark mode"
+      "dark": "Dark mode",
+      "themeDesc": "The selected theme will be applied on the user's next login",
+      "languagePreference": "Language preference",
+      "languageDesc": "The selected language will be applied on the user's next login",
+      "french": "Français",
+      "english": "English",
+      "german": "Deutsch",
+      "associatedEditor": "Associated editor",
+      "associatedEditors": "Associated editors",
+      "password": "Password",
+      "passwordChange": "Leave empty to not change",
+      "createSuccess": "User created successfully",
+      "updateSuccess": "User updated successfully",
+      "createError": "Error creating user",
+      "updateError": "Error updating user",
+      "pageAccess": "Page access rights",
+      "pageAccessDesc": "Configure accessible pages for each role",
+      "showPermissions": "Show permissions",
+      "hidePermissions": "Hide permissions",
+      "selectRole": "Select a role",
+      "page": "Page",
+      "status": "Status",
+      "action": "Action",
+      "allowed": "Allowed",
+      "blocked": "Blocked",
+      "toggle": "Toggle",
+      "loadingPermissions": "Loading permissions..."
     },
     "lookups": {
       "title": "Value Lists",
@@ -162,6 +294,20 @@
   "about": {
     "title": "About",
     "documentation": "Documentation"
+  },
+  "app": {
+    "sessionLoading": "Loading session...",
+    "accessDenied": "Access denied",
+    "noPermission": "You do not have the necessary permissions to access this page.",
+    "adminOnly": "Only administrators can access this page.",
+    "collectorTitle": "Technical MVS Assessment Form",
+    "collectorSubtitle": "Collection of Priority 1 (P1) data for technical assessment",
+    "footer": "Technical Operations Center (TOC) - Tech Health Platform"
+  },
+  "roles": {
+    "Admin": "Administrator",
+    "Supervisor": "Supervisor",
+    "EntityDirector": "Entity Director",
+    "Editor": "Editor"
   }
 }
-
