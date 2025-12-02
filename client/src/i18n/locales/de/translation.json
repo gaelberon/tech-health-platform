@@ -27,6 +27,7 @@
     "collector": "Tech Profiler",
     "admin": "Administration",
     "hosting": "Hosting",
+    "dd-tech": "Tech DD",
     "about": "Über"
   },
   "login": {
