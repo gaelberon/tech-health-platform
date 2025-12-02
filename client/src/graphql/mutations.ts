@@ -12,6 +12,7 @@ export const CREATE_SOLUTION_ENVIRONMENT_P1 = gql`
     $hostingInput: HostingInputP1!
     $environmentInput: EnvironmentInputP1!
     $securityInput: SecurityInputP1!
+    $collectionType: String!
   ) {
     submitP1Data(
       editor: $editorInput
@@ -19,6 +20,7 @@ export const CREATE_SOLUTION_ENVIRONMENT_P1 = gql`
       hosting: $hostingInput
       environment: $environmentInput
       security: $securityInput
+      collection_type: $collectionType
     ) {
       solution {
         solutionId
@@ -50,6 +52,7 @@ export const CREATE_SOLUTION_ENVIRONMENT_P1 = gql`
         global_score
         risk_level
         date
+        collection_type
       }
     }
   }
