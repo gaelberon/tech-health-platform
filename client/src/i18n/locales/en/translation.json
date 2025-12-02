@@ -49,7 +49,8 @@
     "inProgress": "(in progress)",
     "adminConsole": "Administration console",
     "myProfile": "My profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "thirdPartyDocs": "Third-Party Docs"
   },
   "profile": {
     "title": "My Profile",
@@ -343,7 +344,11 @@
     "adminOnly": "Only administrators can access this page.",
     "collectorTitle": "Technical MVS Assessment Form",
     "collectorSubtitle": "Collection of Priority 1 (P1) data for technical assessment",
-    "footer": "Technical Operations Center (TOC) - Tech Health Platform"
+    "footer": "© 2025 {{companyName}}. All rights reserved. | Privacy Policy | Terms of Service | Cookie Settings",
+    "footerCopyright": "© 2025 {{companyName}}. All rights reserved.",
+    "footerLegal": "Privacy Policy",
+    "footerTerms": "Terms of Service",
+    "footerPrivacy": "Cookie Settings"
   },
   "roles": {
     "Admin": "Administrator",

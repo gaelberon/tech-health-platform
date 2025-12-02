@@ -49,7 +49,8 @@
     "inProgress": "(en cours)",
     "adminConsole": "Console d'administration",
     "myProfile": "Mon profil",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "thirdPartyDocs": "Docs Tiers"
   },
   "profile": {
     "title": "Mon Profil",
@@ -378,7 +379,11 @@
     "adminOnly": "Seuls les administrateurs peuvent accéder à cette page.",
     "collectorTitle": "Formulaire d'Évaluation Technique MVS",
     "collectorSubtitle": "Collecte des données de Priorité 1 (P1) pour l'évaluation technique",
-    "footer": "Centre d'Opérations Techniques (COT) - Tech Health Platform"
+    "footer": "© 2025 {{companyName}}. Tous droits réservés. | Mentions Légales | CGU/CGV | Politique de Confidentialité",
+    "footerCopyright": "© 2025 {{companyName}}. Tous droits réservés.",
+    "footerLegal": "Mentions Légales",
+    "footerTerms": "CGU/CGV",
+    "footerPrivacy": "Politique de Confidentialité"
   },
   "roles": {
     "Admin": "Administrateur",

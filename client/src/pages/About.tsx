@@ -319,7 +319,6 @@ const About: React.FC = () => {
 
       {/* Footer note */}
       <div className="text-center text-sm text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <p>Centre d'Opérations Techniques (COT) - Tech Health Platform</p>
       </div>
     </div>
   );

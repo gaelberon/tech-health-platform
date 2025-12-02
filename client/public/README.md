@@ -326,4 +326,3 @@ Propriétaire - Tous droits réservés
 
 ---
 
-**Centre d'Opérations Techniques (COT) - Tech Health Platform**

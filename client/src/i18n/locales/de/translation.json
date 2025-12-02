@@ -49,7 +49,8 @@
     "inProgress": "(in Bearbeitung)",
     "adminConsole": "Administrationskonsole",
     "myProfile": "Mein Profil",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "thirdPartyDocs": "Externe Dokumentation"
   },
   "profile": {
     "title": "Mein Profil",
@@ -343,7 +344,11 @@
     "adminOnly": "Nur Administratoren können auf diese Seite zugreifen.",
     "collectorTitle": "Technisches MVS-Bewertungsformular",
     "collectorSubtitle": "Sammlung von Priorität 1 (P1) Daten für die technische Bewertung",
-    "footer": "Technisches Betriebszentrum (TBZ) - Tech Health Platform"
+    "footer": "© 2025 {{companyName}}. Alle Rechte vorbehalten. | Datenschutzerklärung | Allgemeine Geschäftsbedingungen | Cookie-Einstellungen",
+    "footerCopyright": "© 2025 {{companyName}}. Alle Rechte vorbehalten.",
+    "footerLegal": "Datenschutzerklärung",
+    "footerTerms": "Allgemeine Geschäftsbedingungen",
+    "footerPrivacy": "Cookie-Einstellungen"
   },
   "roles": {
     "Admin": "Administrator",
