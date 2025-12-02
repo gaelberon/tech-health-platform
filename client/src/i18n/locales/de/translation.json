@@ -212,6 +212,8 @@
       "vulnMgmt": "Schwachstellenverwaltung"
     },
     "submit": "Absenden",
+    "submitTitle": "Bereit zur Übermittlung der P1-Daten",
+    "submitDescription": "Bestätigen Sie die Übermittlung, um den ersten Scoring Snapshot für die Lösung auszulösen.",
     "saveDraft": "Als Entwurf speichern",
     "submitting": "Wird übermittelt...",
     "success": "Daten erfolgreich übermittelt!",

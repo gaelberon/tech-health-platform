@@ -229,6 +229,8 @@
       "vulnMgmt": "Gestion des vulnérabilités"
     },
     "submit": "Soumettre",
+    "submitTitle": "Prêt à soumettre les données P1",
+    "submitDescription": "Confirmez la soumission pour déclencher le premier Scoring Snapshot de la solution.",
     "saveDraft": "Enregistrer comme brouillon",
     "submitting": "Soumission en cours...",
     "success": "Données soumises avec succès !",

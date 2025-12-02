@@ -212,6 +212,8 @@
       "vulnMgmt": "Vulnerability management"
     },
     "submit": "Submit",
+    "submitTitle": "Ready to submit P1 data",
+    "submitDescription": "Confirm submission to trigger the first Scoring Snapshot for the solution.",
     "saveDraft": "Save as draft",
     "submitting": "Submitting...",
     "success": "Data submitted successfully!",
