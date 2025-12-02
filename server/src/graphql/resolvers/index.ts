@@ -32,6 +32,7 @@ import UserResolver from './UserResolver.js';
 import AuditResolver from './AuditResolver.js';
 import CollectorResolver from './CollectorResolver.js';
 import CollectorDraftResolver from './CollectorDraftResolver.js';
+import SettingsResolver from './SettingsResolver.js';
 
 
 // ------------------ FONCTION D'AGREGATION ------------------
@@ -100,6 +101,7 @@ const allResolvers = combineResolvers([
     AuditResolver,
     CollectorResolver,
     CollectorDraftResolver,
+    SettingsResolver,
 ]);
 
 export default allResolvers;

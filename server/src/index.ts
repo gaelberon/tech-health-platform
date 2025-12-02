@@ -17,6 +17,7 @@ import jwt from 'jsonwebtoken';
 import { ensureDefaultAdminUser, removeOldEmailUniqueIndex } from './models/User.model.js';
 import { seedInitialLookups } from './config/seedLookups.js';
 import { initializeDefaultPagePermissions } from './models/PageAccessPermission.model.js';
+import { seedInitialSettings } from './config/seedSettings.js';
 
 // Fichier fictif pour la connexion MongoDB (Mongoose)
 // (Vous devez créer ce fichier /server/src/config/db.js ou équivalent)
@@ -45,6 +46,7 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
         await ensureDefaultAdminUser();
         await seedInitialLookups();
         await initializeDefaultPagePermissions(); // Initialiser les permissions d'accès aux pages
+        await seedInitialSettings(); // Initialiser les paramètres de configuration
     } catch (error) {
         console.error("❌ ERREUR: Impossible de se connecter à la base de données. Exiting...");
         process.exit(1);

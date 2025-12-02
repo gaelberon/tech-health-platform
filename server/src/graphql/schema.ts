@@ -305,6 +305,17 @@ const typeDefs = gql`
         impact_estimate: String # P3 [11]
     }
 
+    # Settings / Configuration
+    type Setting {
+        id: ID!
+        key: String!
+        value: String!
+        description: String
+        category: String
+        createdAt: String!
+        updatedAt: String!
+    }
+
     # ENTITÉ DOCUMENT (P4 - Polymorphe) [7, 16]
     type Document {
         docId: ID! # PK [7]
@@ -927,6 +938,10 @@ const typeDefs = gql`
         # Documents / Roadmap (Polymorphes)
         listDocumentsByParent(parentId: ID!, linkedTo: ParentEntity!): [Document!]!
         listRoadmapItems(parentId: ID!, linkedTo: ParentEntity!): [RoadmapItem!]!
+        
+        # Settings / Configuration
+        getSetting(key: String!): String
+        getAllSettings: [Setting!]!
     }
 
     # =================================================================
