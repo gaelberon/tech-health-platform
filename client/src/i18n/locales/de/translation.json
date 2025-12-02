@@ -219,7 +219,88 @@
     "submitting": "Wird übermittelt...",
     "success": "Daten erfolgreich übermittelt!",
     "error": "Fehler beim Übermitteln der Daten",
-    "autoSaveError": "Fehler beim automatischen Speichern"
+    "autoSaveError": "Fehler beim automatischen Speichern",
+    "select": "Auswählen...",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "hide": "Ausblenden",
+    "showMore": "Weitere P2/P3-Details anzeigen (Zertifizierungen, Tech Stack)",
+    "p2Fields": "P2-Felder: Architektur und Zertifizierungen",
+    "ddMode": {
+      "enable": "Vollständiger Tech DD-Modus",
+      "tooltip": "Aktivieren Sie diesen Modus, um alle Technical Due Diligence-Felder zu erfassen. DD-Felder sind optional und können später ausgefüllt werden.",
+      "description": "P1-Felder bleiben für die schnelle Übermittlung erforderlich. DD-Felder bereichern die Bewertung, ohne die Übermittlung zu blockieren."
+    },
+    "dd": {
+      "optional": "Optional",
+      "multiSelectHint": "Halten Sie Strg (Cmd auf Mac) gedrückt, um mehrere Optionen auszuwählen",
+      "editorSolution": {
+        "title": "Due Diligence - Herausgeber & Lösung",
+        "internalItSystems": "Interne IT-Systeme",
+        "internalItSystemsTooltip": "Liste der internen IT-Systeme des Herausgebers",
+        "internalItSystemsPlaceholder": "Ein System pro Zeile (z.B. internes CRM, DMS, Collaboration-Tools...)",
+        "itSecurityStrategy": "IT-Sicherheitsstrategie",
+        "itSecurityStrategyTooltip": "Beschreibung der IT-Sicherheitsstrategie des Herausgebers",
+        "itSecurityStrategyPlaceholder": "Beschreiben Sie die IT-Sicherheitsstrategie des Herausgebers..."
+      },
+      "solution": {
+        "apiRobustness": "API-Robustheit",
+        "apiRobustnessTooltip": "Bewertung der Robustheit der exponierten APIs",
+        "apiRobustnessPlaceholder": "Beschreiben Sie die API-Robustheit (Versionierung, Rate Limiting, Dokumentation...)",
+        "apiDocumentationQuality": "API-Dokumentationsqualität",
+        "apiDocumentationQualityTooltip": "Qualität der API-Interface-Dokumentation",
+        "apiDocumentationQualityPlaceholder": "Beschreiben Sie die API-Dokumentationsqualität (OpenAPI, Swagger, Beispiele...)",
+        "ipOwnershipClear": "Klare geistige Eigentumsrechte",
+        "ipOwnershipClearTooltip": "Sind die geistigen Eigentumsrechte klar definiert?",
+        "licensingModel": "Lizenzmodell",
+        "licensingModelTooltip": "Verwendetes Lizenzmodell (proprietär, Open Source, gemischt...)",
+        "licensingModelPlaceholder": "z.B. Proprietär, Open Source, Gemischt...",
+        "licenseComplianceAssured": "Lizenzkonformität gewährleistet",
+        "licenseComplianceAssuredTooltip": "Ist die Konformität von Drittanbieter-Lizenzen gewährleistet?"
+      },
+      "hostingEnvironment": {
+        "title": "Due Diligence - Hosting & Umgebung"
+      },
+      "environment": {
+        "networkSecurityMechanisms": "Netzwerksicherheitsmechanismen",
+        "networkSecurityMechanismsTooltip": "Bereitgestellte Netzwerksicherheitsmechanismen (VPN, Firewall, IDS/IPS, WAF...)",
+        "dbScalingMechanism": "Datenbank-Skalierungsmechanismus",
+        "dbScalingMechanismTooltip": "Wie skalieren Datenbanken (vertikal, horizontal, Auto-Scaling...)",
+        "disasterRecoveryPlan": "Notfallwiederherstellungsplan",
+        "disasterRecoveryPlanTooltip": "Dokumentierter und getesteter Notfallwiederherstellungsplan",
+        "disasterRecoveryPlanPlaceholder": "Beschreiben Sie den Notfallwiederherstellungsplan (DRP)...",
+        "slaOffered": "Angebotenes SLA",
+        "slaOfferedTooltip": "Den Kunden angebotenes Service-Level (SLA)",
+        "slaOfferedPlaceholder": "z.B. 99,9% Uptime, Antwortzeit < 200ms..."
+      },
+      "hosting": {
+        "contactDetails": "Technischer Hosting-Kontakt",
+        "contactName": "Kontaktname",
+        "contactNamePlaceholder": "Name des technischen Kontakts",
+        "contactEmail": "Kontakt-E-Mail",
+        "contactEmailPlaceholder": "email@example.com"
+      },
+      "security": {
+        "title": "Due Diligence - Sicherheit",
+        "accessControl": "Zugriffskontrolle",
+        "accessControlTooltip": "Zugriffskontrollmethoden (PAM, RBAC, etc.)",
+        "accessControlPlaceholder": "z.B. PAM, RBAC, ACL...",
+        "internalAuditsRecent": "Kürzliche interne Audits",
+        "internalAuditsRecentTooltip": "Zusammenfassung kürzlicher interner Audits",
+        "internalAuditsRecentPlaceholder": "Beschreiben Sie kürzliche interne Audits...",
+        "centralizedMonitoring": "Zentralisiertes Monitoring",
+        "centralizedMonitoringTooltip": "Ist das Sicherheitsmonitoring zentralisiert?",
+        "pentestResultsSummary": "Zusammenfassung der Penetrationstest-Ergebnisse",
+        "pentestResultsSummaryTooltip": "Zusammenfassung der neuesten Penetrationstest-Ergebnisse",
+        "pentestResultsSummaryPlaceholder": "Beschreiben Sie die neuesten Pentest-Ergebnisse...",
+        "knownSecurityFlaws": "Bekannte Sicherheitslücken",
+        "knownSecurityFlawsTooltip": "Bekannte Sicherheitslücken und Abhilfeplan",
+        "knownSecurityFlawsPlaceholder": "Listen Sie bekannte Lücken und ihren Abhilfeplan auf...",
+        "incidentReportingProcess": "Incident-Meldeprozess",
+        "incidentReportingProcessTooltip": "Prozess zur Meldung und Verwaltung von Sicherheitsvorfällen",
+        "incidentReportingProcessPlaceholder": "Beschreiben Sie den Incident-Meldeprozess..."
+      }
+    }
   },
   "admin": {
     "title": "Administration",

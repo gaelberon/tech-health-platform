@@ -219,7 +219,88 @@
     "submitting": "Submitting...",
     "success": "Data submitted successfully!",
     "error": "Error submitting data",
-    "autoSaveError": "Error during automatic save"
+    "autoSaveError": "Error during automatic save",
+    "select": "Select...",
+    "previous": "Previous",
+    "next": "Next",
+    "hide": "Hide",
+    "showMore": "Show more P2/P3 details (Certifications, Tech Stack)",
+    "p2Fields": "P2 Fields: Architecture and Certifications",
+    "ddMode": {
+      "enable": "Full Tech DD Mode",
+      "tooltip": "Enable this mode to collect all Technical Due Diligence fields. DD fields are optional and can be filled later.",
+      "description": "P1 fields remain required for quick submission. DD fields enrich the assessment without blocking submission."
+    },
+    "dd": {
+      "optional": "Optional",
+      "multiSelectHint": "Hold Ctrl (Cmd on Mac) to select multiple options",
+      "editorSolution": {
+        "title": "Due Diligence - Editor & Solution",
+        "internalItSystems": "Internal IT Systems",
+        "internalItSystemsTooltip": "List of the editor's internal IT systems",
+        "internalItSystemsPlaceholder": "One system per line (e.g., internal CRM, DMS, collaboration tools...)",
+        "itSecurityStrategy": "IT Security Strategy",
+        "itSecurityStrategyTooltip": "Description of the editor's IT security strategy",
+        "itSecurityStrategyPlaceholder": "Describe the editor's IT security strategy..."
+      },
+      "solution": {
+        "apiRobustness": "API Robustness",
+        "apiRobustnessTooltip": "Assessment of exposed APIs robustness",
+        "apiRobustnessPlaceholder": "Describe API robustness (versioning, rate limiting, documentation...)",
+        "apiDocumentationQuality": "API Documentation Quality",
+        "apiDocumentationQualityTooltip": "Quality of API interface documentation",
+        "apiDocumentationQualityPlaceholder": "Describe API documentation quality (OpenAPI, Swagger, examples...)",
+        "ipOwnershipClear": "Clear Intellectual Property Ownership",
+        "ipOwnershipClearTooltip": "Are intellectual property rights clearly defined?",
+        "licensingModel": "Licensing Model",
+        "licensingModelTooltip": "Licensing model used (proprietary, open source, mixed...)",
+        "licensingModelPlaceholder": "E.g., Proprietary, Open Source, Mixed...",
+        "licenseComplianceAssured": "License Compliance Assured",
+        "licenseComplianceAssuredTooltip": "Is third-party license compliance assured?"
+      },
+      "hostingEnvironment": {
+        "title": "Due Diligence - Hosting & Environment"
+      },
+      "environment": {
+        "networkSecurityMechanisms": "Network Security Mechanisms",
+        "networkSecurityMechanismsTooltip": "Network security mechanisms deployed (VPN, Firewall, IDS/IPS, WAF...)",
+        "dbScalingMechanism": "Database Scaling Mechanism",
+        "dbScalingMechanismTooltip": "How databases scale (vertical, horizontal, auto-scaling...)",
+        "disasterRecoveryPlan": "Disaster Recovery Plan",
+        "disasterRecoveryPlanTooltip": "Documented and tested disaster recovery plan",
+        "disasterRecoveryPlanPlaceholder": "Describe the disaster recovery plan (DRP)...",
+        "slaOffered": "SLA Offered",
+        "slaOfferedTooltip": "Service level (SLA) offered to clients",
+        "slaOfferedPlaceholder": "E.g., 99.9% uptime, response time < 200ms..."
+      },
+      "hosting": {
+        "contactDetails": "Hosting Technical Contact",
+        "contactName": "Contact Name",
+        "contactNamePlaceholder": "Technical contact name",
+        "contactEmail": "Contact Email",
+        "contactEmailPlaceholder": "email@example.com"
+      },
+      "security": {
+        "title": "Due Diligence - Security",
+        "accessControl": "Access Control",
+        "accessControlTooltip": "Access control methods (PAM, RBAC, etc.)",
+        "accessControlPlaceholder": "E.g., PAM, RBAC, ACL...",
+        "internalAuditsRecent": "Recent Internal Audits",
+        "internalAuditsRecentTooltip": "Summary of recent internal audits",
+        "internalAuditsRecentPlaceholder": "Describe recent internal audits...",
+        "centralizedMonitoring": "Centralized Monitoring",
+        "centralizedMonitoringTooltip": "Is security monitoring centralized?",
+        "pentestResultsSummary": "Penetration Test Results Summary",
+        "pentestResultsSummaryTooltip": "Summary of latest penetration test results",
+        "pentestResultsSummaryPlaceholder": "Describe latest pentest results...",
+        "knownSecurityFlaws": "Known Security Flaws",
+        "knownSecurityFlawsTooltip": "Known security flaws and remediation plan",
+        "knownSecurityFlawsPlaceholder": "List known flaws and their remediation plan...",
+        "incidentReportingProcess": "Incident Reporting Process",
+        "incidentReportingProcessTooltip": "Security incident reporting and management process",
+        "incidentReportingProcessPlaceholder": "Describe the incident reporting process..."
+      }
+    }
   },
   "admin": {
     "title": "Administration",
