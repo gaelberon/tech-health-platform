@@ -35,7 +35,7 @@ logs/
 .turbo/
 .parcel-cache/
 .eslintcache
-
+docs/third-party-docs/
 
 
 
