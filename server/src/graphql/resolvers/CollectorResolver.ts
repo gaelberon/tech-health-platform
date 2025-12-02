@@ -10,12 +10,16 @@ import { ScoringSnapshotModel } from '../../models/ScoringSnapshot.model.js';
 import { assertAuthorized } from '../authorization.js';
 import { logAudit, extractAuditContext } from '../../services/audit.service.js';
 
-// Interfaces pour les inputs P1
+// Interfaces pour les inputs P1 + DD (Due Diligence)
 export interface EditorInputP1 {
   name: string;
   business_criticality: string;
   country?: string;
   size?: string;
+  // Champs DD (optionnels)
+  internal_it_systems?: string[];
+  it_security_strategy?: string;
+  contracts_for_review?: Array<{ type: string; summary?: string }>;
 }
 
 export interface SolutionInputP1 {
@@ -24,6 +28,12 @@ export interface SolutionInputP1 {
   product_criticality: string;
   main_use_case: string;
   description?: string;
+  // Champs DD (optionnels)
+  api_robustness?: string;
+  api_documentation_quality?: string;
+  ip_ownership_clear?: boolean;
+  licensing_model?: string;
+  license_compliance_assured?: boolean;
 }
 
 export interface HostingInputP1 {
@@ -31,6 +41,8 @@ export interface HostingInputP1 {
   region: string;
   tier: string;
   certifications?: string[];
+  // Champs DD (optionnels)
+  contact?: { name: string; email: string };
 }
 
 export interface BackupInputP1 {
@@ -49,6 +61,11 @@ export interface EnvironmentInputP1 {
   deployment_type?: string;
   virtualization?: string;
   tech_stack?: string[];
+  // Champs DD (optionnels)
+  network_security_mechanisms?: string[];
+  db_scaling_mechanism?: string;
+  disaster_recovery_plan?: string;
+  sla_offered?: string;
 }
 
 export interface EncryptionInputP1 {
@@ -63,6 +80,13 @@ export interface SecurityInputP1 {
   patching?: string;
   pentest_freq?: string;
   vuln_mgmt?: string;
+  // Champs DD (optionnels)
+  access_control?: string;
+  internal_audits_recent?: string;
+  centralized_monitoring?: boolean;
+  pentest_results_summary?: string;
+  known_security_flaws?: string;
+  incident_reporting_process?: string;
 }
 
 const CollectorResolver = {
@@ -101,6 +125,16 @@ const CollectorResolver = {
           };
           if (args.editor.country) editorData.country = args.editor.country;
           if (args.editor.size) editorData.size = args.editor.size;
+          // Champs DD (optionnels)
+          if (args.editor.internal_it_systems && args.editor.internal_it_systems.length > 0) {
+            editorData.internal_it_systems = args.editor.internal_it_systems;
+          }
+          if (args.editor.it_security_strategy) {
+            editorData.it_security_strategy = args.editor.it_security_strategy;
+          }
+          if (args.editor.contracts_for_review && args.editor.contracts_for_review.length > 0) {
+            editorData.contracts_for_review = args.editor.contracts_for_review;
+          }
           const createdEditor = await EditorModel.create(editorData);
           editor = (Array.isArray(createdEditor) ? createdEditor[0] : createdEditor) || null;
           isNewEditor = true;
@@ -116,12 +150,22 @@ const CollectorResolver = {
           }
         } else {
           editorId = editor.editorId;
-          // Mise à jour des champs P1
+          // Mise à jour des champs P1 + DD
           const updateData: any = {
             business_criticality: args.editor.business_criticality,
           };
           if (args.editor.country) updateData.country = args.editor.country;
           if (args.editor.size) updateData.size = args.editor.size;
+          // Champs DD (optionnels) - ne mettre à jour que si fournis
+          if (args.editor.internal_it_systems !== undefined) {
+            updateData.internal_it_systems = args.editor.internal_it_systems;
+          }
+          if (args.editor.it_security_strategy !== undefined) {
+            updateData.it_security_strategy = args.editor.it_security_strategy;
+          }
+          if (args.editor.contracts_for_review !== undefined) {
+            updateData.contracts_for_review = args.editor.contracts_for_review;
+          }
 
           const beforeState = editor.toObject();
           editor = await EditorModel.findOneAndUpdate(
@@ -151,33 +195,44 @@ const CollectorResolver = {
         let hosting = await HostingModel.findOne({ hostingId });
         
         if (!hosting) {
-          hosting = await HostingModel.create({
+          const hostingData: any = {
             hostingId,
             provider: args.hosting.provider,
             region: args.hosting.region,
             tier: args.hosting.tier,
             certifications: args.hosting.certifications || [],
-          });
+          };
+          // Champs DD (optionnels)
+          if (args.hosting.contact) {
+            hostingData.contact = args.hosting.contact;
+          }
+          const createdHosting = await HostingModel.create(hostingData);
+          hosting = (Array.isArray(createdHosting) ? createdHosting[0] : createdHosting) || null;
 
-          await logAudit(auditContext, {
-            action: 'CREATE',
-            entityType: 'Hosting',
-            entityId: hostingId,
-            after: hosting.toObject(),
-            description: `Création d'un profil d'hébergement via Tech Profiler`,
-          });
+          if (hosting) {
+            await logAudit(auditContext, {
+              action: 'CREATE',
+              entityType: 'Hosting',
+              entityId: hostingId,
+              after: hosting.toObject(),
+              description: `Création d'un profil d'hébergement via Tech Profiler`,
+            });
+          }
         } else {
           const beforeState = hosting.toObject();
+          const hostingUpdateData: any = {
+            provider: args.hosting.provider,
+            region: args.hosting.region,
+            tier: args.hosting.tier,
+            certifications: args.hosting.certifications || [],
+          };
+          // Champs DD (optionnels) - ne mettre à jour que si fournis
+          if (args.hosting.contact !== undefined) {
+            hostingUpdateData.contact = args.hosting.contact;
+          }
           hosting = await HostingModel.findOneAndUpdate(
             { hostingId },
-            {
-              $set: {
-                provider: args.hosting.provider,
-                region: args.hosting.region,
-                tier: args.hosting.tier,
-                certifications: args.hosting.certifications || [],
-              },
-            },
+            { $set: hostingUpdateData },
             { new: true }
           );
 
@@ -216,10 +271,23 @@ const CollectorResolver = {
             type: args.solution.type,
             product_criticality: args.solution.product_criticality,
             main_use_case: args.solution.main_use_case,
-            ip_ownership_clear: false, // Valeur par défaut pour la collecte P1 (champ DD, sera complété plus tard)
+            ip_ownership_clear: args.solution.ip_ownership_clear !== undefined ? args.solution.ip_ownership_clear : false,
           };
           if (args.solution.description) {
             solutionData.description = args.solution.description;
+          }
+          // Champs DD (optionnels)
+          if (args.solution.api_robustness) {
+            solutionData.api_robustness = args.solution.api_robustness;
+          }
+          if (args.solution.api_documentation_quality) {
+            solutionData.api_documentation_quality = args.solution.api_documentation_quality;
+          }
+          if (args.solution.licensing_model) {
+            solutionData.licensing_model = args.solution.licensing_model;
+          }
+          if (args.solution.license_compliance_assured !== undefined) {
+            solutionData.license_compliance_assured = args.solution.license_compliance_assured;
           }
           const createdSolution = await SolutionModel.create(solutionData);
           solution = (Array.isArray(createdSolution) ? createdSolution[0] : createdSolution) || null;
@@ -245,7 +313,22 @@ const CollectorResolver = {
           if (args.solution.description) {
             updateData.description = args.solution.description;
           }
-          // Ne pas écraser ip_ownership_clear s'il existe déjà
+          // Champs DD (optionnels) - ne mettre à jour que si fournis
+          if (args.solution.api_robustness !== undefined) {
+            updateData.api_robustness = args.solution.api_robustness;
+          }
+          if (args.solution.api_documentation_quality !== undefined) {
+            updateData.api_documentation_quality = args.solution.api_documentation_quality;
+          }
+          if (args.solution.ip_ownership_clear !== undefined) {
+            updateData.ip_ownership_clear = args.solution.ip_ownership_clear;
+          }
+          if (args.solution.licensing_model !== undefined) {
+            updateData.licensing_model = args.solution.licensing_model;
+          }
+          if (args.solution.license_compliance_assured !== undefined) {
+            updateData.license_compliance_assured = args.solution.license_compliance_assured;
+          }
           solution = await SolutionModel.findOneAndUpdate(
             { solutionId },
             { $set: updateData },
@@ -293,6 +376,19 @@ const CollectorResolver = {
           if (args.environment.tech_stack && args.environment.tech_stack.length > 0) {
             environmentData.tech_stack = args.environment.tech_stack;
           }
+          // Champs DD (optionnels)
+          if (args.environment.network_security_mechanisms && args.environment.network_security_mechanisms.length > 0) {
+            environmentData.network_security_mechanisms = args.environment.network_security_mechanisms;
+          }
+          if (args.environment.db_scaling_mechanism) {
+            environmentData.db_scaling_mechanism = args.environment.db_scaling_mechanism;
+          }
+          if (args.environment.disaster_recovery_plan) {
+            environmentData.disaster_recovery_plan = args.environment.disaster_recovery_plan;
+          }
+          if (args.environment.sla_offered) {
+            environmentData.sla_offered = args.environment.sla_offered;
+          }
           const createdEnvironment = await EnvironmentModel.create(environmentData);
           environment = (Array.isArray(createdEnvironment) ? createdEnvironment[0] : createdEnvironment) || null;
 
@@ -307,25 +403,37 @@ const CollectorResolver = {
           }
         } else if (environment) {
           const beforeState = environment.toObject();
+          const environmentUpdateData: any = {
+            env_type: args.environment.env_type,
+            data_types: args.environment.data_types,
+            redundancy: args.environment.redundancy,
+            backup: {
+              exists: args.environment.backup.exists,
+              ...(args.environment.backup.schedule && { schedule: args.environment.backup.schedule }),
+              ...(args.environment.backup.rto_hours !== undefined && { rto: args.environment.backup.rto_hours }),
+              ...(args.environment.backup.rpo_hours !== undefined && { rpo: args.environment.backup.rpo_hours }),
+              ...(args.environment.backup.restoration_test_frequency && { restoration_test_frequency: args.environment.backup.restoration_test_frequency }),
+            },
+            deployment_type: args.environment.deployment_type || undefined,
+            virtualization: args.environment.virtualization || undefined,
+            tech_stack: args.environment.tech_stack || [],
+          };
+          // Champs DD (optionnels) - ne mettre à jour que si fournis
+          if (args.environment.network_security_mechanisms !== undefined) {
+            environmentUpdateData.network_security_mechanisms = args.environment.network_security_mechanisms;
+          }
+          if (args.environment.db_scaling_mechanism !== undefined) {
+            environmentUpdateData.db_scaling_mechanism = args.environment.db_scaling_mechanism;
+          }
+          if (args.environment.disaster_recovery_plan !== undefined) {
+            environmentUpdateData.disaster_recovery_plan = args.environment.disaster_recovery_plan;
+          }
+          if (args.environment.sla_offered !== undefined) {
+            environmentUpdateData.sla_offered = args.environment.sla_offered;
+          }
           environment = await EnvironmentModel.findOneAndUpdate(
             { envId },
-            {
-              $set: {
-                env_type: args.environment.env_type,
-                data_types: args.environment.data_types,
-                redundancy: args.environment.redundancy,
-                backup: {
-                  exists: args.environment.backup.exists,
-                  ...(args.environment.backup.schedule && { schedule: args.environment.backup.schedule }),
-                  ...(args.environment.backup.rto_hours !== undefined && { rto: args.environment.backup.rto_hours }),
-                  ...(args.environment.backup.rpo_hours !== undefined && { rpo: args.environment.backup.rpo_hours }),
-                  ...(args.environment.backup.restoration_test_frequency && { restoration_test_frequency: args.environment.backup.restoration_test_frequency }),
-                },
-                deployment_type: args.environment.deployment_type || undefined,
-                virtualization: args.environment.virtualization || undefined,
-                tech_stack: args.environment.tech_stack || [],
-              },
-            },
+            { $set: environmentUpdateData },
             { new: true }
           );
 
@@ -350,7 +458,7 @@ const CollectorResolver = {
         let securityProfile = await SecurityProfileModel.findOne({ secId });
 
         if (!securityProfile) {
-          securityProfile = await SecurityProfileModel.create({
+          const securityData: any = {
             secId,
             envId: environment._id,
             auth: args.security.auth,
@@ -362,32 +470,73 @@ const CollectorResolver = {
             patching: args.security.patching || 'ad_hoc',
             pentest_freq: args.security.pentest_freq || 'never',
             vuln_mgmt: args.security.vuln_mgmt || 'none',
-          });
+          };
+          // Champs DD (optionnels)
+          if (args.security.access_control) {
+            securityData.access_control = args.security.access_control;
+          }
+          if (args.security.internal_audits_recent) {
+            securityData.internal_audits_recent = args.security.internal_audits_recent;
+          }
+          if (args.security.centralized_monitoring !== undefined) {
+            securityData.centralized_monitoring = args.security.centralized_monitoring;
+          }
+          if (args.security.pentest_results_summary) {
+            securityData.pentest_results_summary = args.security.pentest_results_summary;
+          }
+          if (args.security.known_security_flaws) {
+            securityData.known_security_flaws = args.security.known_security_flaws;
+          }
+          if (args.security.incident_reporting_process) {
+            securityData.incident_reporting_process = args.security.incident_reporting_process;
+          }
+          const createdSecurityProfile = await SecurityProfileModel.create(securityData);
+          securityProfile = (Array.isArray(createdSecurityProfile) ? createdSecurityProfile[0] : createdSecurityProfile) || null;
 
-          await logAudit(auditContext, {
-            action: 'CREATE',
-            entityType: 'SecurityProfile',
-            entityId: secId,
-            after: securityProfile.toObject(),
-            description: `Création d'un profil de sécurité via Tech Profiler`,
-          });
+          if (securityProfile) {
+            await logAudit(auditContext, {
+              action: 'CREATE',
+              entityType: 'SecurityProfile',
+              entityId: secId,
+              after: securityProfile.toObject(),
+              description: `Création d'un profil de sécurité via Tech Profiler`,
+            });
+          }
         } else {
           const beforeState = securityProfile.toObject();
+          const securityUpdateData: any = {
+            auth: args.security.auth,
+            encryption: {
+              in_transit: args.security.encryption.in_transit,
+              at_rest: args.security.encryption.at_rest,
+              details: args.security.encryption.details || undefined,
+            },
+            patching: args.security.patching || 'ad_hoc',
+            pentest_freq: args.security.pentest_freq || 'never',
+            vuln_mgmt: args.security.vuln_mgmt || 'none',
+          };
+          // Champs DD (optionnels) - ne mettre à jour que si fournis
+          if (args.security.access_control !== undefined) {
+            securityUpdateData.access_control = args.security.access_control;
+          }
+          if (args.security.internal_audits_recent !== undefined) {
+            securityUpdateData.internal_audits_recent = args.security.internal_audits_recent;
+          }
+          if (args.security.centralized_monitoring !== undefined) {
+            securityUpdateData.centralized_monitoring = args.security.centralized_monitoring;
+          }
+          if (args.security.pentest_results_summary !== undefined) {
+            securityUpdateData.pentest_results_summary = args.security.pentest_results_summary;
+          }
+          if (args.security.known_security_flaws !== undefined) {
+            securityUpdateData.known_security_flaws = args.security.known_security_flaws;
+          }
+          if (args.security.incident_reporting_process !== undefined) {
+            securityUpdateData.incident_reporting_process = args.security.incident_reporting_process;
+          }
           securityProfile = await SecurityProfileModel.findOneAndUpdate(
             { secId },
-            {
-              $set: {
-                auth: args.security.auth,
-                encryption: {
-                  in_transit: args.security.encryption.in_transit,
-                  at_rest: args.security.encryption.at_rest,
-                  details: args.security.encryption.details || undefined,
-                },
-                patching: args.security.patching || 'ad_hoc',
-                pentest_freq: args.security.pentest_freq || 'never',
-                vuln_mgmt: args.security.vuln_mgmt || 'none',
-              },
-            },
+            { $set: securityUpdateData },
             { new: true }
           );
 
