@@ -3,7 +3,7 @@ import type { UserRole } from './User.model.js';
 
 export interface IPageAccessPermission extends Document {
   role: UserRole;
-  page: string; // 'collector', 'admin', 'dashboard', 'hosting', 'about'
+  page: string; // 'collector', 'admin', 'dashboard', 'hosting', 'dd-tech', 'about'
   allowed: boolean;
 }
 
@@ -60,6 +60,12 @@ export async function initializeDefaultPagePermissions() {
     { role: 'Supervisor', page: 'hosting', allowed: true },
     { role: 'EntityDirector', page: 'hosting', allowed: true },
     { role: 'Editor', page: 'hosting', allowed: true },
+    
+    // DD Tech - accessible à tous
+    { role: 'Admin', page: 'dd-tech', allowed: true },
+    { role: 'Supervisor', page: 'dd-tech', allowed: true },
+    { role: 'EntityDirector', page: 'dd-tech', allowed: true },
+    { role: 'Editor', page: 'dd-tech', allowed: true },
   ];
 
   for (const perm of defaultPermissions) {
