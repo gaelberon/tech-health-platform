@@ -830,8 +830,8 @@ const CollectorStepper: React.FC = () => {
       case 4:
         return (
           <div className="text-center space-y-4">
-            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{t('collector.submit')}</h2>
-            <p className="mb-8 text-gray-700 dark:text-gray-300">{t('collector.submit')}</p>
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{t('collector.submitTitle')}</h2>
+            <p className="mb-8 text-gray-700 dark:text-gray-300">{t('collector.submitDescription')}</p>
             
             {submissionError && (
               <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-700 dark:text-red-300 mb-4 transition-colors">
