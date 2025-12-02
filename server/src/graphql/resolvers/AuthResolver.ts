@@ -26,7 +26,7 @@ export const AuthResolver = {
       const userObj = user.toObject();
       const { passwordHash, ...userWithoutPassword } = userObj;
       
-      console.log('[ME] Utilisateur trouvé:', userWithoutPassword.userId);
+      console.log('[ME] Utilisateur trouvé:', userWithoutPassword.userId, 'themePreference:', userWithoutPassword.themePreference);
       return userWithoutPassword;
     },
   },

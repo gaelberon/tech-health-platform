@@ -14,6 +14,7 @@ export interface IUser extends Document {
   associatedEditorId?: string; // Pour Editor/EntityDirector (un seul éditeur)
   associatedEditorIds?: string[]; // Pour Supervisor (plusieurs éditeurs dans le portefeuille)
   profilePicture?: string; // Photo de profil en base64 ou URL
+  themePreference?: 'light' | 'dark'; // Préférence de thème (light/dark)
   archived?: boolean;
   archivedAt?: Date;
   archivedBy?: string; // userId de l'admin qui a archivé
@@ -39,6 +40,7 @@ const UserSchema = new Schema<IUser>(
     associatedEditorId: { type: String, required: false }, // Pour Editor/EntityDirector
     associatedEditorIds: [{ type: String }], // Pour Supervisor (portefeuille d'éditeurs)
     profilePicture: { type: String, required: false }, // Photo de profil (base64 ou URL)
+    themePreference: { type: String, enum: ['light', 'dark'], required: false, default: 'light' }, // Préférence de thème
     archived: { type: Boolean, default: false, index: true },
     archivedAt: { type: Date, required: false },
     archivedBy: { type: String, required: false },

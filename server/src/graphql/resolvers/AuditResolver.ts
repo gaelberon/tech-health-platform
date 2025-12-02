@@ -49,9 +49,22 @@ const AuditResolver = {
 
       return logs.map((log) => {
         const logObj = log.toObject() as any;
+        
+        // Sérialiser les valeurs dans changes (oldValue et newValue doivent être des strings)
+        const serializedChanges = logObj.changes?.map((change: any) => ({
+          field: change.field,
+          oldValue: change.oldValue !== undefined && change.oldValue !== null 
+            ? (typeof change.oldValue === 'string' ? change.oldValue : JSON.stringify(change.oldValue))
+            : null,
+          newValue: change.newValue !== undefined && change.newValue !== null
+            ? (typeof change.newValue === 'string' ? change.newValue : JSON.stringify(change.newValue))
+            : null,
+        })) || [];
+        
         return {
           ...logObj,
           id: log._id.toString(),
+          changes: serializedChanges,
           before: logObj.before ? JSON.stringify(logObj.before) : null,
           after: logObj.after ? JSON.stringify(logObj.after) : null,
           timestamp: logObj.timestamp.toISOString(),
@@ -75,9 +88,22 @@ const AuditResolver = {
 
       return logs.map((log) => {
         const logObj = log.toObject() as any;
+        
+        // Sérialiser les valeurs dans changes (oldValue et newValue doivent être des strings)
+        const serializedChanges = logObj.changes?.map((change: any) => ({
+          field: change.field,
+          oldValue: change.oldValue !== undefined && change.oldValue !== null 
+            ? (typeof change.oldValue === 'string' ? change.oldValue : JSON.stringify(change.oldValue))
+            : null,
+          newValue: change.newValue !== undefined && change.newValue !== null
+            ? (typeof change.newValue === 'string' ? change.newValue : JSON.stringify(change.newValue))
+            : null,
+        })) || [];
+        
         return {
           ...logObj,
           id: log._id.toString(),
+          changes: serializedChanges,
           before: logObj.before ? JSON.stringify(logObj.before) : null,
           after: logObj.after ? JSON.stringify(logObj.after) : null,
           timestamp: logObj.timestamp.toISOString(),

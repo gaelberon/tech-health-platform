@@ -75,11 +75,10 @@ CollectorDraftSchema.index({ userId: 1, status: 1 });
 CollectorDraftSchema.index({ userId: 1, lastSavedAt: -1 }); // Pour trier par date
 
 // Middleware pour mettre à jour lastSavedAt à chaque sauvegarde
-CollectorDraftSchema.pre('save', function (next: any) {
+CollectorDraftSchema.pre('save', async function () {
   if (this.isModified() || this.isNew) {
     (this as any).lastSavedAt = new Date();
   }
-  next();
 });
 
 export const CollectorDraftModel = model<ICollectorDraft>(

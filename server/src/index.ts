@@ -53,48 +53,29 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
     // b. Initialisation de l'Application Express
     const app = express();
     
+    // Configuration CORS EN PREMIER (avant les autres middlewares)
+    // Utiliser le middleware cors standard qui gère correctement les headers et les requêtes OPTIONS
+    app.use(cors({
+      origin: 'http://localhost:5173',
+      credentials: true,
+      methods: ['GET', 'POST', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }));
+    
     // Configuration du body parser avec limite de taille augmentée pour les images base64
     // Une image de 2MB encodée en base64 peut faire ~2.7MB, on met 10MB pour la marge
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     
-    // Middleware de logging pour debug
-    app.use((req, res, next) => {
-      if (req.path === '/graphql') {
-        console.log(`[HTTP] ${req.method} ${req.path} - Cookies:`, req.cookies);
-      }
-      next();
-    });
-    
     app.use(cookieParser());
     
-    // Configuration CORS personnalisée qui intercepte TOUTES les réponses
-    // (même celles générées par Apollo Server)
+    // Middleware de logging pour debug (après CORS et body parser)
+    // IMPORTANT: Ne pas intercepter les requêtes GraphQL car Apollo Server les gère
     app.use((req, res, next) => {
-      // Sauvegarder la méthode end originale
-      const originalEnd = res.end;
-      
-      // Intercepter la méthode end pour forcer les headers CORS juste avant l'envoi
-      res.end = function(chunk?: any, encoding?: any, cb?: any) {
-        // Forcer les headers CORS AVANT d'envoyer la réponse
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        
-        // Appeler la méthode end originale
-        return originalEnd.call(this, chunk, encoding, cb);
-      };
-      
-      // Pour les requêtes OPTIONS (preflight), répondre immédiatement
-      if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        return res.sendStatus(200);
+      // Ne logger que les requêtes non-GraphQL pour éviter les conflits
+      if (req.path !== '/graphql') {
+        console.log(`[HTTP] ${req.method} ${req.path} - Cookies:`, req.cookies);
       }
-      
       next();
     });
 
@@ -103,10 +84,10 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
 
     // d. Initialisation de l'Instance Apollo Server
     // L'utilisation de GraphQL permet de créer des vues flexibles (Portfolio, Technique DD).
-    // Ajouter le scalar JSON aux resolvers
+    // Ajouter le scalar JSON aux resolvers - IMPORTANT: JSON doit être au niveau racine
     const resolversWithJSON = {
+        JSON: GraphQLJSON, // Scalar JSON doit être au niveau racine, pas dans Query/Mutation
         ...resolvers,
-        JSON: GraphQLJSON,
     };
 
     const server = new ApolloServer({
@@ -176,14 +157,12 @@ async function startApolloServer(typeDefs: any, resolvers: any) {
 
     // f. Application du middleware Apollo à Express
     // Cela permet à Apollo de gérer toutes les requêtes HTTP sur le chemin /graphql
-    // Configuration du body parser pour accepter des requêtes plus grandes (images base64)
-    // CORRECTION : Forcer l'application à 'any' pour contourner le conflit de typage Express/Apollo Server v3
+    // Note: bodyParserConfig n'est plus supporté dans Apollo Server v3
+    // La configuration du body parser se fait via Express (déjà fait plus haut)
     server.applyMiddleware({ 
         app: app as any, 
         path: GRAPHQL_PATH,
-        bodyParserConfig: {
-            limit: '10mb',
-        },
+        cors: false, // CORS est géré par le middleware Express personnalisé
     }); 
     
     // g. Démarrage du Serveur d'écoute
