@@ -51,7 +51,7 @@ const CollectorStepper: React.FC = () => {
   const [showDraftSelector, setShowDraftSelector] = useState(false);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useSession();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // Déterminer la langue à utiliser (préférence utilisateur ou langue i18n actuelle)
   const currentLang = user?.languagePreference || i18n.language || 'fr';
@@ -124,7 +124,7 @@ const CollectorStepper: React.FC = () => {
           }
         });
       } catch (error) {
-        console.error('Erreur lors de la sauvegarde automatique:', error);
+        console.error(t('collector.autoSaveError') + ':', error);
       }
     }, 2000); // 2 secondes de délai
   };
@@ -160,14 +160,14 @@ const CollectorStepper: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Erreur lors du chargement du brouillon:', error);
-      alert(`Erreur lors du chargement du brouillon: ${error.message}`);
+      alert(`${t('collector.loadDraftError')}: ${error.message}`);
     }
   };
 
   // Fonction pour supprimer un brouillon
   const handleDeleteDraft = async (draftId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ?')) return;
+    if (!confirm(t('collector.deleteDraftConfirm'))) return;
 
     try {
       await deleteDraft({ variables: { draftId } });
@@ -176,7 +176,7 @@ const CollectorStepper: React.FC = () => {
         setCurrentDraftId(null);
       }
     } catch (error: any) {
-      alert(`Erreur lors de la suppression: ${error.message}`);
+      alert(`${t('collector.deleteDraftError')}: ${error.message}`);
     }
   };
 
@@ -187,47 +187,47 @@ const CollectorStepper: React.FC = () => {
 
     // Validation des champs requis
     if (!formData.editorName && !formData.selectedEditorId) {
-      setSubmissionError('Le nom de l\'éditeur est requis');
+      setSubmissionError(t('collector.editor.nameRequired'));
       return;
     }
 
     if (!formData.editorCriticality && !formData.useExistingEditor) {
-      setSubmissionError('La criticité métier est requise');
+      setSubmissionError(t('collector.editor.businessCriticalityRequired'));
       return;
     }
 
     if (!formData.solutionName) {
-      setSubmissionError('Le nom de la solution est requis');
+      setSubmissionError(t('collector.solution.nameRequired'));
       return;
     }
 
     if (!formData.solutionType) {
-      setSubmissionError('Le type de solution est requis');
+      setSubmissionError(t('collector.solution.typeRequired'));
       return;
     }
 
     if (!formData.solutionCriticality) {
-      setSubmissionError('La criticité produit est requise');
+      setSubmissionError(t('collector.solution.criticalityRequired'));
       return;
     }
 
     if (!formData.solutionMainUseCase) {
-      setSubmissionError('Le cas d\'usage principal est requis');
+      setSubmissionError(t('collector.solution.mainUseCaseRequired'));
       return;
     }
 
     if (formData.dataTypes.length === 0) {
-      setSubmissionError('Au moins un type de données doit être sélectionné');
+      setSubmissionError(t('collector.environment.dataTypesRequired'));
       return;
     }
 
     if (!formData.redundancy) {
-      setSubmissionError('Le niveau de redondance est requis');
+      setSubmissionError(t('collector.environment.redundancyRequired'));
       return;
     }
 
     if (!formData.auth) {
-      setSubmissionError('La méthode d\'authentification est requise');
+      setSubmissionError(t('collector.security.authRequired'));
       return;
     }
 
@@ -315,7 +315,7 @@ const CollectorStepper: React.FC = () => {
       }
     } catch (e: any) {
       console.error('Erreur de soumission GraphQL:', e);
-      const errorMessage = e.message || 'Erreur lors de la soumission des données';
+      const errorMessage = e.message || t('collector.error');
       setSubmissionError(errorMessage);
 
       // Sauvegarder le brouillon avec statut "failed" et le message d'erreur
@@ -363,7 +363,7 @@ const CollectorStepper: React.FC = () => {
     return (
       <div className="text-center py-8">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-gray-500 text-sm">Chargement des listes de valeurs...</p>
+        <p className="mt-4 text-gray-500 text-sm">{t('collector.loadingLookups')}</p>
       </div>
     );
   }
@@ -373,12 +373,12 @@ const CollectorStepper: React.FC = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Reprendre un brouillon</h2>
+          <h2 className="text-xl font-semibold">{t('collector.resumeDraft')}</h2>
           <button
             onClick={() => setShowDraftSelector(false)}
             className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
           >
-            Nouveau formulaire
+            {t('collector.newForm')}
           </button>
         </div>
 
@@ -401,9 +401,9 @@ const CollectorStepper: React.FC = () => {
                           : 'bg-blue-100 text-blue-800'
                       }`}
                     >
-                      {draft.status === 'failed' ? 'Échec' : draft.status === 'in_progress' ? 'En cours' : 'Brouillon'}
+                      {draft.status === 'failed' ? t('collector.draftStatus.failed') : draft.status === 'in_progress' ? t('collector.draftStatus.in_progress') : t('collector.draftStatus.draft')}
                     </span>
-                    <span className="text-sm text-gray-500">Étape {draft.step}/4</span>
+                    <span className="text-sm text-gray-500">{t('collector.step', { current: draft.step, total: 4 })}</span>
                   </div>
                   {draft.formData.solutionName && (
                     <p className="font-medium text-gray-900 dark:text-gray-100 mb-1">
@@ -412,22 +412,22 @@ const CollectorStepper: React.FC = () => {
                   )}
                   {draft.formData.editorName && (
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      Éditeur: {draft.formData.editorName}
+                      {t('collector.editor.editorLabel')}: {draft.formData.editorName}
                     </p>
                   )}
                   {draft.errorMessage && (
                     <p className="text-xs text-red-600 mt-2 italic">
-                      Erreur: {draft.errorMessage}
+                      {t('collector.errorLabel')}: {draft.errorMessage}
                     </p>
                   )}
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                    Sauvegardé le {new Date(draft.lastSavedAt).toLocaleString('fr-FR')}
+                    {t('collector.lastSaved')} {new Date(draft.lastSavedAt).toLocaleString('fr-FR')}
                   </p>
                 </div>
                 <button
                   onClick={(e) => handleDeleteDraft(draft.draftId, e)}
                   className="text-red-500 hover:text-red-700 ml-2"
-                  title="Supprimer"
+                  title={t('common.delete')}
                 >
                   ✕
                 </button>
@@ -444,7 +444,7 @@ const CollectorStepper: React.FC = () => {
       case 1:
         return (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">1. Identification de la Solution (P1)</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('collector.solution.step1Title')}</h2>
 
             {/* Choix: éditeur existant ou nouveau */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-gray-50 dark:bg-gray-800 transition-colors">
@@ -464,7 +464,7 @@ const CollectorStepper: React.FC = () => {
                   }}
                   className="mr-2"
                 />
-                <span className="font-medium">Utiliser un éditeur existant</span>
+                <span className="font-medium">{t('collector.editor.useExisting')}</span>
               </label>
 
               {formData.useExistingEditor && editors.length > 0 && (
@@ -473,7 +473,7 @@ const CollectorStepper: React.FC = () => {
                   onChange={(e) => handleEditorSelect(e.target.value)}
                   className="w-full border p-2 rounded mt-2"
                 >
-                  <option value="">Sélectionner un éditeur...</option>
+                  <option value="">{t('collector.editor.selectEditor')}</option>
                   {editors.map((editor: any) => (
                     <option key={editor.editorId} value={editor.editorId}>
                       {editor.name} ({editor.editorId})
@@ -483,13 +483,13 @@ const CollectorStepper: React.FC = () => {
               )}
 
               {formData.useExistingEditor && editors.length === 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Aucun éditeur disponible. Créez-en un nouveau.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">{t('collector.editor.noEditorAvailable')}</p>
               )}
             </div>
 
             {/* Editor.name (P1) */}
             <label className="block text-gray-700 dark:text-gray-300">
-              Nom de l'Éditeur {formData.useExistingEditor ? '(pré-rempli)' : '*'}
+              {t('collector.editor.name')} {formData.useExistingEditor ? '(pré-rempli)' : '*'}
                 <AssistanceTooltip content="Nom légal de l'entreprise éditrice du logiciel." />
             </label>
             <input
@@ -503,7 +503,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Editor.business_criticality (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Criticité Métier *
+              {t('collector.editor.criticalityLabel')} *
               <AssistanceTooltip content="Évalue l'impact métier si l'éditeur devenait indisponible (définitions standardisées). P1 pour le score global : fixe la tolérance au risque et les exigences de product_criticality." />
             </label>
             <select
@@ -513,7 +513,7 @@ const CollectorStepper: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
-              <option value="">Sélectionner...</option>
+              <option value="">{t('collector.select')}</option>
               {lookups.businessCriticality.map((item: any) => (
                 <option key={item.code} value={item.code}>
                   {item.label}
@@ -523,7 +523,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Solution.name (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Nom de la Solution *
+              {t('collector.solution.name')} *
               <AssistanceTooltip content="Nom de la solution logicielle évaluée." />
             </label>
             <input
@@ -536,7 +536,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Solution.type (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Mode Logiciel (Type) *
+              {t('collector.solution.typeLabel')} *
                 <AssistanceTooltip content="Modèle de livraison du logiciel. Crucial pour les enjeux d'hébergement." />
             </label>
             <select
@@ -545,7 +545,7 @@ const CollectorStepper: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
-              <option value="">Sélectionner...</option>
+              <option value="">{t('collector.select')}</option>
               {lookups.solutionTypes.map((item: any) => (
                 <option key={item.code} value={item.code}>
                   {item.label}
@@ -555,7 +555,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Solution.product_criticality (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Criticité Produit *
+              {t('collector.solution.criticality')} *
               <AssistanceTooltip content="Criticité de la solution pour l'organisation." />
             </label>
             <select
@@ -564,7 +564,7 @@ const CollectorStepper: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
-              <option value="">Sélectionner...</option>
+              <option value="">{t('collector.select')}</option>
               {lookups.businessCriticality.map((item: any) => (
                 <option key={item.code} value={item.code}>
                   {item.label}
@@ -574,7 +574,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Solution.main_use_case (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Cas d'usage principal *
+              {t('collector.solution.mainUseCase')} *
               <AssistanceTooltip content="Description du cas d'usage principal de la solution." />
             </label>
             <textarea
@@ -590,11 +590,11 @@ const CollectorStepper: React.FC = () => {
       case 2:
         return (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">2. Hébergement & Résilience (P1)</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('collector.hosting.step2Title')}</h2>
 
             {/* Hosting.provider (P1) */}
             <label className="block text-gray-700 dark:text-gray-300">
-              Fournisseur Cloud/Hébergeur *
+              {t('collector.hosting.providerLabel')} *
                 <AssistanceTooltip content="Nom du fournisseur technique (ex: OVH, Azure, GCP). Champ conditionnel si SaaS ou Hébergé." />
             </label>
             <input
@@ -607,7 +607,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Hosting.region (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Région d'Hébergement *
+              {t('collector.hosting.regionLabel')} *
                 <AssistanceTooltip content="Pays/Région où les données sont hébergées. Nécessaire pour la conformité RGPD." />
             </label>
             <input
@@ -620,7 +620,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Hosting.tier (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Type d'infrastructure *
+              {t('collector.hosting.tierLabel')} *
               <AssistanceTooltip content="Type d'infrastructure d'hébergement." />
             </label>
             <select
@@ -637,7 +637,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Environment.data_types (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Types de Données Hébergées (P1) *
+              {t('collector.environment.dataTypesLabel')} *
               <AssistanceTooltip content="Indique si des données réglementées sont traitées (Santé, Finance, RGPD). Critique pour le score de conformité (20%) et justifie les exigences de certifications (HDS, Ségur)." />
             </label>
             <select
@@ -656,11 +656,11 @@ const CollectorStepper: React.FC = () => {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs types</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('collector.environment.dataTypesHint')}</p>
 
             {/* Environment.redundancy (P1) */}
             <label className="block pt-2 text-gray-700 dark:text-gray-300">
-              Niveau de Redondance *
+              {t('collector.environment.redundancyLabel')} *
               <AssistanceTooltip content="Niveau de redondance de l'infrastructure." />
             </label>
             <select
@@ -669,7 +669,7 @@ const CollectorStepper: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
-              <option value="">Sélectionner...</option>
+              <option value="">{t('collector.select')}</option>
               {lookups.redundancyLevels.map((item: any) => (
                 <option key={item.code} value={item.code}>
                   {item.label}
@@ -679,7 +679,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* Environment.backup (exists, RTO, RPO) (P1) */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded mt-4 bg-white dark:bg-gray-800 transition-colors">
-              <label className="block font-medium text-gray-700 dark:text-gray-300">Politique de Sauvegarde (Backup) :</label>
+              <label className="block font-medium text-gray-700 dark:text-gray-300">{t('collector.environment.backupPolicy')} :</label>
               <div className="flex items-center pt-2">
                 <input
                   type="checkbox"
@@ -688,7 +688,7 @@ const CollectorStepper: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, backupExists: e.target.checked })}
                   className="mr-2"
                 />
-                <label htmlFor="backupExists" className="text-gray-700 dark:text-gray-300">Existe-t-elle ? (P1)</label>
+                <label htmlFor="backupExists" className="text-gray-700 dark:text-gray-300">{t('collector.environment.backupExists')}</label>
               </div>
 
               {formData.backupExists && (
@@ -740,12 +740,12 @@ const CollectorStepper: React.FC = () => {
               onClick={() => setShowP2Details(!showP2Details)}
               className="mt-4 text-blue-500 hover:underline"
             >
-              {showP2Details ? 'Masquer' : 'Voir plus de détails P2/P3 (Certifications, Tech Stack)'}
+              {showP2Details ? t('collector.hide') : t('collector.showMore')}
             </button>
 
             {showP2Details && (
               <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-gray-50 dark:bg-gray-800 mt-2 transition-colors">
-                <h3 className="font-semibold mb-2">Champs P2 : Architecture et Certifications</h3>
+                <h3 className="font-semibold mb-2">{t('collector.p2Fields')}</h3>
                 <label className="block text-gray-700 dark:text-gray-300 font-medium">Certifications (P2) :</label>
                 <select
                   multiple
@@ -766,7 +766,7 @@ const CollectorStepper: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, deploymentType: e.target.value })}
                   className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
-                  <option value="">Sélectionner...</option>
+                  <option value="">{t('collector.select')}</option>
                   <option value="monolith">Monolith</option>
                   <option value="microservices">Microservices</option>
                   <option value="hybrid">Hybrid</option>
@@ -779,11 +779,11 @@ const CollectorStepper: React.FC = () => {
       case 3:
         return (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">3. Sécurité Minimale (P1)</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">{t('collector.security.step3Title')}</h2>
 
             {/* SecurityProfile.auth (P1) */}
             <label className="block text-gray-700 dark:text-gray-300">
-              Authentification *
+              {t('collector.security.auth')} *
               <AssistanceTooltip content="Méthode pour valider l'identité des utilisateurs (Passwords/MFA/SSO). P1 pour le score Sécurité (30%) : MFA ou SSO requis pour atteindre le maximum." />
             </label>
             <select
@@ -792,7 +792,7 @@ const CollectorStepper: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               required
             >
-              <option value="">Sélectionner...</option>
+              <option value="">{t('collector.select')}</option>
               {lookups.authTypes.map((item: any) => (
                 <option key={item.code} value={item.code}>
                   {item.label}
@@ -802,7 +802,7 @@ const CollectorStepper: React.FC = () => {
 
             {/* SecurityProfile.encryption (in_transit, at_rest) (P1) */}
             <div className="border p-4 rounded mt-4">
-              <label className="block font-medium mb-2 text-gray-700 dark:text-gray-300">Chiffrement des Données (P1) :</label>
+              <label className="block font-medium mb-2 text-gray-700 dark:text-gray-300">{t('collector.security.encryption')} :</label>
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -811,7 +811,7 @@ const CollectorStepper: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, encryptTransit: e.target.checked })}
                   className="mr-2"
                 />
-                <label htmlFor="encryptTransit">Chiffrement en Transit (ex: HTTPS) ?</label>
+                <label htmlFor="encryptTransit">{t('collector.security.encryptTransit')}</label>
               </div>
               <div className="flex items-center pt-2">
                 <input
@@ -821,7 +821,7 @@ const CollectorStepper: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, encryptRest: e.target.checked })}
                   className="mr-2"
                 />
-                <label htmlFor="encryptRest">Chiffrement au Repos (base de données/disque) ?</label>
+                <label htmlFor="encryptRest">{t('collector.security.encryptRest')}</label>
               </div>
             </div>
           </div>
@@ -830,12 +830,12 @@ const CollectorStepper: React.FC = () => {
       case 4:
         return (
           <div className="text-center space-y-4">
-            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">Prêt à soumettre les données P1</h2>
-            <p className="mb-8 text-gray-700 dark:text-gray-300">Confirmez la soumission pour déclencher le premier Scoring Snapshot de la solution.</p>
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{t('collector.submit')}</h2>
+            <p className="mb-8 text-gray-700 dark:text-gray-300">{t('collector.submit')}</p>
             
             {submissionError && (
               <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-700 dark:text-red-300 mb-4 transition-colors">
-                <p className="font-semibold">Erreur de soumission</p>
+                <p className="font-semibold">{t('common.error')}</p>
                 <p className="text-sm">{submissionError}</p>
               </div>
             )}
@@ -845,7 +845,7 @@ const CollectorStepper: React.FC = () => {
               disabled={submitting}
               className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? 'Soumission en cours...' : 'Soumettre et Calculer le Score Initial (P1)'}
+              {submitting ? t('collector.submitting') : t('collector.submit')}
             </button>
           </div>
         );
@@ -854,9 +854,9 @@ const CollectorStepper: React.FC = () => {
         return (
           <div className="text-center space-y-4">
             <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-6 transition-colors">
-              <h2 className="text-2xl font-semibold text-green-800 dark:text-green-200 mb-4">✅ Soumission réussie !</h2>
+              <h2 className="text-2xl font-semibold text-green-800 dark:text-green-200 mb-4">✅ {t('collector.success')}</h2>
               <p className="text-green-700 dark:text-green-300 mb-4">
-                Les données P1 ont été enregistrées avec succès. Un snapshot de scoring initial a été créé.
+                {t('collector.success')}
               </p>
               <button
                 onClick={() => {
@@ -898,14 +898,14 @@ const CollectorStepper: React.FC = () => {
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                Nouvelle collecte
+                {t('collector.newForm')}
               </button>
             </div>
           </div>
         );
 
       default:
-        return <p>Étape inconnue.</p>;
+        return <p>{t('common.error')}</p>;
     }
   };
 
@@ -916,11 +916,11 @@ const CollectorStepper: React.FC = () => {
         <div className="mb-4 flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 transition-colors">
           <div className="flex items-center gap-2">
             <span className="text-sm text-blue-700 dark:text-blue-300">
-              {drafts.length} brouillon{drafts.length > 1 ? 's' : ''} disponible{drafts.length > 1 ? 's' : ''}
+              {t('collector.draftsAvailable', { count: drafts.length })}
             </span>
             {currentDraftId && (
               <span className="text-xs text-blue-600 dark:text-blue-400">
-                (Brouillon actif sauvegardé automatiquement)
+                {t('collector.draftActive')}
               </span>
             )}
           </div>
@@ -928,7 +928,7 @@ const CollectorStepper: React.FC = () => {
             onClick={() => setShowDraftSelector(true)}
             className="px-3 py-1 text-sm text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-200 font-medium"
           >
-            Voir les brouillons
+            {t('collector.viewDrafts')}
           </button>
         </div>
       )}
@@ -937,20 +937,20 @@ const CollectorStepper: React.FC = () => {
       {user && drafts.length > 0 && !currentDraftId && !showDraftSelector && step === 1 && (
         <div className="mb-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 transition-colors">
           <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
-            Vous avez {drafts.length} brouillon{drafts.length > 1 ? 's' : ''} enregistré{drafts.length > 1 ? 's' : ''}. Souhaitez-vous reprendre un brouillon existant ?
+            {t('collector.draftsSaved', { count: drafts.length })}
           </p>
           <button
             onClick={() => setShowDraftSelector(true)}
             className="px-4 py-2 text-sm bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
           >
-            Voir mes brouillons
+            {t('collector.viewMyDrafts')}
           </button>
         </div>
       )}
 
       {savingDraft && (
         <div className="mb-2 text-xs text-gray-500 italic">
-          💾 Sauvegarde automatique en cours...
+          {t('collector.autoSaving')}
         </div>
       )}
 
@@ -965,7 +965,7 @@ const CollectorStepper: React.FC = () => {
             }}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
-              Précédent
+              {t('collector.previous')}
             </button>
           )}
 
@@ -977,7 +977,7 @@ const CollectorStepper: React.FC = () => {
             }}
               className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 ml-auto"
             >
-              Suivant
+              {t('collector.next')}
             </button>
           )}
         </div>
