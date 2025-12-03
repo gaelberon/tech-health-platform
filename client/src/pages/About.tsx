@@ -612,7 +612,7 @@ const DataModelContent: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div id="data-model">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Modèle de Données</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Description complète des entités et des champs collectés pour l'évaluation de la santé technique.
@@ -717,6 +717,145 @@ const DataModelContent: React.FC = () => {
               <p className="text-gray-500 dark:text-gray-400">Sélectionnez une entité pour voir ses champs</p>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Détails avancés sur le référentiel DD Tech + CIEC */}
+      <div id="data-model-details" className="space-y-4 mt-8">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          Clé d'unicité et structure hiérarchique du référentiel DD Tech + CIEC
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400">
+          Une ligne d'information <span className="font-semibold">unique et complète</span> dans le référentiel DD Tech + CIEC
+          est identifiée par la combinaison hiérarchique suivante&nbsp;:
+          <span className="font-semibold"> Editor (editorId) &rarr; Solution (solutionId) &rarr; Environment (envId)</span>.
+          Cette chaîne Editor + Solution + Environment constitue la clé d'unicité fonctionnelle de la donnée, car&nbsp;:
+        </p>
+        <ul className="list-disc ml-6 space-y-1 text-gray-600 dark:text-gray-400">
+          <li>
+            un <span className="font-semibold">Editor</span> possède plusieurs <span className="font-semibold">Solutions</span> (relation 1&nbsp;:&nbsp;N) ;
+          </li>
+          <li>
+            chaque <span className="font-semibold">Solution</span> possède plusieurs <span className="font-semibold">Environments</span> (Prod, Dev, Test, Backup) ;
+          </li>
+          <li>
+            chaque <span className="font-semibold">Environment</span> agrège l&apos;ensemble des informations d&apos;hébergement,
+            de sécurité, d&apos;observabilité et de coûts associées à ce couple (Solution, Environment).
+          </li>
+        </ul>
+        <p className="text-gray-600 dark:text-gray-400">
+          Autour de cet axe principal, le modèle applique plusieurs relations 1&nbsp;:&nbsp;1 qui garantissent l&apos;unicité des blocs
+          d&apos;information complémentaires&nbsp;:
+        </p>
+        <ul className="list-disc ml-6 space-y-1 text-gray-600 dark:text-gray-400">
+          <li>
+            <span className="font-semibold">SecurityProfile</span> est lié en 1&nbsp;:&nbsp;1 à un Environment (un seul profil de sécurité par environnement) ;
+          </li>
+          <li>
+            <span className="font-semibold">MonitoringObservability</span> peut être géré en 1&nbsp;:&nbsp;1 (ou N) par Environment pour la partie observabilité ;
+          </li>
+          <li>
+            <span className="font-semibold">EntityCost</span> est en 1&nbsp;:&nbsp;1 avec Environment (un bloc de coûts par environnement) ;
+          </li>
+          <li>
+            <span className="font-semibold">Codebase</span> et <span className="font-semibold">DevelopmentMetrics</span> sont en 1&nbsp;:&nbsp;1 avec Solution ;
+          </li>
+          <li>
+            <span className="font-semibold">DevelopmentTeam</span> est en 1&nbsp;:&nbsp;1 avec Editor.
+          </li>
+        </ul>
+        <p className="text-gray-600 dark:text-gray-400">
+          Le <span className="font-semibold">ScoringSnapshot</span> vient ensuite s&apos;appuyer sur cette structure&nbsp;: il est toujours lié à une Solution
+          (obligatoire) et éventuellement à un Environment, avec un champ <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">collection_type</code>
+          qui distingue les collectes de type <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">snapshot</code> (instantané) et
+          <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">DD</code> (Due Diligence).
+          Plusieurs snapshots peuvent exister pour un même triplet (Editor, Solution, Environment) à des dates différentes,
+          mais chaque snapshot reste unique via son <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">scoreId</code>.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-6">
+          Liste complète des critères d&apos;une ligne DD Tech + CIEC
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400">
+          En complément du tableau ci-dessus, une ligne complète de référentiel DD Tech + CIEC (pour un triplet Editor + Solution + Environment)
+          regroupe les critères suivants, structurés par entité&nbsp;:
+        </p>
+        <ul className="list-disc ml-6 space-y-1 text-gray-600 dark:text-gray-400">
+          <li>
+            <span className="font-semibold">Editor</span>&nbsp;: editorId, name, country, size, business_criticality,
+            internal_it_systems, it_security_strategy, contracts_for_review
+          </li>
+          <li>
+            <span className="font-semibold">Solution</span>&nbsp;: solutionId, name, description, main_use_case, type,
+            product_criticality, api_robustness, api_documentation_quality, ip_ownership_clear, licensing_model,
+            license_compliance_assured
+          </li>
+          <li>
+            <span className="font-semibold">Environment</span>&nbsp;: envId, env_type, tech_stack,
+            data_types, redundancy, backup_exists, backup_schedule, backup_rto, backup_rpo,
+            backup_restoration_test_frequency, deployment_type, virtualization, db_scaling_mechanism,
+            disaster_recovery_plan, network_security_mechanisms, sla_offered
+          </li>
+          <li>
+            <span className="font-semibold">Hosting</span>&nbsp;: hostingId, provider, region, tier, certifications, contact_name, contact_email
+          </li>
+          <li>
+            <span className="font-semibold">SecurityProfile</span>&nbsp;: secId, auth, encryption_in_transit, encryption_at_rest,
+            encryption_details, patching, pentest_freq, vuln_mgmt, access_control, internal_audits_recent,
+            centralized_monitoring, pentest_results_summary, known_security_flaws, incident_reporting_process
+          </li>
+          <li>
+            <span className="font-semibold">MonitoringObservability</span>&nbsp;: monId, perf_monitoring, log_centralization, tools,
+            alerting_strategy
+          </li>
+          <li>
+            <span className="font-semibold">EntityCost</span>&nbsp;: costId, hosting_monthly, licenses_monthly,
+            ops_hours_monthly_equiv, comments, hidden_costs, cost_evolution_factors, modernization_investment_needs
+          </li>
+          <li>
+            <span className="font-semibold">Codebase</span>&nbsp;: codebaseId, repo_location, documentation_level,
+            code_review_process, version_control_tool, technical_debt_known, legacy_systems, third_party_dependencies
+          </li>
+          <li>
+            <span className="font-semibold">DevelopmentMetrics</span>&nbsp;: metricsId, sdlc_process, devops_automation_level,
+            planned_vs_unplanned_ratio, lead_time_for_changes_days, mttr_hours, internal_vs_external_bug_ratio
+          </li>
+          <li>
+            <span className="font-semibold">AIFeatures</span>&nbsp;: aiId, technical_type, quality_validation_method,
+            continuous_improvement
+          </li>
+          <li>
+            <span className="font-semibold">DevelopmentTeam</span>&nbsp;: teamId, team_size_adequate, key_person_dependency
+          </li>
+        </ul>
+        <p className="text-gray-600 dark:text-gray-400 text-sm italic mt-2">
+          <strong>Note&nbsp;:</strong> Les clés étrangères (FK) comme <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">editorId</code> dans Solution,
+          <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">solutionId</code> dans Environment/Codebase/DevelopmentMetrics/AIFeatures,
+          <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">envId</code> dans SecurityProfile/MonitoringObservability/EntityCost,
+          et <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-xs">hostingId</code> dans Environment
+          ne sont pas répétées dans cette liste car elles sont redondantes avec les clés primaires (PK) des entités parentes.
+          La hiérarchie Editor → Solution → Environment établit déjà ces relations.
+        </p>
+
+        <p className="text-gray-600 dark:text-gray-400 mt-4">
+          Pour faciliter certains exports ou intégrations, cette même liste de critères peut également être représentée
+          sous forme d&apos;une seule ligne (<strong>87 critères uniques</strong> séparés par des virgules, après suppression des FK redondantes)&nbsp;:
+        </p>
+        <div className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs font-mono overflow-x-auto">
+          editorId, name, country, size, business_criticality, internal_it_systems, it_security_strategy, contracts_for_review,
+          solutionId, name, description, main_use_case, type, product_criticality, api_robustness, api_documentation_quality,
+          ip_ownership_clear, licensing_model, license_compliance_assured, envId, env_type, tech_stack, data_types, redundancy,
+          backup_exists, backup_schedule, backup_rto, backup_rpo, backup_restoration_test_frequency, deployment_type,
+          virtualization, db_scaling_mechanism, disaster_recovery_plan, network_security_mechanisms, sla_offered, hostingId,
+          provider, region, tier, certifications, contact_name, contact_email, secId, auth, encryption_in_transit,
+          encryption_at_rest, encryption_details, patching, pentest_freq, vuln_mgmt, access_control, internal_audits_recent,
+          centralized_monitoring, pentest_results_summary, known_security_flaws, incident_reporting_process, monId,
+          perf_monitoring, log_centralization, tools, alerting_strategy, costId, hosting_monthly, licenses_monthly,
+          ops_hours_monthly_equiv, comments, hidden_costs, cost_evolution_factors, modernization_investment_needs, codebaseId,
+          repo_location, documentation_level, code_review_process, version_control_tool, technical_debt_known, legacy_systems,
+          third_party_dependencies, metricsId, sdlc_process, devops_automation_level, planned_vs_unplanned_ratio,
+          lead_time_for_changes_days, mttr_hours, internal_vs_external_bug_ratio, aiId, technical_type,
+          quality_validation_method, continuous_improvement, teamId, team_size_adequate, key_person_dependency
         </div>
       </div>
     </div>

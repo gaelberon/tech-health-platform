@@ -4,6 +4,8 @@
 
 La **Vue d'Hébergement** est une interface dédiée à la visualisation et à l'analyse de l'infrastructure d'hébergement des solutions informatiques. Elle permet de comprendre rapidement l'architecture d'hébergement d'un éditeur, organisée par solution et par environnement.
 
+> 📊 **Référence** : Pour une description complète des entités (Editor, Solution, Environment, Hosting) et de leurs relations, consultez la section [Modèle de Données](#data-model) dans la documentation.
+
 ## Accès
 
 La vue d'hébergement est accessible via l'onglet **"Hébergement"** 🏗️ dans la navigation principale de l'application.

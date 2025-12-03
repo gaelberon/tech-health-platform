@@ -4,6 +4,8 @@
 
 Le **Bilan Tech Instantané** (anciennement "Tech Profiler") est un formulaire multi-étapes qui permet de collecter les données critiques (P1) nécessaires au calcul du score de santé technique d'une solution. Ce document décrit le workflow complet, de la saisie des données jusqu'à la génération du snapshot de scoring initial.
 
+> 📊 **Référence** : Pour une description complète des entités et des champs collectés, consultez la section [Modèle de Données](#data-model) dans la documentation.
+
 ---
 
 ## Architecture du Workflow

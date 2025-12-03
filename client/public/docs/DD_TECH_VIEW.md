@@ -4,6 +4,8 @@
 
 La **Vue DD Tech** (Technical Due Diligence) est une interface complète dédiée à l'évaluation pré-acquisition de la situation technique et technologique d'un éditeur de solution logicielle. Elle permet d'avoir une vision rapide et efficace de tous les éléments pertinents pour une Due Diligence Technique.
 
+> 📊 **Référence** : Pour une description complète des entités et de la structure hiérarchique du référentiel (Editor → Solution → Environment), consultez la section [Modèle de Données](#data-model) dans la documentation.
+
 ## Accès
 
 La vue DD Tech est accessible via l'onglet **"DD Tech"** 🔍 dans la navigation principale de l'application.
