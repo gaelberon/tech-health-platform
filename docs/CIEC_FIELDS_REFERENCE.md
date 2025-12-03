@@ -335,3 +335,4 @@ Ce document liste tous les champs CIEC extraits du PDF "Editeurs-Overview - Enti
 12. **SECURITY_MECHANISMS**: MFA/SSO, Patching, Encryption, Pentest, etc. (choix multiple)
 13. **PERFORMANCE_METRICS**: Suivi temps réponse, SLA, Alerting (choix multiple)
 
+

@@ -286,3 +286,4 @@ Les champs DD nécessiteront des lookups supplémentaires :
 5. ✅ Mettre à jour les resolvers backend pour gérer les champs DD
 6. ✅ Ajouter les traductions i18n pour les nouveaux champs
 
+
