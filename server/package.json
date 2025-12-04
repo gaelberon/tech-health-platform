@@ -11,7 +11,9 @@
     "translate-lookups": "ts-node --esm src/scripts/translateLookups.ts",
     "import-csv": "npm run build && node dist/scripts/importCSV.js",
     "delete-editor": "npm run build && node dist/scripts/deleteEditor.js",
-    "merge-editors": "npm run build && node dist/scripts/mergeEditors.js"
+    "merge-editors": "npm run build && node dist/scripts/mergeEditors.js",
+    "calculate-hosting-snapshots": "npm run build && node dist/scripts/calculateHostingSnapshots.js",
+    "calculate-dd-tech": "npm run build && node dist/scripts/calculateDDTech.js"
   },
   "keywords": [],
   "author": "",
