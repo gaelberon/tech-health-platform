@@ -51,21 +51,23 @@ function combineResolvers(resolversArray: any[]): any {
         Editor: {},
         Solution: {},
         Environment: {},
+        Hosting: {},
         ...resolversArray
-            .filter(r => r.Query || r.Mutation || r.Solution || r.Environment || r.Editor) // Filtre pour les resolvers valides
+            .filter(r => r.Query || r.Mutation || r.Solution || r.Environment || r.Editor || r.Hosting) // Filtre pour les resolvers valides
             .reduce((acc, resolver) => {
                 // Fusion des Query et Mutation
                 Object.assign(acc.Query, resolver.Query);
                 Object.assign(acc.Mutation, resolver.Mutation);
 
-                // Fusion des Field Resolvers (Editor, Solution, Environment, etc.)
+                // Fusion des Field Resolvers (Editor, Solution, Environment, Hosting, etc.)
                 if (resolver.Editor) Object.assign(acc.Editor, resolver.Editor);
                 if (resolver.Solution) Object.assign(acc.Solution, resolver.Solution);
                 if (resolver.Environment) Object.assign(acc.Environment, resolver.Environment);
-                // Ajoutez ici la gestion des autres Type Resolvers si nécessaire (ex: Hosting, SecurityProfile)
+                if (resolver.Hosting) Object.assign(acc.Hosting, resolver.Hosting);
+                // Ajoutez ici la gestion des autres Type Resolvers si nécessaire (ex: SecurityProfile)
                 
                 return acc;
-            }, { Query: {}, Mutation: {}, Editor: {}, Solution: {}, Environment: {} }),
+            }, { Query: {}, Mutation: {}, Editor: {}, Solution: {}, Environment: {}, Hosting: {} }),
     };
     
     // Pour ne pas inclure des objets vides si aucune Query/Mutation n'a été trouvée

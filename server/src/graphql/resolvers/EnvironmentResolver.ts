@@ -128,6 +128,77 @@ const EnvironmentResolver = {
             
             return updatedEnvironment;
         },
+        
+        // Mutation pour créer un nouvel environnement (Data Management)
+        createEnvironment: async (_: any, { input }: { input: any }, ctx: any) => {
+            const { assertAuthorized } = await import('../authorization.js');
+            await assertAuthorized(ctx, 'createEnvironment');
+            
+            // Vérifier que l'utilisateur a le droit (Admin ou Supervisor)
+            if (ctx.user.role !== 'Admin' && ctx.user.role !== 'Supervisor') {
+                throw new Error('Seuls les administrateurs et superviseurs peuvent créer des environnements');
+            }
+            
+            // Générer un envId unique
+            const envCount = await EnvironmentModel.countDocuments();
+            const envId = `env-${String(envCount + 1).padStart(4, '0')}`;
+            
+            // Convertir backup.rto_hours et backup.rpo_hours en backup.rto et backup.rpo
+            const backupData = input.backup ? {
+                ...input.backup,
+                rto: input.backup.rto_hours,
+                rpo: input.backup.rpo_hours,
+                restoration_test_frequency: input.backup.restoration_test_frequency || 'never'
+            } : {
+                exists: false,
+                rto: 24,
+                rpo: 4,
+                restoration_test_frequency: 'never'
+            };
+            
+            const newEnvironment = await EnvironmentModel.create({
+                ...input,
+                envId,
+                backup: backupData,
+                archived: false
+            });
+            
+            return newEnvironment;
+        },
+        
+        // Mutation pour archiver/Désarchiver un environnement (Data Management)
+        archiveEnvironment: async (_: any, { input }: { input: { id: string; archived: boolean } }, ctx: any) => {
+            const { assertAuthorized } = await import('../authorization.js');
+            await assertAuthorized(ctx, 'archiveEnvironment');
+            
+            // Vérifier que l'utilisateur a le droit (Admin ou Supervisor)
+            if (ctx.user.role !== 'Admin' && ctx.user.role !== 'Supervisor') {
+                throw new Error('Seuls les administrateurs et superviseurs peuvent archiver des environnements');
+            }
+            
+            const updateData: any = {
+                archived: input.archived,
+                archivedBy: ctx.user.userId || ctx.user._id?.toString()
+            };
+            
+            if (input.archived) {
+                updateData.archivedAt = new Date();
+            } else {
+                updateData.archivedAt = null;
+            }
+            
+            const updatedEnvironment = await EnvironmentModel.findOneAndUpdate(
+                { envId: input.id },
+                { $set: updateData },
+                { new: true }
+            );
+            
+            if (!updatedEnvironment) {
+                throw new Error('Environnement non trouvé');
+            }
+            
+            return updatedEnvironment;
+        }
     },
     
     // Résolveurs de CHAMP (Field Resolvers) : Pour lier les entités associées à Environment

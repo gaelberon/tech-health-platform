@@ -75,7 +75,53 @@ const HostingResolver = {
     },
     
     // Résolveurs de CHAMP (Field Resolvers)
-    // Non requis ici, car Hosting est un nœud 'feuille' de Environment.
+    Hosting: {
+        // Field resolver pour gérer le cas où contact est null ou a des valeurs null
+        // Ce resolver est nécessaire car GraphQL peut essayer d'accéder à contact.name avant que Mongoose ne retourne les données
+        contact: (parent: IHosting & Document) => {
+            try {
+                // Convertir le document Mongoose en objet simple pour éviter les problèmes avec les getters
+                // Utiliser lean() ou toObject() pour obtenir un objet plain JavaScript
+                const hosting = (parent as any).toObject ? (parent as any).toObject({ getters: false, virtuals: false }) : parent;
+                
+                // Si contact n'existe pas du tout ou est explicitement null, retourner null
+                if (!hosting || !hosting.contact || hosting.contact === null || hosting.contact === undefined) {
+                    return null;
+                }
+                
+                // Convertir en objet simple pour éviter les problèmes avec Mongoose
+                const contact = hosting.contact as any;
+                
+                // Si contact est un objet vide ou n'a ni name ni email valides, retourner null
+                if (!contact || (typeof contact !== 'object')) {
+                    return null;
+                }
+                
+                // Extraire les valeurs en s'assurant qu'elles sont bien des strings ou null
+                const nameValue = contact.name !== null && contact.name !== undefined && contact.name !== '' 
+                    ? String(contact.name) 
+                    : null;
+                const emailValue = contact.email !== null && contact.email !== undefined && contact.email !== '' 
+                    ? String(contact.email) 
+                    : null;
+                
+                // Si les deux sont null, retourner null plutôt qu'un objet avec des valeurs null
+                if (!nameValue && !emailValue) {
+                    return null;
+                }
+                
+                // Sinon, retourner l'objet contact avec les valeurs (peuvent être null individuellement)
+                return {
+                    name: nameValue,
+                    email: emailValue,
+                };
+            } catch (error: any) {
+                // En cas d'erreur, retourner null pour éviter de bloquer la requête
+                console.warn('Erreur dans Hosting.contact resolver:', error?.message || error);
+                return null;
+            }
+        },
+    },
 };
 
 export default HostingResolver;

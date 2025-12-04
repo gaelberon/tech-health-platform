@@ -38,6 +38,11 @@ export interface IEnvironment extends Document {
 
     // Ajout ou vérification de la présence de ce champ P3 :
     sla_offered: string; // Doit être de type string ou string | null
+    
+    // Champs d'archivage
+    archived?: boolean;
+    archivedAt?: Date;
+    archivedBy?: string; // userId de l'admin/supervisor qui a archivé
 }
 
 const EnvironmentSchema = new Schema<IEnvironment>({
@@ -54,6 +59,24 @@ const EnvironmentSchema = new Schema<IEnvironment>({
     disaster_recovery_plan: { type: String, enum: ['Documented', 'Tested', 'None'] }, // Donnée DD
     db_scaling_mechanism: { type: String },
     sla_offered: { type: String },
+    
+    // Champs d'archivage
+    archived: { 
+        type: Boolean, 
+        default: false, 
+        index: true,
+        description: "Indique si l'environnement est archivé"
+    },
+    archivedAt: { 
+        type: Date, 
+        required: false,
+        description: "Date d'archivage"
+    },
+    archivedBy: { 
+        type: String, 
+        required: false,
+        description: "userId de l'admin/supervisor qui a archivé"
+    }
 }, {
     timestamps: true
 });

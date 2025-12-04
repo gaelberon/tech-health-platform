@@ -109,6 +109,63 @@ const SolutionResolver = {
             // scoringService.calculateScore(input.solutionId);
             
             return updatedMetrics;
+        },
+        
+        // Mutation 3: Créer une nouvelle solution (Data Management)
+        createSolution: async (_: any, { input }: { input: any }, ctx: any) => {
+            const { assertAuthorized } = await import('../authorization.js');
+            await assertAuthorized(ctx, 'createSolution');
+            
+            // Vérifier que l'utilisateur a le droit (Admin ou Supervisor)
+            if (ctx.user.role !== 'Admin' && ctx.user.role !== 'Supervisor') {
+                throw new Error('Seuls les administrateurs et superviseurs peuvent créer des solutions');
+            }
+            
+            // Générer un solutionId unique
+            const solutionCount = await SolutionModel.countDocuments();
+            const solutionId = `solution-${String(solutionCount + 1).padStart(4, '0')}`;
+            
+            const newSolution = await SolutionModel.create({
+                ...input,
+                solutionId,
+                archived: false
+            });
+            
+            return newSolution;
+        },
+        
+        // Mutation 4: Archiver/Désarchiver une solution (Data Management)
+        archiveSolution: async (_: any, { input }: { input: { id: string; archived: boolean } }, ctx: any) => {
+            const { assertAuthorized } = await import('../authorization.js');
+            await assertAuthorized(ctx, 'archiveSolution');
+            
+            // Vérifier que l'utilisateur a le droit (Admin ou Supervisor)
+            if (ctx.user.role !== 'Admin' && ctx.user.role !== 'Supervisor') {
+                throw new Error('Seuls les administrateurs et superviseurs peuvent archiver des solutions');
+            }
+            
+            const updateData: any = {
+                archived: input.archived,
+                archivedBy: ctx.user.userId || ctx.user._id?.toString()
+            };
+            
+            if (input.archived) {
+                updateData.archivedAt = new Date();
+            } else {
+                updateData.archivedAt = null;
+            }
+            
+            const updatedSolution = await SolutionModel.findOneAndUpdate(
+                { solutionId: input.id },
+                { $set: updateData },
+                { new: true }
+            );
+            
+            if (!updatedSolution) {
+                throw new Error('Solution non trouvée');
+            }
+            
+            return updatedSolution;
         }
     },
     

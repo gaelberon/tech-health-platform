@@ -172,8 +172,8 @@ const typeDefs = gql`
 
     # Utilisé dans Hosting Input (P4) [5]
     type ContactDetails {
-        name: String!
-        email: String!
+        name: String
+        email: String
     }
 
     # Utilisé dans ScoringSnapshot (P1) [7]
@@ -458,6 +458,11 @@ const typeDefs = gql`
         db_scaling_mechanism: String # Section 2b DD [4]
         disaster_recovery_plan: String # Section 5c DD [4]
         
+        # Champs d'archivage
+        archived: Boolean
+        archivedAt: String
+        archivedBy: String
+        
         # Relations 1:1 via Field Resolvers
         hosting: Hosting # FK vers Hosting [17]
         securityProfile: SecurityProfile # FK vers SecurityProfile [17]
@@ -486,6 +491,11 @@ const typeDefs = gql`
         ip_ownership_clear: Boolean # Section 4a DD [19]
         licensing_model: String # Section 4b DD [19]
         license_compliance_assured: Boolean # Section 4b DD [19]
+        
+        # Champs d'archivage
+        archived: Boolean
+        archivedAt: String
+        archivedBy: String
         
         # Relations 1:1 via Field Resolvers
         codebase: CodeBase # Section 1 DD [17]
@@ -660,6 +670,42 @@ const typeDefs = gql`
         network_security_mechanisms: [String]
         db_scaling_mechanism: String
         disaster_recovery_plan: String
+    }
+    
+    # Inputs pour créer des solutions et environnements (Data Management)
+    input CreateSolutionInput {
+        editorId: ID!
+        name: String!
+        description: String
+        main_use_case: String!
+        type: SolutionType!
+        product_criticality: Criticality!
+        api_robustness: String
+        api_documentation_quality: String
+        ip_ownership_clear: Boolean
+        licensing_model: String
+        license_compliance_assured: Boolean
+    }
+    
+    input CreateEnvironmentInput {
+        solutionId: ID!
+        hostingId: ID!
+        env_type: EnvType!
+        deployment_type: DeploymentType
+        tech_stack: [String]
+        data_types: [String]
+        redundancy: RedundancyType!
+        backup: BackupInput!
+        network_security_mechanisms: [String]
+        db_scaling_mechanism: String
+        disaster_recovery_plan: String
+        sla_offered: String
+    }
+    
+    # Input pour archiver/désarchiver (Data Management)
+    input ArchiveInput {
+        id: ID! # solutionId ou envId
+        archived: Boolean!
     }
 
     # EntityCost Inputs
@@ -1030,6 +1076,14 @@ const typeDefs = gql`
         createDocument(input: CreateDocumentInput!): Document!
         createRoadmapItem(input: CreateRoadmapItemInput!): RoadmapItem!
         updateRoadmapItem(input: UpdateRoadmapItemInput!): RoadmapItem!
+        
+        # Actions : Création de solutions et environnements (Data Management)
+        createSolution(input: CreateSolutionInput!): Solution!
+        createEnvironment(input: CreateEnvironmentInput!): Environment!
+        
+        # Actions : Archivage/Désarchivage (Data Management)
+        archiveSolution(input: ArchiveInput!): Solution!
+        archiveEnvironment(input: ArchiveInput!): Environment!
     }
 `;
 

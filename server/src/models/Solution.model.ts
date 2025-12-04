@@ -23,6 +23,11 @@ export interface ISolution extends Document {
     ip_ownership_clear: boolean; // Droits de propriété clairs [2] (DD Section 4a)
     licensing_model: string; // Modèles de licence utilisés [2] (DD Section 4b)
     license_compliance_assured: boolean; // Conformité des licences tierces/Open Source [2] (DD Section 4b)
+    
+    // Champs d'archivage
+    archived?: boolean;
+    archivedAt?: Date;
+    archivedBy?: string; // userId de l'admin/supervisor qui a archivé
 }
 
 // 2. Définition du Schéma Mongoose
@@ -91,6 +96,24 @@ const SolutionSchema = new Schema<ISolution>({
         type: Boolean, 
         required: false,
         description: "Conformité des licences pour les logiciels tiers/Open Source (DD Section 4b)" // DD [2]
+    },
+    
+    // Champs d'archivage
+    archived: { 
+        type: Boolean, 
+        default: false, 
+        index: true,
+        description: "Indique si la solution est archivée"
+    },
+    archivedAt: { 
+        type: Date, 
+        required: false,
+        description: "Date d'archivage"
+    },
+    archivedBy: { 
+        type: String, 
+        required: false,
+        description: "userId de l'admin/supervisor qui a archivé"
     }
 }, {
     timestamps: true // Ajoute createdAt et updatedAt

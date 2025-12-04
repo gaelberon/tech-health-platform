@@ -93,6 +93,11 @@ export const typeDefs = gql`
         ip_ownership_clear: Boolean
         licensing_model: String
         license_compliance_assured: Boolean
+        
+        # Champs d'archivage
+        archived: Boolean
+        archivedAt: Date
+        archivedBy: String
 
         # Relations 1:N
         environments: [Environment!]
@@ -120,6 +125,11 @@ export const typeDefs = gql`
         db_scaling_mechanism: String
         disaster_recovery_plan: String
         sla_offered: String # P3 [5]
+        
+        # Champs d'archivage
+        archived: Boolean
+        archivedAt: Date
+        archivedBy: String
 
         # Relations 1:1
         hosting: Hosting! # hostingId FK [5]
@@ -278,6 +288,48 @@ export const typeDefs = gql`
         country: String
         business_criticality: String!
     }
+    
+    input CreateSolutionInput {
+        editorId: ObjectID!
+        name: String!
+        description: String
+        main_use_case: String!
+        type: String! # SaaS, OnPrem, Hybrid, ClientHeavy
+        product_criticality: String! # Low, Medium, High, Critical
+        api_robustness: String
+        api_documentation_quality: String
+        ip_ownership_clear: Boolean
+        licensing_model: String
+        license_compliance_assured: Boolean
+    }
+    
+    input CreateEnvironmentInput {
+        solutionId: ObjectID!
+        hostingId: String!
+        env_type: String! # production, test, dev, backup
+        deployment_type: String # monolith, microservices, hybrid
+        tech_stack: [String]
+        data_types: [String]
+        redundancy: String! # none, minimal, geo-redundant, high
+        backup: BackupInput!
+        network_security_mechanisms: [String]
+        db_scaling_mechanism: String
+        disaster_recovery_plan: String
+        sla_offered: String
+    }
+    
+    input BackupInput {
+        exists: Boolean!
+        schedule: String
+        rto_hours: Float
+        rpo_hours: Float
+        restoration_test_frequency: String
+    }
+    
+    input ArchiveInput {
+        id: ID! # solutionId ou envId
+        archived: Boolean!
+    }
 
     # ------------------ REQUÊTES RACINES (Queries) ------------------
 
@@ -306,5 +358,13 @@ export const typeDefs = gql`
 
         # Action : Déclenchement manuel ou automatique d'un nouveau Snapshot de Scoring (P1)
         createScoringSnapshot(solutionId: ID!): ScoringSnapshot
+        
+        # Actions : Création de solutions et environnements (Data Management)
+        createSolution(input: CreateSolutionInput!): Solution
+        createEnvironment(input: CreateEnvironmentInput!): Environment
+        
+        # Actions : Archivage/Désarchivage (Data Management)
+        archiveSolution(input: ArchiveInput!): Solution
+        archiveEnvironment(input: ArchiveInput!): Environment
     }
 `;

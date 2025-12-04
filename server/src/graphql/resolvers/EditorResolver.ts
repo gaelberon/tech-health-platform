@@ -132,7 +132,8 @@ const EditorResolver = {
         // Relation 1:N vers Solution [1]
         solutions: async (parent: IEditor & Document) => {
             // Utilise l'ID Mongoose interne (_id) ou editorId pour la jointure
-            return await SolutionModel.find({ editorId: parent._id }); 
+            // Inclut les solutions archivées (tous les utilisateurs peuvent les voir)
+            return await SolutionModel.find({ editorId: parent._id }).sort({ archived: 1, createdAt: -1 }); 
         },
 
         // Relation 1:1 vers DevelopmentTeam [5]
