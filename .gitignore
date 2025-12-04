@@ -36,6 +36,7 @@ logs/
 .parcel-cache/
 .eslintcache
 docs/third-party-docs/
+data/
 server/scripts/
 
 ### Fichiers de debug et scripts temporaires
