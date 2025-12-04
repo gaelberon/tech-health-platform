@@ -22,7 +22,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
   const { permissions: pagePermissions } = usePagePermissions(user?.role);
 
   // Utiliser le système de permissions pour déterminer les onglets disponibles
-  const allTabs: TabType[] = ['dashboard', 'collector', 'admin', 'dd-tech', 'hosting', 'about'];
+  const allTabs: TabType[] = ['dashboard', 'data-management', 'collector', 'admin', 'dd-tech', 'hosting', 'about'];
   const tabs = allTabs
     .filter((tab) => {
       // Admin est maintenant accessible via le menu utilisateur, retiré du header

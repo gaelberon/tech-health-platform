@@ -437,4 +437,130 @@ export const GET_EDITOR_DD_TECH_VIEW = gql`
   }
 `;
 
+// Query pour récupérer un éditeur avec toutes ses données (solutions, environnements, coûts, etc.)
+export const GET_EDITOR_WITH_DETAILS = gql`
+  query GetEditorWithDetails($editorId: ID!) {
+    getEditor(editorId: $editorId) {
+      editorId
+      name
+      country
+      size
+      business_criticality
+      internal_it_systems
+      it_security_strategy
+      contracts_for_review {
+        type
+        summary
+      }
+      developmentTeam {
+        teamId
+        team_size_adequate
+        key_person_dependency
+      }
+      solutions {
+        solutionId
+        name
+        description
+        main_use_case
+        type
+        product_criticality
+        api_robustness
+        api_documentation_quality
+        ip_ownership_clear
+        licensing_model
+        license_compliance_assured
+        environments {
+          envId
+          env_type
+          deployment_type
+          tech_stack
+          data_types
+          redundancy
+          backup {
+            exists
+            schedule
+            rto_hours
+            rpo_hours
+            restoration_test_frequency
+          }
+          network_security_mechanisms
+          db_scaling_mechanism
+          disaster_recovery_plan
+          sla_offered
+          hosting {
+            hostingId
+            provider
+            region
+            tier
+            certifications
+            contact {
+              name
+              email
+            }
+          }
+          securityProfile {
+            secId
+            auth
+            encryption {
+              in_transit
+              at_rest
+              details
+            }
+            patching
+            pentest_freq
+            vuln_mgmt
+            access_control
+            internal_audits_recent
+            centralized_monitoring
+            pentest_results_summary
+            known_security_flaws
+            incident_reporting_process
+          }
+          monitoringObservability {
+            monId
+            perf_monitoring
+            log_centralization
+            tools
+          }
+          costs {
+            costId
+            hosting_monthly
+            licenses_monthly
+            ops_hours_monthly_equiv
+            comments
+            hidden_costs
+            cost_evolution_factors
+            modernization_investment_needs
+          }
+        }
+        codebase {
+          codebaseId
+          repo_location
+          documentation_level
+          code_review_process
+          version_control_tool
+          technical_debt_known
+          legacy_systems
+          third_party_dependencies
+        }
+        developmentMetrics {
+          metricsId
+          sdlc_process
+          devops_automation_level
+          planned_vs_unplanned_ratio
+          lead_time_for_changes_days
+          mttr_hours
+          internal_vs_external_bug_ratio
+        }
+        aiFeatures {
+          aiId
+          technical_type
+          quality_validation_method
+          continuous_improvement
+        }
+      }
+    }
+  }
+`;
+
 

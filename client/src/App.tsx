@@ -13,6 +13,7 @@ import ThirdPartyDocs from './pages/ThirdPartyDocs';
 import HostingView from './pages/HostingView';
 import DDTechView from './pages/DDTechView';
 import Dashboard from './pages/Dashboard';
+import DataManagement from './pages/DataManagement';
 import MyProfile from './pages/MyProfile';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
@@ -185,6 +186,8 @@ const AppShell: React.FC = () => {
         return <AdminDashboard />;
       case 'dashboard':
         return <Dashboard />;
+      case 'data-management':
+        return <DataManagement />;
       case 'hosting':
         return <HostingView />;
       case 'dd-tech':

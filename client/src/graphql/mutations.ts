@@ -81,5 +81,163 @@ export const DELETE_COLLECTOR_DRAFT = gql`
   }
 `;
 
+// Mutations pour la gestion des données (Data Management)
+export const UPDATE_EDITOR = gql`
+  mutation UpdateEditor($input: UpdateEditorInput!) {
+    updateEditor(input: $input) {
+      editorId
+      name
+      country
+      size
+      business_criticality
+      internal_it_systems
+      it_security_strategy
+    }
+  }
+`;
+
+export const UPDATE_SOLUTION = gql`
+  mutation UpdateSolution($input: UpdateSolutionInput!) {
+    updateSolution(input: $input) {
+      solutionId
+      name
+      description
+      main_use_case
+      type
+      product_criticality
+    }
+  }
+`;
+
+export const UPDATE_ENVIRONMENT = gql`
+  mutation UpdateEnvironment($input: UpdateEnvironmentInput!) {
+    updateEnvironment(input: $input) {
+      envId
+      env_type
+      deployment_type
+      redundancy
+    }
+  }
+`;
+
+export const UPDATE_HOSTING = gql`
+  mutation UpdateHosting($input: UpdateHostingInput!) {
+    updateHostingProfile(input: $input) {
+      hostingId
+      provider
+      region
+      tier
+      certifications
+    }
+  }
+`;
+
+export const UPDATE_SECURITY_PROFILE = gql`
+  mutation UpdateSecurityProfile($input: UpdateSecurityProfileInput!) {
+    updateSecurityProfile(input: $input) {
+      secId
+      auth
+      patching
+      pentest_freq
+    }
+  }
+`;
+
+export const UPDATE_ENTITY_COST = gql`
+  mutation UpdateEntityCost($input: UpdateEntityCostInput!) {
+    updateEntityCost(input: $input) {
+      costId
+      hosting_monthly
+      licenses_monthly
+      ops_hours_monthly_equiv
+    }
+  }
+`;
+
+export const UPDATE_MONITORING = gql`
+  mutation UpdateMonitoring($input: UpdateMonitoringObservabilityInput!) {
+    updateMonitoringObservability(input: $input) {
+      monId
+      perf_monitoring
+      log_centralization
+      tools
+    }
+  }
+`;
+
+export const UPDATE_CODEBASE = gql`
+  mutation UpdateCodebase($input: UpdateCodebaseInput!) {
+    updateCodebase(input: $input) {
+      codebaseId
+      repo_location
+      documentation_level
+      technical_debt_known
+    }
+  }
+`;
+
+export const UPDATE_DEVELOPMENT_METRICS = gql`
+  mutation UpdateDevelopmentMetrics($input: UpdateDevelopmentMetricsInput!) {
+    updateDevelopmentMetrics(input: $input) {
+      metricsId
+      sdlc_process
+      devops_automation_level
+      mttr_hours
+    }
+  }
+`;
+
+// Mutations pour créer des solutions et environnements (Data Management)
+export const CREATE_SOLUTION = gql`
+  mutation CreateSolution($input: CreateSolutionInput!) {
+    createSolution(input: $input) {
+      solutionId
+      name
+      description
+      main_use_case
+      type
+      product_criticality
+      archived
+    }
+  }
+`;
+
+export const CREATE_ENVIRONMENT = gql`
+  mutation CreateEnvironment($input: CreateEnvironmentInput!) {
+    createEnvironment(input: $input) {
+      envId
+      env_type
+      deployment_type
+      redundancy
+      archived
+    }
+  }
+`;
+
+// Mutations pour archiver/désarchiver (Data Management)
+export const ARCHIVE_SOLUTION = gql`
+  mutation ArchiveSolution($input: ArchiveInput!) {
+    archiveSolution(input: $input) {
+      solutionId
+      name
+      archived
+      archivedAt
+      archivedBy
+    }
+  }
+`;
+
+export const ARCHIVE_ENVIRONMENT = gql`
+  mutation ArchiveEnvironment($input: ArchiveInput!) {
+    archiveEnvironment(input: $input) {
+      envId
+      env_type
+      archived
+      archivedAt
+      archivedBy
+    }
+  }
+`;
+
 // Note : Les interfaces TypeScript (EditorInputP1, etc.) sont définies dans /common/types.
 // Le backend doit utiliser les types partagés pour définir ces Inputs.
