@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Types pour les onglets
-type AboutTab = 'overview' | 'data-model' | 'collector-workflow' | 'dd-tech-view' | 'hosting-view' | 'audit-trail' | 'user-profile' | 'deployment-ci-cd';
+type AboutTab = 'overview' | 'data-model' | 'collector-workflow' | 'dd-tech-view' | 'hosting-view' | 'audit-trail' | 'user-profile' | 'deployment-ci-cd' | 'data-management';
 
 // Composants personnalisés pour le rendu Markdown
 const MarkdownComponents = {
@@ -160,6 +160,7 @@ const About: React.FC = () => {
   const [collectorWorkflowContent, setCollectorWorkflowContent] = useState<string>('');
   const [ddTechViewContent, setDdTechViewContent] = useState<string>('');
   const [deploymentCiCdContent, setDeploymentCiCdContent] = useState<string>('');
+  const [dataManagementContent, setDataManagementContent] = useState<string>('');
 
   // Charger le README.md
   useEffect(() => {
@@ -238,12 +239,24 @@ const About: React.FC = () => {
       });
   }, []);
 
+  // Charger DATA_MANAGEMENT.md
+  useEffect(() => {
+    fetch('/docs/DATA_MANAGEMENT.md')
+      .then((res) => res.text())
+      .then((text) => setDataManagementContent(text))
+      .catch((err) => {
+        console.error('Erreur lors du chargement de la doc Data Management:', err);
+        setDataManagementContent('# Data Management\n\nDocumentation non disponible.');
+      });
+  }, []);
+
   const tabs = [
     { id: 'overview' as AboutTab, label: 'Vue d\'ensemble', icon: '📖' },
     { id: 'data-model' as AboutTab, label: 'Données collectées', icon: '📊' },
     { id: 'collector-workflow' as AboutTab, label: 'Workflow de collecte', icon: '📋' },
     { id: 'dd-tech-view' as AboutTab, label: 'DD Tech (Vue)', icon: '🔍' },
     { id: 'hosting-view' as AboutTab, label: 'Hébergement (Vue)', icon: '🏗️' },
+    { id: 'data-management' as AboutTab, label: 'Data Management', icon: '💾' },
     { id: 'audit-trail' as AboutTab, label: 'Pistes d\'audit', icon: '🔍' },
     { id: 'user-profile' as AboutTab, label: 'Profils', icon: '👤' },
     { id: 'deployment-ci-cd' as AboutTab, label: 'Déploiement & CI/CD', icon: '🚀' },
@@ -316,6 +329,14 @@ const About: React.FC = () => {
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
               {deploymentCiCdContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
+      case 'data-management':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {dataManagementContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );
