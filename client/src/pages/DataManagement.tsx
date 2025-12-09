@@ -18,6 +18,7 @@ const DataManagement: React.FC = () => {
   const { user } = useSession();
   const [selectedEditorId, setSelectedEditorId] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<'dashboard' | 'form'>('dashboard');
+  const [showFieldReferences, setShowFieldReferences] = useState<boolean>(false);
 
   // Récupérer les éditeurs disponibles
   const { data: editorsData, loading: editorsLoading } = useQuery(LIST_EDITORS_FOR_USER, {
@@ -41,16 +42,22 @@ const DataManagement: React.FC = () => {
 
     const editors = editorsData?.listEditorsForUser || [];
 
-    if (user.role === 'Admin') {
-      // Admin : sélectionner le premier éditeur par défaut si disponible
-      if (editors.length > 0 && !selectedEditorId) {
-        setSelectedEditorId(editors[0].editorId);
+    if (editors.length > 0 && !selectedEditorId) {
+      // Sélectionner l'éditeur le plus ancien (basé sur createdAt) ou le premier si pas de date
+      let defaultEditor = editors[0];
+      if (editors.length > 1) {
+        const sortedEditors = [...editors].sort((a: any, b: any) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          if (dateA === 0 && dateB === 0) {
+            // Fallback: utiliser editorId (séquentiel)
+            return a.editorId.localeCompare(b.editorId);
+          }
+          return dateA - dateB; // Tri croissant (plus ancienne en premier)
+        });
+        defaultEditor = sortedEditors[0];
       }
-    } else {
-      // Autres utilisateurs : utiliser leur éditeur associé
-      if (editors.length > 0 && !selectedEditorId) {
-        setSelectedEditorId(editors[0].editorId);
-      }
+      setSelectedEditorId(defaultEditor.editorId);
     }
   }, [user, editorsData, editorsLoading, selectedEditorId]);
 
@@ -79,6 +86,23 @@ const DataManagement: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Option d'affichage des références (uniquement pour Admin) */}
+      {user.role === 'Admin' && (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showFieldReferences}
+              onChange={(e) => setShowFieldReferences(e.target.checked)}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t('dataManagement.showFieldReferences', 'Afficher les références au modèle de données')}
+            </span>
+          </label>
+        </div>
+      )}
 
       {/* Sélection d'éditeur (uniquement pour les admins) */}
       {user.role === 'Admin' && (
@@ -171,9 +195,10 @@ const DataManagement: React.FC = () => {
         <DataManagementForm
           editor={editor}
           editorId={selectedEditorId}
+          showFieldReferences={showFieldReferences}
           onDataUpdated={() => {
             refetchEditorDetails();
-            setActiveView('dashboard');
+            // Ne pas changer de vue automatiquement, laisser l'utilisateur continuer à éditer
           }}
         />
       )}

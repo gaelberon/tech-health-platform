@@ -225,6 +225,7 @@ const typeDefs = gql`
         perf_monitoring: MonitoringStatus # P2 [9, 10]
         log_centralization: MonitoringStatus # P2 [9, 10]
         tools: [String] # Prometheus, Grafana, ELK, Datadog... (P2) [9, 10]
+        alerting_strategy: String # DD Section 5a - Stratégie d'alerting
     }
 
     # ENTITÉ PERFORMANCE METRICS (P3 - Timeseries) - Liée à Environment [9, 11]
@@ -463,6 +464,10 @@ const typeDefs = gql`
         archivedAt: String
         archivedBy: String
         
+        # Timestamps (ajoutés automatiquement par Mongoose)
+        createdAt: String
+        updatedAt: String
+        
         # Relations 1:1 via Field Resolvers
         hosting: Hosting # FK vers Hosting [17]
         securityProfile: SecurityProfile # FK vers SecurityProfile [17]
@@ -497,6 +502,10 @@ const typeDefs = gql`
         archivedAt: String
         archivedBy: String
         
+        # Timestamps (ajoutés automatiquement par Mongoose)
+        createdAt: String
+        updatedAt: String
+        
         # Relations 1:1 via Field Resolvers
         codebase: CodeBase # Section 1 DD [17]
         developmentMetrics: DevelopmentMetrics # Section 6c DD [17]
@@ -519,7 +528,7 @@ const typeDefs = gql`
 
         # Champs DD internes
         internal_it_systems: [String] # Systèmes IT internes (ERP, CRM) [6]
-        it_security_strategy: String # Stratégie de sécurité interne [6]
+        it_security_strategy: [String] # Stratégies de sécurité interne (array) [6]
         contracts_for_review: [ContractForReview] # Contrats à examiner [6]
         
         # Relations 0..N via Field Resolvers
@@ -545,7 +554,7 @@ const typeDefs = gql`
         size: CompanySize
         business_criticality: Criticality
         internal_it_systems: [String]
-        it_security_strategy: String
+        it_security_strategy: [String]
         contracts_for_review: [ContractForReviewInput]
     }
 
@@ -645,6 +654,7 @@ const typeDefs = gql`
         perf_monitoring: MonitoringStatus
         log_centralization: MonitoringStatus
         tools: [String]
+        alerting_strategy: String
     }
 
     # Environment Inputs
@@ -836,7 +846,7 @@ const typeDefs = gql`
         size: String # Micro/SME/Mid/Enterprise
         # Champs DD (optionnels)
         internal_it_systems: [String]
-        it_security_strategy: String
+        it_security_strategy: [String]
         contracts_for_review: [ContractForReviewInput]
     }
 

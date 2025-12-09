@@ -4,7 +4,8 @@
 
 import { Document, Types } from 'mongoose'; 
 // Import du modèle et de l'interface CodeBase (avec .js pour la résolution ESM)
-import { CodeBaseModel, ICodeBase } from '../../models/CodeBase.model.js'; 
+import { CodeBaseModel, ICodeBase } from '../../models/CodeBase.model.js';
+import { SolutionModel } from '../../models/Solution.model.js'; 
 
 // ------------------ INTERFACES DE TYPAGE ------------------
 
@@ -56,10 +57,42 @@ const CodeBaseResolver = {
         
         // Mutation pour créer ou mettre à jour le profil Codebase d'une solution (DD Section 1)
         updateCodebase: async (_: any, { input }: { input: UpdateCodebaseInput }) => {
+            // Convertir solutionId en ObjectId si c'est une string
+            let solutionIdObjectId: Types.ObjectId;
+            if (typeof input.solutionId === 'string') {
+                if (Types.ObjectId.isValid(input.solutionId)) {
+                    // Si c'est déjà un ObjectId valide en string, le convertir
+                    solutionIdObjectId = new Types.ObjectId(input.solutionId);
+                } else {
+                    // Sinon, chercher la solution par son solutionId (string externe)
+                    const solution = await SolutionModel.findOne({ solutionId: input.solutionId });
+                    if (!solution) {
+                        throw new Error(`Solution avec solutionId "${input.solutionId}" non trouvée`);
+                    }
+                    solutionIdObjectId = solution._id;
+                }
+            } else {
+                solutionIdObjectId = input.solutionId;
+            }
+
+            // Vérifier si un codebase existe déjà
+            const existingCodebase = await CodeBaseModel.findOne({ solutionId: solutionIdObjectId });
+            
+            const updateData: any = {
+                ...input,
+                solutionId: solutionIdObjectId,
+            };
+
+            // Générer codebaseId si c'est une nouvelle création
+            if (!existingCodebase) {
+                const codebaseCount = await CodeBaseModel.countDocuments();
+                updateData.codebaseId = `codebase-${String(codebaseCount + 1).padStart(4, '0')}`;
+            }
+
             // Utilisation de findOneAndUpdate avec upsert: true pour gérer la relation 1:1
             const updatedCodebase = await CodeBaseModel.findOneAndUpdate(
-                { solutionId: input.solutionId },
-                { $set: input },
+                { solutionId: solutionIdObjectId },
+                { $set: updateData },
                 { new: true, upsert: true } // Crée si n'existe pas, retourne la nouvelle version
             );
 

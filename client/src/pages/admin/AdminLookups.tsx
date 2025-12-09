@@ -156,11 +156,28 @@ const AdminLookups: React.FC = () => {
 
     const sortedValues = [...editingLookup.values].sort((a, b) => (a.order || 0) - (b.order || 0));
 
+    // Nettoyer les valeurs pour supprimer __typename et ne garder que les champs valides
+    const cleanedValues = sortedValues.map((value) => {
+      const cleaned: any = {
+        code: value.code,
+        label: value.label,
+      };
+      
+      // Ajouter les champs optionnels seulement s'ils existent
+      if (value.label_fr) cleaned.label_fr = value.label_fr;
+      if (value.label_en) cleaned.label_en = value.label_en;
+      if (value.description) cleaned.description = value.description;
+      if (value.order !== undefined) cleaned.order = value.order;
+      if (value.active !== undefined) cleaned.active = value.active;
+      
+      return cleaned;
+    });
+
     await updateLookup({
       variables: {
         input: {
           key: editingLookup.key,
-          values: sortedValues,
+          values: cleanedValues,
           category: editingLookup.category || null,
           entity: editingLookup.entity || null,
           formLabel: editingLookup.formLabel || null,

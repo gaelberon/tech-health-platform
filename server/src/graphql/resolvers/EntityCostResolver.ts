@@ -4,7 +4,8 @@
 
 import { Document, Types } from 'mongoose'; 
 // Import du modèle et de l'interface EntityCost (avec .js pour la résolution ESM)
-import { EntityCostModel, IEntityCost } from '../../models/EntityCost.model.js'; 
+import { EntityCostModel, IEntityCost } from '../../models/EntityCost.model.js';
+import { EnvironmentModel } from '../../models/Environment.model.js'; 
 
 // ------------------ INTERFACES DE TYPAGE ------------------
 
@@ -18,7 +19,8 @@ interface GetEntityCostArgs {
 // Basée sur les champs de la Due Diligence Section 8 [2, 3]
 export interface UpdateEntityCostInput {
     // Clé étrangère nécessaire pour identifier l'enregistrement à mettre à jour/créer
-    envId: Types.ObjectId; 
+    // Peut être une string (envId) ou un ObjectId
+    envId: string | Types.ObjectId; 
     
     // Coûts mensuels P4 [1]
     hosting_monthly?: number; 
@@ -57,10 +59,42 @@ const EntityCostResolver = {
             const { assertAuthorized } = await import('../authorization.js');
             await assertAuthorized(ctx, 'updateEntityCost');
 
+            // Convertir envId (string) en ObjectId si nécessaire
+            let envIdObjectId: Types.ObjectId;
+            if (typeof input.envId === 'string') {
+                // Si c'est une string (envId externe), trouver l'environnement pour obtenir son ObjectId MongoDB
+                if (Types.ObjectId.isValid(input.envId)) {
+                    // Si c'est déjà un ObjectId valide en string, le convertir
+                    envIdObjectId = new Types.ObjectId(input.envId);
+                } else {
+                    // Sinon, chercher l'environnement par son envId (string)
+                    const environment = await EnvironmentModel.findOne({ envId: input.envId });
+                    if (!environment) {
+                        throw new Error(`Environnement avec envId "${input.envId}" non trouvé`);
+                    }
+                    envIdObjectId = environment._id;
+                }
+            } else {
+                envIdObjectId = input.envId;
+            }
+
+            // Préparer les données de mise à jour avec l'ObjectId correct
+            const updateData: any = {
+                ...input,
+                envId: envIdObjectId,
+            };
+
+            // Générer un costId si c'est une création (upsert)
+            const existingCost = await EntityCostModel.findOne({ envId: envIdObjectId });
+            if (!existingCost) {
+                const costCount = await EntityCostModel.countDocuments();
+                updateData.costId = `cost-${String(costCount + 1).padStart(4, '0')}`;
+            }
+
             // Les coûts d'hébergement (P4) sont un point sensible (OVH est cher pour Inedee, 8k Euros/mois) [5]
             const updatedCosts = await EntityCostModel.findOneAndUpdate(
-                { envId: input.envId },
-                { $set: input },
+                { envId: envIdObjectId },
+                { $set: updateData },
                 { new: true, upsert: true } // Crée si n'existe pas, retourne la nouvelle version
             );
             

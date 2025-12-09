@@ -340,20 +340,20 @@ export class ScoringEngineService {
         const notes = this.generateRecommendations(categoryScores);
 
         // 7. Création et enregistrement du snapshot (P1)
-        const snapshotInput: CreateScoringSnapshotInput = {
+        // Générer un scoreId unique et la date
+        const snapshotCount = await ScoringSnapshotModel.countDocuments();
+        const scoreId = `score-${String(snapshotCount + 1).padStart(6, '0')}`;
+        const date = new Date();
+        
+        const snapshotInput: any = {
+            scoreId,
             solutionId,
             envId,
+            date,
+            collection_type: 'snapshot', // Par défaut, sera écrasé par le script si nécessaire
             global_score,
             risk_level,
             notes,
-            // scores: {
-            //     security: securityScore,
-            //     resilience: resilienceScore,
-            //     observability: observabilityScore,
-            //     architecture: architectureScore,
-            //     compliance: complianceScore,
-            // }
-            // Assurez-vous que le champ scores de l'Input utilise la structure CategoryScoresStrict si possible
             scores: categoryScores // Utilisation de l'objet complet
         };
 

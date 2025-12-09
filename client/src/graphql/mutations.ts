@@ -158,9 +158,11 @@ export const UPDATE_MONITORING = gql`
   mutation UpdateMonitoring($input: UpdateMonitoringObservabilityInput!) {
     updateMonitoringObservability(input: $input) {
       monId
+      envId
       perf_monitoring
       log_centralization
       tools
+      alerting_strategy
     }
   }
 `;
@@ -171,7 +173,11 @@ export const UPDATE_CODEBASE = gql`
       codebaseId
       repo_location
       documentation_level
+      code_review_process
+      version_control_tool
       technical_debt_known
+      legacy_systems
+      third_party_dependencies
     }
   }
 `;
@@ -182,7 +188,10 @@ export const UPDATE_DEVELOPMENT_METRICS = gql`
       metricsId
       sdlc_process
       devops_automation_level
+      planned_vs_unplanned_ratio
+      lead_time_for_changes_days
       mttr_hours
+      internal_vs_external_bug_ratio
     }
   }
 `;

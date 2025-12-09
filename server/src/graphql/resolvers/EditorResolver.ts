@@ -36,7 +36,7 @@ export interface UpdateEditorInput {
 
     // Champs DD (Section 9a, 4c) [3]
     internal_it_systems?: string[]; 
-    it_security_strategy?: string; 
+    it_security_strategy?: string[]; // Array de stratégies
     contracts_for_review?: ContractForReviewInput[]; 
 }
 
@@ -106,7 +106,7 @@ const EditorResolver = {
     Mutation: {
         
         // Mutation pour créer ou mettre à jour les données de l'éditeur
-        updateEditor: async (_: any, { input }: { input: UpdateEditorInput }) => {
+        updateEditor: async (_: any, { input }: { input: UpdateEditorInput }, ctx: any) => {
             // Utilisation de '_: any' pour satisfaire noImplicitAny
             
             if (!input.editorId) {
@@ -114,10 +114,104 @@ const EditorResolver = {
                  return await EditorModel.create(input);
             }
 
+            // Préparer les données de mise à jour
+            const updateData: any = {};
+            
+            // Copier les champs simples
+            if (input.name !== undefined) updateData.name = input.name;
+            if (input.country !== undefined) updateData.country = input.country;
+            if (input.size !== undefined) updateData.size = input.size;
+            if (input.business_criticality !== undefined) updateData.business_criticality = input.business_criticality;
+            
+            // Gérer it_security_strategy (array de strings)
+            // Note: GraphQL peut parfois envoyer des strings JSON au lieu d'arrays
+            if (input.it_security_strategy !== undefined) {
+                const itSecurityStrategyValue: any = input.it_security_strategy;
+                if (Array.isArray(itSecurityStrategyValue)) {
+                    updateData.it_security_strategy = itSecurityStrategyValue;
+                } else if (typeof itSecurityStrategyValue === 'string') {
+                    // Si c'est une string, essayer de parser ou split par sauts de ligne
+                    try {
+                        const parsed = JSON.parse(itSecurityStrategyValue);
+                        updateData.it_security_strategy = Array.isArray(parsed) ? parsed : [];
+                    } catch (e) {
+                        // Si ce n'est pas du JSON, split par sauts de ligne (séparateur différent des virgules)
+                        updateData.it_security_strategy = itSecurityStrategyValue
+                            .split('\n')
+                            .map((s: string) => s.trim())
+                            .filter((s: string) => s.length > 0);
+                    }
+                } else {
+                    updateData.it_security_strategy = [];
+                }
+            }
+            
+            // Gérer internal_it_systems (array de strings)
+            // Note: GraphQL peut parfois envoyer des strings JSON au lieu d'arrays
+            if (input.internal_it_systems !== undefined) {
+                const internalItSystemsValue: any = input.internal_it_systems;
+                if (Array.isArray(internalItSystemsValue)) {
+                    updateData.internal_it_systems = internalItSystemsValue;
+                } else if (typeof internalItSystemsValue === 'string') {
+                    // Si c'est une string, essayer de parser ou split par virgules
+                    try {
+                        const parsed = JSON.parse(internalItSystemsValue);
+                        updateData.internal_it_systems = Array.isArray(parsed) ? parsed : [];
+                    } catch (e) {
+                        // Si ce n'est pas du JSON, split par virgules
+                        updateData.internal_it_systems = internalItSystemsValue
+                            .split(',')
+                            .map((s: string) => s.trim())
+                            .filter((s: string) => s.length > 0);
+                    }
+                } else {
+                    updateData.internal_it_systems = [];
+                }
+            }
+
+            // Gérer contracts_for_review (array d'objets avec type et summary)
+            if (input.contracts_for_review !== undefined) {
+                if (Array.isArray(input.contracts_for_review)) {
+                    // S'assurer que chaque élément est un objet avec type et summary
+                    updateData.contracts_for_review = input.contracts_for_review.map((contract: any) => {
+                        if (typeof contract === 'object' && contract !== null) {
+                            return {
+                                type: contract.type || '',
+                                summary: contract.summary || '',
+                            };
+                        }
+                        return { type: '', summary: '' };
+                    }).filter((contract: any) => contract.type && contract.type.trim().length > 0);
+                } else if (typeof input.contracts_for_review === 'string') {
+                    // Si c'est une string, essayer de parser
+                    try {
+                        const parsed = JSON.parse(input.contracts_for_review);
+                        if (Array.isArray(parsed)) {
+                            updateData.contracts_for_review = parsed.map((contract: any) => {
+                                if (typeof contract === 'object' && contract !== null) {
+                                    return {
+                                        type: contract.type || '',
+                                        summary: contract.summary || '',
+                                    };
+                                }
+                                return { type: '', summary: '' };
+                            }).filter((contract: any) => contract.type && contract.type.trim().length > 0);
+                        } else {
+                            updateData.contracts_for_review = [];
+                        }
+                    } catch (e) {
+                        console.error('Error parsing contracts_for_review:', e);
+                        updateData.contracts_for_review = [];
+                    }
+                } else {
+                    updateData.contracts_for_review = [];
+                }
+            }
+
             // Mise à jour des informations DD et générales
             const updatedEditor = await EditorModel.findOneAndUpdate(
                 { editorId: input.editorId },
-                { $set: input },
+                { $set: updateData },
                 { new: true, upsert: true } // Crée ou met à jour
             );
             

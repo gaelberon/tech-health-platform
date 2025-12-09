@@ -4,8 +4,8 @@
 
 import { Document, Types } from 'mongoose'; 
 // Import du modèle et de l'interface DevelopmentMetrics (avec .js pour la résolution ESM)
-import { DevelopmentMetricsModel, IDevelopmentMetrics } from '../../models/DevelopmentMetrics.model.js'; 
-// L'entité Solution est implicitement nécessaire pour la FK, mais pas besoin du modèle entier ici
+import { DevelopmentMetricsModel, IDevelopmentMetrics } from '../../models/DevelopmentMetrics.model.js';
+import { SolutionModel } from '../../models/Solution.model.js';
 
 // ------------------ INTERFACES DE TYPAGE ------------------
 
@@ -49,10 +49,42 @@ const DevelopmentMetricsResolver = {
         updateDevelopmentMetrics: async (_: any, { input }: { input: UpdateDevelopmentMetricsInput }) => {
             // Utilisation de '_: any' pour satisfaire noImplicitAny dans la Root Mutation [7]
 
+            // Convertir solutionId en ObjectId si c'est une string
+            let solutionIdObjectId: Types.ObjectId;
+            if (typeof input.solutionId === 'string') {
+                if (Types.ObjectId.isValid(input.solutionId)) {
+                    // Si c'est déjà un ObjectId valide en string, le convertir
+                    solutionIdObjectId = new Types.ObjectId(input.solutionId);
+                } else {
+                    // Sinon, chercher la solution par son solutionId (string externe)
+                    const solution = await SolutionModel.findOne({ solutionId: input.solutionId });
+                    if (!solution) {
+                        throw new Error(`Solution avec solutionId "${input.solutionId}" non trouvée`);
+                    }
+                    solutionIdObjectId = solution._id;
+                }
+            } else {
+                solutionIdObjectId = input.solutionId;
+            }
+
+            // Vérifier si des métriques existent déjà
+            const existingMetrics = await DevelopmentMetricsModel.findOne({ solutionId: solutionIdObjectId });
+            
+            const updateData: any = {
+                ...input,
+                solutionId: solutionIdObjectId,
+            };
+
+            // Générer metricsId si c'est une nouvelle création
+            if (!existingMetrics) {
+                const metricsCount = await DevelopmentMetricsModel.countDocuments();
+                updateData.metricsId = `metrics-${String(metricsCount + 1).padStart(4, '0')}`;
+            }
+
             // La logique de mise à jour est critique car elle peut déclencher un nouveau scoring [9, 10]
             const updatedMetrics = await DevelopmentMetricsModel.findOneAndUpdate(
-                { solutionId: input.solutionId },
-                { $set: input },
+                { solutionId: solutionIdObjectId },
+                { $set: updateData },
                 { new: true, upsert: true } // Crée si n'existe pas, retourne la nouvelle version [10]
             );
 

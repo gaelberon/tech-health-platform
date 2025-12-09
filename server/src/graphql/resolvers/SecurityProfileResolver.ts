@@ -4,7 +4,8 @@
 
 import { Document, Types } from 'mongoose'; 
 // Import du modèle et de l'interface SecurityProfile (avec .js pour la résolution ESM)
-import { SecurityProfileModel, ISecurityProfile } from '../../models/SecurityProfile.model.js'; 
+import { SecurityProfileModel, ISecurityProfile } from '../../models/SecurityProfile.model.js';
+import { EnvironmentModel } from '../../models/Environment.model.js'; 
 
 // ------------------ TYPES ENUMÉRÉS & OBJETS IMBRIQUÉS ------------------
 
@@ -32,7 +33,8 @@ interface GetSecurityProfileArgs {
 // Basée sur les champs de la Due Diligence Section 3 [4]
 export interface UpdateSecurityProfileInput {
     // Clé étrangère nécessaire pour identifier l'enregistrement à mettre à jour/créer (P1)
-    envId: Types.ObjectId; 
+    // Peut être une string (envId) ou un ObjectId
+    envId: string | Types.ObjectId; 
     
     // Champs P1 (Critique pour le scoring Sécurité 30%)
     auth?: AuthType;
@@ -77,15 +79,47 @@ const SecurityProfileResolver = {
             const { assertAuthorized } = await import('../authorization.js');
             await assertAuthorized(ctx, 'updateSecurityProfile');
 
+            // Convertir envId (string) en ObjectId si nécessaire
+            let envIdObjectId: Types.ObjectId;
+            if (typeof input.envId === 'string') {
+                // Si c'est une string (envId externe), trouver l'environnement pour obtenir son ObjectId MongoDB
+                if (Types.ObjectId.isValid(input.envId)) {
+                    // Si c'est déjà un ObjectId valide en string, le convertir
+                    envIdObjectId = new Types.ObjectId(input.envId);
+                } else {
+                    // Sinon, chercher l'environnement par son envId (string)
+                    const environment = await EnvironmentModel.findOne({ envId: input.envId });
+                    if (!environment) {
+                        throw new Error(`Environnement avec envId "${input.envId}" non trouvé`);
+                    }
+                    envIdObjectId = environment._id;
+                }
+            } else {
+                envIdObjectId = input.envId;
+            }
+
+            // Préparer les données de mise à jour avec l'ObjectId correct
+            const updateData: any = {
+                ...input,
+                envId: envIdObjectId,
+            };
+
+            // Générer un secId si c'est une création (upsert)
+            const existingProfile = await SecurityProfileModel.findOne({ envId: envIdObjectId });
+            if (!existingProfile) {
+                const profileCount = await SecurityProfileModel.countDocuments();
+                updateData.secId = `sec-${String(profileCount + 1).padStart(4, '0')}`;
+            }
+
             // La mise à jour est CRITIQUE, car elle affecte la catégorie de scoring la plus importante (Sécurité, 30%) [2]
             const updatedProfile = await SecurityProfileModel.findOneAndUpdate(
-                { envId: input.envId },
-                { $set: input },
+                { envId: envIdObjectId },
+                { $set: updateData },
                 { new: true, upsert: true } // Crée si n'existe pas, retourne la nouvelle version
             );
 
             // NOTE : Le Scoring Engine DOIT être notifié ici pour recalculer le score de sécurité.
-            // (Exemple : scoringService.calculateSecurityScore(input.envId);)
+            // (Exemple : scoringService.calculateSecurityScore(envIdObjectId);)
             
             return updatedProfile;
         },

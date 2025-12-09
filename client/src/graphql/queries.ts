@@ -469,13 +469,23 @@ export const GET_EDITOR_WITH_DETAILS = gql`
         ip_ownership_clear
         licensing_model
         license_compliance_assured
+        archived
+        archivedAt
+        archivedBy
+        createdAt
         environments {
           envId
           env_type
           deployment_type
+          virtualization
           tech_stack
           data_types
           redundancy
+          archived
+          archivedAt
+          archivedBy
+          hostingId
+          createdAt
           backup {
             exists
             schedule
@@ -521,6 +531,7 @@ export const GET_EDITOR_WITH_DETAILS = gql`
             perf_monitoring
             log_centralization
             tools
+            alerting_strategy
           }
           costs {
             costId

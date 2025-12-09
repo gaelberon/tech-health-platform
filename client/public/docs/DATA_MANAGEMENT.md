@@ -19,8 +19,18 @@ La page **Data Management** est accessible depuis le menu principal de l'applica
 
 - **Pour Admin et Supervisor** : Un menu déroulant permet de sélectionner n'importe quel éditeur de la base de données
 - **Pour EntityDirector et Editor** : L'éditeur associé au compte est automatiquement sélectionné (pas de choix)
+- **Sélection automatique intelligente** : Si un seul éditeur est disponible, il est automatiquement sélectionné. Si plusieurs éditeurs existent, le plus ancien (basé sur la date de création) est sélectionné par défaut
 
-### 2. Dashboard de l'éditeur
+### 2. Option d'affichage des références (Admin uniquement)
+
+- **Checkbox "Afficher les références au modèle de données"** : Visible uniquement pour les utilisateurs Admin
+- Lorsqu'activée, affiche à côté de chaque label :
+  - Le nom du document du modèle de données
+  - Le nom du champ
+  - Le type du champ (entre parenthèses)
+- Utile pour comprendre la structure exacte des données stockées en base
+
+### 3. Dashboard de l'éditeur
 
 Une fois un éditeur sélectionné, un **dashboard court** affiche :
 
@@ -49,7 +59,16 @@ Une fois un éditeur sélectionné, un **dashboard court** affiche :
   - **Total mensuel**
 - **Note** : Indique le nombre d'environnements utilisés pour le calcul
 
-### 3. Formulaire d'édition
+### 4. Surbrillance des champs non peuplés
+
+Tous les champs de formulaire affichent automatiquement une **surbrillance visuelle** (fond rose pâle) lorsqu'ils sont :
+- **Vides** (chaîne vide)
+- **Non définis** (null, undefined)
+- **Contiennent des valeurs invalides** : TBD, NA, N/A, MANQUANT, #ERROR!, etc.
+
+Cette fonctionnalité permet d'identifier rapidement les champs qui nécessitent une saisie ou une mise à jour.
+
+### 5. Formulaire d'édition
 
 Le formulaire permet de gérer toutes les données de l'éditeur sélectionné, organisé en onglets :
 
@@ -71,6 +90,10 @@ Le formulaire permet de gérer toutes les données de l'éditeur sélectionné, 
   - **Créer une nouvelle solution** (Admin/Supervisor uniquement)
   - **Archiver/Désarchiver** une solution (Admin/Supervisor uniquement)
   - **Afficher/Masquer les solutions archivées** (tous les utilisateurs)
+- **Sélection automatique intelligente** :
+  - Si une seule solution existe, elle est automatiquement sélectionnée
+  - Si plusieurs solutions existent, la plus ancienne (basée sur la date de création) est sélectionnée par défaut
+  - La sélection automatique ne bloque pas la sélection manuelle d'une autre solution
 
 - **Champs modifiables** :
   - Nom
@@ -84,6 +107,21 @@ Le formulaire permet de gérer toutes les données de l'éditeur sélectionné, 
     - Clarté de la propriété intellectuelle
     - Modèle de licence
     - Conformité des licences assurée
+  - **Code Source** (CodeBase) :
+    - Localisation du dépôt
+    - Niveau de documentation
+    - Processus de revue de code
+    - Outil de contrôle de version
+    - Dette technique connue
+    - Systèmes hérités
+    - Dépendances tierces
+  - **Métriques de développement** (DevelopmentMetrics) :
+    - Processus SDLC (Scrum, Kanban, Waterfall, Agile, Hybrid)
+    - Niveau d'automatisation DevOps
+    - Ratio travail planifié/non planifié
+    - Délai de livraison des changements (en jours)
+    - MTTR (Mean Time To Restore) en heures
+    - Ratio bugs internes/externes
 
 #### Onglet "Environnements"
 - **Liste des environnements** avec possibilité de :
@@ -91,6 +129,10 @@ Le formulaire permet de gérer toutes les données de l'éditeur sélectionné, 
   - **Créer un nouvel environnement** (Admin/Supervisor uniquement)
   - **Archiver/Désarchiver** un environnement (Admin/Supervisor uniquement)
   - **Afficher/Masquer les environnements archivés** (tous les utilisateurs)
+- **Sélection automatique intelligente** :
+  - Si un seul environnement existe pour la solution sélectionnée, il est automatiquement sélectionné
+  - Si plusieurs environnements existent, le plus ancien (basé sur la date de création) est sélectionné par défaut
+  - La sélection automatique ne bloque pas la sélection manuelle d'un autre environnement
 
 - **Champs modifiables** :
   - Solution associée
@@ -174,6 +216,8 @@ Les modifications des données peuvent déclencher un **recalcul des scores** vi
 - **Validation** : Les données sont validées côté serveur selon le schéma GraphQL
 - **Permissions** : Les permissions sont vérifiées côté serveur pour chaque opération
 - **Cache** : Les données sont mises en cache par Apollo Client et rafraîchies automatiquement après modification
+- **Surbrillance des champs** : Utilise un utilitaire de validation (`fieldValidation.ts`) qui détecte les valeurs vides ou invalides et applique automatiquement un style visuel distinctif
+- **Sélection automatique** : Utilise des références React (`useRef`) pour éviter de forcer une sélection si l'utilisateur a déjà fait un choix manuel
 
 ## Pour une description détaillée des champs
 

@@ -8,7 +8,7 @@ export interface IEditor extends Document {
     size: 'Micro' | 'SME' | 'Mid' | 'Enterprise';
     business_criticality: 'Low' | 'Medium' | 'High' | 'Critical';
     internal_it_systems: string[]; // Donnée DD
-    it_security_strategy: string; // Donnée DD
+    it_security_strategy: string[]; // Donnée DD - Array de stratégies
     contracts_for_review: { type: string, summary: string }[]; // Donnée DD
 }
 
@@ -22,7 +22,7 @@ const EditorSchema = new Schema<IEditor>({
 
     // Nouveaux champs DD
     internal_it_systems: [{ type: String }], // Array of strings
-    it_security_strategy: { type: String }, // Texte DD
+    it_security_strategy: [{ type: String }], // Array of strings - Stratégies de sécurité IT
     contracts_for_review: [{ // Array d'objets pour les contrats
         type: String,
         summary: String

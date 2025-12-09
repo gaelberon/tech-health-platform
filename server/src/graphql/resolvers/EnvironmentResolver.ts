@@ -12,6 +12,7 @@ import { EntityCostModel, IEntityCost } from '../../models/EntityCost.model.js';
 import { PerformanceMetricsModel, IPerformanceMetrics } from '../../models/PerformanceMetrics.model.js';
 import { RoadmapItemModel, IRoadmapItem } from '../../models/RoadmapItem.model.js';
 import { DocumentModel, IDocument } from '../../models/Document.model.js';
+import { SolutionModel } from '../../models/Solution.model.js';
 
 
 // ------------------ INTERFACES DE TYPAGE ------------------
@@ -114,10 +115,27 @@ const EnvironmentResolver = {
             const { assertAuthorized } = await import('../authorization.js');
             await assertAuthorized(ctx, 'updateEnvironment');
 
+            // Préparer les données de mise à jour
+            const updateData: any = { ...input };
+            
+            // Mapper la redondance : "geo_redundant" (GraphQL) -> "geo-redundant" (Mongoose)
+            if (updateData.redundancy === 'geo_redundant') {
+                updateData.redundancy = 'geo-redundant';
+            }
+            
+            // Si solutionId est fourni comme string (solutionId externe), trouver l'ObjectId MongoDB
+            if (input.solutionId && typeof input.solutionId === 'string' && !Types.ObjectId.isValid(input.solutionId)) {
+                const solution = await SolutionModel.findOne({ solutionId: input.solutionId });
+                if (!solution) {
+                    throw new Error(`Solution avec solutionId "${input.solutionId}" non trouvée`);
+                }
+                updateData.solutionId = solution._id;
+            }
+
             // Mise à jour de l'environnement (essentiel pour les données de Résilience/Sécurité)
             const updatedEnvironment = await EnvironmentModel.findOneAndUpdate(
                 { envId: input.envId },
-                { $set: input },
+                { $set: updateData },
                 { new: true, upsert: true } // Crée ou met à jour
             );
             
@@ -139,6 +157,17 @@ const EnvironmentResolver = {
                 throw new Error('Seuls les administrateurs et superviseurs peuvent créer des environnements');
             }
             
+            // Trouver la Solution par son solutionId (string) pour obtenir son ObjectId MongoDB
+            const solution = await SolutionModel.findOne({ solutionId: input.solutionId });
+            if (!solution) {
+                throw new Error(`Solution avec solutionId "${input.solutionId}" non trouvée`);
+            }
+            
+            // Mapper la redondance : "geo_redundant" (GraphQL) -> "geo-redundant" (Mongoose)
+            const mappedRedundancy = input.redundancy === 'geo_redundant' 
+                ? 'geo-redundant' 
+                : input.redundancy;
+            
             // Générer un envId unique
             const envCount = await EnvironmentModel.countDocuments();
             const envId = `env-${String(envCount + 1).padStart(4, '0')}`;
@@ -158,6 +187,8 @@ const EnvironmentResolver = {
             
             const newEnvironment = await EnvironmentModel.create({
                 ...input,
+                solutionId: solution._id, // Utiliser l'ObjectId MongoDB de la Solution
+                redundancy: mappedRedundancy, // Utiliser la valeur mappée
                 envId,
                 backup: backupData,
                 archived: false
@@ -203,6 +234,15 @@ const EnvironmentResolver = {
     
     // Résolveurs de CHAMP (Field Resolvers) : Pour lier les entités associées à Environment
     Environment: {
+        
+        // Field resolver pour redundancy : convertir "geo-redundant" (MongoDB) vers "geo_redundant" (GraphQL)
+        redundancy: (parent: IEnvironment & Document) => {
+            // Convertir "geo-redundant" (MongoDB) vers "geo_redundant" (GraphQL enum)
+            if (parent.redundancy === 'geo-redundant') {
+                return 'geo_redundant';
+            }
+            return parent.redundancy;
+        },
         
         // Relation 1:1 vers Hosting
         hosting: async (parent: IEnvironment & Document) => {

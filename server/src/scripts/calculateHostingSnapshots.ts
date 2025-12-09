@@ -22,6 +22,10 @@ import { SolutionModel } from '../models/Solution.model.js';
 import { EnvironmentModel } from '../models/Environment.model.js';
 import { ScoringSnapshotModel } from '../models/ScoringSnapshot.model.js';
 import { ScoringEngineService } from '../services/ScoringEngine.service.js';
+import { SecurityProfileModel } from '../models/SecurityProfile.model.js';
+import { MonitoringObservabilityModel } from '../models/MonitoringObservability.model.js';
+import { CodeBaseModel } from '../models/CodeBase.model.js';
+import { DevelopmentMetricsModel } from '../models/DevelopmentMetrics.model.js';
 
 /**
  * Génère un ID unique pour un snapshot
@@ -33,12 +37,15 @@ function generateScoreId(solutionId: string, envId: string, collectionType: 'sna
 
 /**
  * Trouve l'environnement de production ou le premier disponible pour une solution
+ * Ignore les environnements archivés
  */
 async function findEnvironmentForScoring(solutionId: mongoose.Types.ObjectId): Promise<mongoose.Types.ObjectId | null> {
   // Priorité : production > test > dev > backup
+  // Ignorer les environnements archivés (archived !== true)
   const env = await EnvironmentModel.findOne({
     solutionId,
-    env_type: 'production'
+    env_type: 'production',
+    $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
   } as any).exec();
 
   if (env) return env._id;
@@ -46,14 +53,110 @@ async function findEnvironmentForScoring(solutionId: mongoose.Types.ObjectId): P
   // Si pas de production, chercher test
   const testEnv = await EnvironmentModel.findOne({
     solutionId,
-    env_type: 'test'
+    env_type: 'test',
+    $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
   } as any).exec();
 
   if (testEnv) return testEnv._id;
 
-  // Si pas de test, prendre le premier disponible
-  const anyEnv = await EnvironmentModel.findOne({ solutionId } as any).exec();
+  // Si pas de test, prendre le premier disponible (non archivé)
+  const anyEnv = await EnvironmentModel.findOne({
+    solutionId,
+    $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
+  } as any).exec();
   return anyEnv ? anyEnv._id : null;
+}
+
+/**
+ * Vérifie les données manquantes et retourne une liste des champs obligatoires manquants
+ */
+async function checkMissingData(
+  solutionId: mongoose.Types.ObjectId,
+  envId: mongoose.Types.ObjectId
+): Promise<string[]> {
+  const missingFields: string[] = [];
+  
+  const environment = await EnvironmentModel.findOne({ _id: envId }).exec();
+  const securityProfile = await SecurityProfileModel.findOne({ envId: envId }).exec();
+  const monitoring = await MonitoringObservabilityModel.findOne({ envId: envId }).exec();
+  const codeBase = await CodeBaseModel.findOne({ solutionId: solutionId }).exec();
+  const metrics = await DevelopmentMetricsModel.findOne({ solutionId: solutionId }).exec();
+
+  // Vérification Environment
+  if (!environment) {
+    missingFields.push('Environment (environnement complet)');
+  } else {
+    if (!environment.redundancy) missingFields.push('Environment.redundancy (redondance)');
+    if (!environment.backup) {
+      missingFields.push('Environment.backup (configuration de sauvegarde)');
+    } else {
+      if (environment.backup.exists === undefined || environment.backup.exists === null) {
+        missingFields.push('Environment.backup.exists (sauvegarde existante)');
+      }
+      // Note: rto et rpo sont utilisés dans le calcul mais peuvent être optionnels
+    }
+    if (!environment.data_types || environment.data_types.length === 0) {
+      missingFields.push('Environment.data_types (types de données)');
+    }
+    // Champs utilisés dans calculateResilienceScore
+    if (!environment.sla_offered) missingFields.push('Environment.sla_offered (SLA offert)');
+    // Champs utilisés dans calculateArchitectureScore
+    if (!environment.deployment_type) missingFields.push('Environment.deployment_type (type de déploiement)');
+    if (!environment.virtualization) missingFields.push('Environment.virtualization (virtualisation)');
+    if (!environment.db_scaling_mechanism) missingFields.push('Environment.db_scaling_mechanism (mécanisme de scaling DB)');
+  }
+
+  // Vérification SecurityProfile
+  if (!securityProfile) {
+    missingFields.push('SecurityProfile (profil de sécurité complet)');
+  } else {
+    if (!securityProfile.auth) missingFields.push('SecurityProfile.auth (authentification)');
+    if (!securityProfile.encryption) {
+      missingFields.push('SecurityProfile.encryption (chiffrement)');
+    } else {
+      if (securityProfile.encryption.in_transit === undefined || securityProfile.encryption.in_transit === null) {
+        missingFields.push('SecurityProfile.encryption.in_transit (chiffrement en transit)');
+      }
+      if (securityProfile.encryption.at_rest === undefined || securityProfile.encryption.at_rest === null) {
+        missingFields.push('SecurityProfile.encryption.at_rest (chiffrement au repos)');
+      }
+    }
+    if (!securityProfile.patching) missingFields.push('SecurityProfile.patching (gestion des patchs)');
+    if (!securityProfile.pentest_freq) missingFields.push('SecurityProfile.pentest_freq (fréquence des tests d\'intrusion)');
+    // Champs utilisés dans calculateSecurityScore
+    if (securityProfile.centralized_monitoring === undefined || securityProfile.centralized_monitoring === null) {
+      missingFields.push('SecurityProfile.centralized_monitoring (monitoring centralisé)');
+    }
+    if (securityProfile.access_control === undefined || securityProfile.access_control === null) {
+      missingFields.push('SecurityProfile.access_control (contrôle d\'accès)');
+    }
+  }
+
+  // Vérification MonitoringObservability
+  if (!monitoring) {
+    missingFields.push('MonitoringObservability (monitoring & observabilité complet)');
+  } else {
+    if (!monitoring.perf_monitoring) missingFields.push('MonitoringObservability.perf_monitoring (monitoring de performance)');
+    if (!monitoring.log_centralization) missingFields.push('MonitoringObservability.log_centralization (centralisation des logs)');
+    if (!monitoring.tools || monitoring.tools.length === 0) {
+      missingFields.push('MonitoringObservability.tools (outils de monitoring)');
+    }
+  }
+
+  // Vérification CodeBase
+  if (!codeBase) {
+    missingFields.push('CodeBase (code source complet)');
+  } else {
+    if (!codeBase.documentation_level) missingFields.push('CodeBase.documentation_level (niveau de documentation)');
+    if (!codeBase.technical_debt_known) missingFields.push('CodeBase.technical_debt_known (dette technique connue)');
+  }
+
+  // Vérification DevelopmentMetrics
+  if (!metrics) {
+    missingFields.push('DevelopmentMetrics (métriques de développement)');
+  }
+
+  return missingFields;
 }
 
 /**
@@ -73,12 +176,25 @@ async function calculateSnapshotForSolution(
       return false;
     }
 
+    // Vérifier les données manquantes avant d'essayer de calculer
+    const missingFields = await checkMissingData(solutionId, envId);
+    
+    if (missingFields.length > 0) {
+      console.warn(`\n⚠️  Impossible de calculer le score pour "${solutionName}" - Données manquantes:`);
+      console.warn(`   Champs obligatoires manquants:`);
+      missingFields.forEach(field => {
+        console.warn(`   - ${field}`);
+      });
+      console.warn(`\n   💡 Veuillez compléter ces données dans le module "Data Management" avant de recalculer.\n`);
+      return false;
+    }
+
     // Utiliser le ScoringEngineService pour calculer le score
     // Note: Le ScoringEngineService crée un snapshot, mais sans scoreId ni collection_type
     // On va l'utiliser pour calculer les scores, puis créer notre propre snapshot
     const scoringEngine = new ScoringEngineService();
     
-    let tempSnapshot;
+    let tempSnapshot: any;
     try {
       tempSnapshot = await scoringEngine.calculateAndRecordScore(solutionId, envId);
     } catch (error: any) {
@@ -159,8 +275,10 @@ async function calculateHostingSnapshots() {
 
     for (const editorName of editorNames) {
       const trimmedName = editorName.trim();
+      // Ignorer les éditeurs archivés (archived !== true)
       const editor = await EditorModel.findOne({
-        name: { $regex: new RegExp(`^${trimmedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+        name: { $regex: new RegExp(`^${trimmedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+        $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
       });
 
       if (editor) {
@@ -177,8 +295,10 @@ async function calculateHostingSnapshots() {
     }
 
     if (notFound.length > 0) {
-      console.log('\n💡 Éditeurs disponibles dans la base de données (20 premiers):');
-      const allEditors = await EditorModel.find({}).select('name editorId').limit(20);
+      console.log('\n💡 Éditeurs disponibles dans la base de données (20 premiers, non archivés):');
+      const allEditors = await EditorModel.find({
+        $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
+      }).select('name editorId').limit(20);
       allEditors.forEach((ed, idx) => {
         console.log(`   ${idx + 1}. "${ed.name}" (ID: ${ed.editorId})`);
       });
@@ -200,8 +320,12 @@ async function calculateHostingSnapshots() {
     for (const editor of editors) {
       console.log(`\n📌 Traitement de l'éditeur: "${editor.name}"`);
       
-      const solutions = await SolutionModel.find({ editorId: editor._id });
-      console.log(`   ${solutions.length} solution(s) trouvée(s)`);
+      // Ignorer les solutions archivées (archived !== true)
+      const solutions = await SolutionModel.find({
+        editorId: editor._id,
+        $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
+      });
+      console.log(`   ${solutions.length} solution(s) trouvée(s) (non archivées)`);
 
       for (const solution of solutions) {
         totalSolutions++;
