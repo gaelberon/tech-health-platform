@@ -112,3 +112,5 @@ Les IDs sont générés automatiquement à partir des noms :
 - Les erreurs sur une ligne n'arrêtent pas le traitement des autres lignes
 - Les logs détaillent chaque création d'entité pour faciliter le débogage
 
+
+

@@ -8,7 +8,7 @@ export interface IAIFeatures extends Document {
     aiId: string; // Identifiant unique (PK dans le MCD) [2]
     solutionId: Types.ObjectId; // Lien vers l'entité Solution (FK) [2]
     
-    // Champs pour la Due Diligence IA (Section 10 du DD)
+    // Champs pour la Due Diligence IA (10)
     technical_type: string; // Services externes intégrés ou modèles propres entraînés [2, 3]
     quality_validation_method?: string | undefined | null; // Comment la qualité a été mesurée/validée [2, 3]
     continuous_improvement: boolean; // Existence de workflows pour l'amélioration continue [2, 3]

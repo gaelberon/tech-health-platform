@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Types pour les onglets
-type ThirdPartyDocsTab = 'dd-tech';
+type ThirdPartyDocsTab = 'dd-tech' | 'data-model-mapping';
 
 // Composants personnalisés pour le rendu Markdown (identique à About.tsx)
 const MarkdownComponents = {
@@ -143,6 +143,7 @@ const MarkdownComponents = {
 const ThirdPartyDocs: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ThirdPartyDocsTab>('dd-tech');
   const [ddTechContent, setDdTechContent] = useState<string>('');
+  const [dataModelMappingContent, setDataModelMappingContent] = useState<string>('');
   const [showCiecCategory, setShowCiecCategory] = useState<boolean>(false);
 
   // Charger dd-tech.md
@@ -153,6 +154,17 @@ const ThirdPartyDocs: React.FC = () => {
       .catch((err) => {
         console.error('Erreur lors du chargement de la doc Tech DD:', err);
         setDdTechContent('# Technical Due Diligence\n\nDocumentation non disponible.');
+      });
+  }, []);
+
+  // Charger DATA_MODEL_MAPPING.md
+  useEffect(() => {
+    fetch('/docs/DATA_MODEL_MAPPING.md')
+      .then((res) => res.text())
+      .then((text) => setDataModelMappingContent(text))
+      .catch((err) => {
+        console.error('Erreur lors du chargement de la doc Data Model Mapping:', err);
+        setDataModelMappingContent('# Mapping du Modèle de Données\n\nDocumentation non disponible.');
       });
   }, []);
 
@@ -182,6 +194,7 @@ const ThirdPartyDocs: React.FC = () => {
 
   const tabs = [
     { id: 'dd-tech' as ThirdPartyDocsTab, label: 'Tech DD - Mapping', icon: '📋' },
+    { id: 'data-model-mapping' as ThirdPartyDocsTab, label: 'Mapping Référentiels', icon: '🗺️' },
   ];
 
   const renderTabContent = () => {
@@ -191,6 +204,14 @@ const ThirdPartyDocs: React.FC = () => {
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
               {ddTechContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
+      case 'data-model-mapping':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {dataModelMappingContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );

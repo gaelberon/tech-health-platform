@@ -206,6 +206,12 @@ export const CREATE_SOLUTION = gql`
       main_use_case
       type
       product_criticality
+      api_robustness
+      api_documentation_quality
+      ip_ownership_clear
+      licensing_model
+      license_compliance_assured
+      tech_stack
       archived
     }
   }

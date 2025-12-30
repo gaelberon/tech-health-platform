@@ -229,7 +229,9 @@ async function calculateSnapshotForSolution(
       global_score: tempSnapshot.global_score,
       risk_level: tempSnapshot.risk_level,
       scores: tempSnapshot.scores,
-      notes: tempSnapshot.notes
+      notes: tempSnapshot.notes,
+      calculationDetails: tempSnapshot.calculationDetails,
+      calculationReport: tempSnapshot.calculationReport
     });
 
     console.log(`✅ Snapshot ${collectionType} créé pour "${solutionName}" - Score: ${newSnapshot.global_score}, Risque: ${newSnapshot.risk_level}`);

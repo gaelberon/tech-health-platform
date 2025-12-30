@@ -11,18 +11,22 @@ const EnvironmentTable: React.FC<EnvironmentTableProps> = ({ environments }) => 
       test: { label: 'TEST', className: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300' },
       dev: { label: 'DEV', className: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' },
       backup: { label: 'BACKUP', className: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300' },
+      recette: { label: 'RECETTE', className: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' },
     };
-    return badges[envType] || badges.dev;
+    // Pour les types non reconnus, afficher le type en majuscules avec un style par défaut
+    return badges[envType] || { label: envType?.toUpperCase() || 'UNKNOWN', className: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300' };
   };
 
   const getRedundancyBadge = (redundancy: string) => {
+    // Normaliser la redondance : gérer à la fois 'geo-redundant' (MongoDB) et 'geo_redundant' (GraphQL)
+    const normalizedRedundancy = redundancy === 'geo_redundant' ? 'geo-redundant' : redundancy;
     const badges: Record<string, { label: string; className: string }> = {
       none: { label: 'Aucune', className: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' },
       minimal: { label: 'Minimale', className: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300' },
       'geo-redundant': { label: 'Geo-redondant', className: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' },
       high: { label: 'Élevée', className: 'bg-green-200 dark:bg-green-800/30 text-green-900 dark:text-green-200' },
     };
-    return badges[redundancy] || badges.none;
+    return badges[normalizedRedundancy] || badges.none;
   };
 
   return (

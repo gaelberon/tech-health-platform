@@ -2,11 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { LIST_EDITORS_FOR_USER, GET_SOLUTION_HOSTING_VIEW } from '../graphql/queries';
 import { useSession } from '../session/SessionContext';
+import { useEditor } from '../contexts/EditorContext';
 import EnvironmentCard from '../components/hosting/EnvironmentCard';
 import EnvironmentTable from '../components/hosting/EnvironmentTable';
 
 type ViewMode = 'cards' | 'table';
-type EnvTypeFilter = 'all' | 'production' | 'test' | 'dev' | 'backup';
+type EnvTypeFilter = 'all' | 'production' | 'test' | 'dev' | 'backup' | 'recette';
 
 interface Editor {
   editorId: string;
@@ -20,12 +21,12 @@ interface Editor {
 
 const HostingView: React.FC = () => {
   const { user } = useSession();
-  const [selectedEditorId, setSelectedEditorId] = useState<string>('');
+  const { selectedEditorId, canSelectMultiple } = useEditor();
   const [selectedSolutionId, setSelectedSolutionId] = useState<string>('');
   const [viewMode, setViewMode] = useState<ViewMode>('cards');
   const [envTypeFilter, setEnvTypeFilter] = useState<EnvTypeFilter>('all');
 
-  // Récupérer les éditeurs accessibles
+  // Récupérer les éditeurs accessibles (pour obtenir les solutions)
   const { data: editorsData, loading: editorsLoading } = useQuery(LIST_EDITORS_FOR_USER);
 
   // Récupérer les données de la solution sélectionnée
@@ -34,48 +35,6 @@ const HostingView: React.FC = () => {
     skip: !selectedSolutionId,
   });
 
-  // Déterminer si l'utilisateur doit sélectionner un éditeur
-  const shouldSelectEditor = useMemo(() => {
-    if (!user || !editorsData?.listEditorsForUser) return false;
-    
-    // Admin : sélection nécessaire si plusieurs éditeurs disponibles
-    // (même sans éditeur associé, l'admin voit tous les éditeurs)
-    if (user.role === 'Admin') {
-      return editorsData.listEditorsForUser.length > 1;
-    }
-    
-    // Editor/EntityDirector : pas de sélection si un seul éditeur
-    if ((user.role === 'Editor' || user.role === 'EntityDirector') && editorsData.listEditorsForUser.length === 1) {
-      return false;
-    }
-    
-    // Supervisor : sélection nécessaire si plusieurs éditeurs dans le portefeuille
-    if (user.role === 'Supervisor') {
-      return editorsData.listEditorsForUser.length > 1;
-    }
-    
-    return false;
-  }, [user, editorsData]);
-
-  // Sélectionner automatiquement le premier éditeur si un seul disponible
-  // (sauf pour Admin qui peut avoir besoin de sélectionner)
-  useEffect(() => {
-    if (editorsData?.listEditorsForUser && !selectedEditorId) {
-      // Pour Editor/EntityDirector : toujours sélectionner automatiquement
-      if ((user?.role === 'Editor' || user?.role === 'EntityDirector') && editorsData.listEditorsForUser.length === 1) {
-        setSelectedEditorId(editorsData.listEditorsForUser[0].editorId);
-      }
-      // Pour Supervisor : sélectionner si un seul éditeur dans le portefeuille
-      else if (user?.role === 'Supervisor' && editorsData.listEditorsForUser.length === 1) {
-        setSelectedEditorId(editorsData.listEditorsForUser[0].editorId);
-      }
-      // Pour Admin : sélectionner automatiquement le premier si disponible
-      else if (user?.role === 'Admin' && editorsData.listEditorsForUser.length > 0) {
-        setSelectedEditorId(editorsData.listEditorsForUser[0].editorId);
-      }
-    }
-  }, [editorsData, selectedEditorId, user]);
-
   // Sélectionner automatiquement la première solution quand un éditeur est sélectionné
   useEffect(() => {
     if (selectedEditorId && editorsData?.listEditorsForUser) {
@@ -83,6 +42,9 @@ const HostingView: React.FC = () => {
       if (editor && editor.solutions && editor.solutions.length > 0 && !selectedSolutionId) {
         setSelectedSolutionId(editor.solutions[0].solutionId);
       }
+    } else if (!selectedEditorId) {
+      // Réinitialiser la solution si aucun éditeur n'est sélectionné
+      setSelectedSolutionId('');
     }
   }, [selectedEditorId, editorsData, selectedSolutionId]);
 
@@ -101,17 +63,22 @@ const HostingView: React.FC = () => {
     if (!solutionData?.getSolution?.environments) {
       return {
         totalEnvs: 0,
-        byType: { production: 0, test: 0, dev: 0, backup: 0 },
+        byType: { production: 0, test: 0, dev: 0, backup: 0, recette: 0, autres: 0 },
         totalCost: 0,
       };
     }
 
     const envs = solutionData.getSolution.environments;
+    // Types d'environnement connus
+    const knownTypes = ['production', 'test', 'dev', 'backup', 'recette'];
+    
     const byType = {
       production: envs.filter((e: any) => e.env_type === 'production').length,
       test: envs.filter((e: any) => e.env_type === 'test').length,
       dev: envs.filter((e: any) => e.env_type === 'dev').length,
       backup: envs.filter((e: any) => e.env_type === 'backup').length,
+      recette: envs.filter((e: any) => e.env_type === 'recette').length,
+      autres: envs.filter((e: any) => !knownTypes.includes(e.env_type)).length,
     };
 
     const totalCost = envs.reduce((sum: number, env: any) => {
@@ -147,6 +114,17 @@ const HostingView: React.FC = () => {
     );
   }
 
+  // Si l'utilisateur peut sélectionner plusieurs éditeurs et qu'aucun n'est sélectionné
+  if (canSelectMultiple && !selectedEditorId) {
+    return (
+      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center transition-colors">
+        <p className="text-gray-500 dark:text-gray-400">
+          Veuillez sélectionner une entité dans le menu en haut à droite pour afficher les données.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -159,41 +137,20 @@ const HostingView: React.FC = () => {
 
       {/* Navigation hiérarchique */}
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4 transition-colors">
-        {/* Sélecteur d'éditeur */}
-        {shouldSelectEditor ? (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Éditeur
-            </label>
-            <select
-              value={selectedEditorId}
-              onChange={(e) => {
-                setSelectedEditorId(e.target.value);
-                setSelectedSolutionId(''); // Reset solution quand éditeur change
-              }}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            >
-              <option value="">Sélectionner un éditeur...</option>
-              {editorsData.listEditorsForUser.map((editor: Editor) => (
-                <option key={editor.editorId} value={editor.editorId}>
-                  {editor.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
+        {/* Affichage de l'éditeur (sélectionné dans le header) */}
+        {selectedEditorId && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Éditeur
             </label>
             <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300">
-              {selectedEditor?.name || editorsData.listEditorsForUser[0]?.name}
+              {editorsData.listEditorsForUser.find((e: Editor) => e.editorId === selectedEditorId)?.name || 'Éditeur inconnu'}
             </div>
           </div>
         )}
 
         {/* Sélecteur de solution */}
-        {selectedEditor && (
+        {selectedEditorId && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Solution
@@ -204,7 +161,7 @@ const HostingView: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               <option value="">Sélectionner une solution...</option>
-              {selectedEditor.solutions?.map((solution: any) => (
+              {editorsData.listEditorsForUser.find((e: Editor) => e.editorId === selectedEditorId)?.solutions?.map((solution: any) => (
                 <option key={solution.solutionId} value={solution.solutionId}>
                   {solution.name} ({solution.type})
                 </option>
@@ -221,7 +178,7 @@ const HostingView: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Vue d'ensemble - {solutionData.getSolution.name}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
                 <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{overviewMetrics.totalEnvs}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Environnements</div>
@@ -237,6 +194,14 @@ const HostingView: React.FC = () => {
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
                 <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{overviewMetrics.byType.dev}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Développement</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{overviewMetrics.byType.recette}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Recette (UAT)</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">{overviewMetrics.byType.autres}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Autres</div>
               </div>
             </div>
             {overviewMetrics.totalCost > 0 && (
@@ -262,6 +227,7 @@ const HostingView: React.FC = () => {
                 <option value="test">Test</option>
                 <option value="dev">Développement</option>
                 <option value="backup">Backup</option>
+                <option value="recette">Recette (UAT)</option>
               </select>
             </div>
             <div className="flex items-center gap-2 ml-auto">

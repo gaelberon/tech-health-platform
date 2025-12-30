@@ -11,10 +11,10 @@ export interface IEntityCost extends Document {
     ops_hours_monthly_equiv: number; // Heures Ops requises (Estimation) [1]
     comments: string; // Commentaires sur les coûts [1]
     
-    // Nouveaux champs DD (Section 8 du DD)
-    hidden_costs: string; // Coûts cachés ou obligations contractuelles futures [2]
-    cost_evolution_factors: string; // Comment les coûts évoluent avec l'utilisation (tokens IA, workflows) [2]
-    modernization_investment_needs: string; // Investissements nécessaires pour la modernisation/croissance [2]
+    // Nouveaux champs DD (8.a, 8.b)
+    hidden_costs: string; // Coûts cachés ou obligations contractuelles futures [2] (8.a.2)
+    cost_evolution_factors: string; // Comment les coûts évoluent avec l'utilisation (tokens IA, workflows) [2] (8.a.3)
+    modernization_investment_needs: string; // Investissements nécessaires pour la modernisation/croissance [2] (8.b.1)
 }
 
 // 2. Définition du Schéma Mongoose
@@ -65,19 +65,19 @@ const EntityCostSchema = new Schema<IEntityCost>({
     hidden_costs: { 
         type: String, 
         required: false,
-        description: "Coûts cachés ou obligations contractuelles futures (DD Section 8a)" 
+        description: "Coûts cachés ou obligations contractuelles futures (DD 8.a.2)" 
     },
     
     cost_evolution_factors: { 
         type: String, 
         required: false,
-        description: "Facteurs d'évolution des coûts (tokens IA, licences, etc.) (DD Section 8a)" 
+        description: "Facteurs d'évolution des coûts (tokens IA, licences, etc.) (DD 8.a.3)" 
     },
     
     modernization_investment_needs: { 
         type: String, 
         required: false,
-        description: "Investissements nécessaires pour la modernisation/croissance (DD Section 8b)" 
+        description: "Investissements nécessaires pour la modernisation/croissance (DD 8.b.1)" 
     }
 }, {
     timestamps: true // Ajoute createdAt et updatedAt

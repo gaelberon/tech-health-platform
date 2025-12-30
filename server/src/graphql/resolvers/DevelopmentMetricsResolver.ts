@@ -6,6 +6,7 @@ import { Document, Types } from 'mongoose';
 // Import du modèle et de l'interface DevelopmentMetrics (avec .js pour la résolution ESM)
 import { DevelopmentMetricsModel, IDevelopmentMetrics } from '../../models/DevelopmentMetrics.model.js';
 import { SolutionModel } from '../../models/Solution.model.js';
+import { validateLookupValue } from '../../utils/validateLookupValue.js';
 
 // ------------------ INTERFACES DE TYPAGE ------------------
 
@@ -48,6 +49,20 @@ const DevelopmentMetricsResolver = {
         // Mutation pour créer ou mettre à jour les métriques de développement
         updateDevelopmentMetrics: async (_: any, { input }: { input: UpdateDevelopmentMetricsInput }) => {
             // Utilisation de '_: any' pour satisfaire noImplicitAny dans la Root Mutation [7]
+
+            // Validation contre les Value Lists
+            if (input.sdlc_process) {
+                const isValid = await validateLookupValue('SDLC_PROCESS', input.sdlc_process);
+                if (!isValid) {
+                    throw new Error(`Le processus SDLC "${input.sdlc_process}" n'est pas valide. Veuillez utiliser une valeur de la liste "SDLC_PROCESS".`);
+                }
+            }
+            if (input.devops_automation_level) {
+                const isValid = await validateLookupValue('DEVOPS_AUTOMATION_LEVEL', input.devops_automation_level);
+                if (!isValid) {
+                    throw new Error(`Le niveau d'automatisation DevOps "${input.devops_automation_level}" n'est pas valide. Veuillez utiliser une valeur de la liste "DEVOPS_AUTOMATION_LEVEL".`);
+                }
+            }
 
             // Convertir solutionId en ObjectId si c'est une string
             let solutionIdObjectId: Types.ObjectId;

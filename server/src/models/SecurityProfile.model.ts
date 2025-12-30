@@ -28,7 +28,7 @@ export interface ISecurityProfile extends Document {
     vuln_mgmt: VulnMgmt; // Gestion des vulnérabilités [3, 4]
     access_control: string; // Contrôle d'accès (e.g., PAM used?) [4]
     
-    // Champs DD spécifiques (Section 3 du DD)
+    // Champs DD spécifiques (3.a, 3.b, 3.c, 3.d)
     internal_audits_recent: string; // Audits internes/externes récents et mesures prises [3]
     centralized_monitoring: boolean; // Monitoring centralisé pour les événements de sécurité [3]
     pentest_results_summary: string; // Résumé des derniers résultats de pentests [3]
@@ -102,31 +102,31 @@ const SecurityProfileSchema = new Schema<ISecurityProfile>({
     internal_audits_recent: {
         type: String,
         required: false,
-        description: "Audits internes ou externes récents et mesures prises (DD Section 3c)." [3]
+        description: "Audits internes ou externes récents et mesures prises (DD 3.c.2)."
     },
     
     centralized_monitoring: {
         type: Boolean,
         required: false,
-        description: "Monitoring centralisé pour les événements de sécurité (DD Section 3a)." [3]
+        description: "Monitoring centralisé pour les événements de sécurité (DD 3.a.2)."
     },
     
     pentest_results_summary: {
         type: String,
         required: false,
-        description: "Résumé des derniers résultats de tests d'intrusion (DD Section 3c)." [3]
+        description: "Résumé des derniers résultats de tests d'intrusion (DD 3.c.1)."
     },
     
     known_security_flaws: {
         type: String,
         required: false,
-        description: "Failles de sécurité actuellement connues (DD Section 3b)." [3]
+        description: "Failles de sécurité actuellement connues (DD 3.b.1)."
     },
     
     incident_reporting_process: {
         type: String,
         required: false,
-        description: "Processus de signalement et de résolution des incidents (DD Section 3b, 5a)." [3]
+        description: "Processus de signalement et de résolution des incidents (DD 3.b.3, 5.a.1)."
     }
 }, {
     timestamps: true // Ajoute createdAt et updatedAt

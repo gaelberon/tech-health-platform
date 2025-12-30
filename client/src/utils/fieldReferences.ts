@@ -41,9 +41,10 @@ export const FIELD_REFERENCES: Record<string, FieldReference> = {
   'dataManagement.solution.productCriticality': { model: 'Solution', field: 'product_criticality', type: 'enum: Low | Medium | High | Critical' },
   'dataManagement.solution.apiRobustness': { model: 'Solution', field: 'api_robustness', type: 'string' },
   'dataManagement.solution.apiDocumentationQuality': { model: 'Solution', field: 'api_documentation_quality', type: 'enum: High | Medium | Low | None' },
-  'dataManagement.solution.ipOwnershipClear': { model: 'Solution', field: 'ip_ownership_clear', type: 'boolean' },
+  'dataManagement.solution.ipOwnershipClear': { model: 'Solution', field: 'ip_ownership_clear', type: 'enum' },
   'dataManagement.solution.licensingModel': { model: 'Solution', field: 'licensing_model', type: 'string' },
-  'dataManagement.solution.licenseComplianceAssured': { model: 'Solution', field: 'license_compliance_assured', type: 'boolean' },
+  'dataManagement.solution.licenseComplianceAssured': { model: 'Solution', field: 'license_compliance_assured', type: 'enum' },
+  'dataManagement.solution.techStack': { model: 'Solution', field: 'tech_stack', type: 'string[]' },
 
   // Environment fields
   'dataManagement.environment.envType': { model: 'Environment', field: 'env_type', type: 'enum: production | test | dev | backup' },

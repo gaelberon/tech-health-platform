@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { GET_LOOKUPS_BATCH } from '../../hooks/useLookups';
+import { GET_P1_LOOKUPS } from '../../graphql/queries';
 
 const LIST_ALL_LOOKUPS = gql`
   query ListAllLookups($category: String) {

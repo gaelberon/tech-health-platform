@@ -14,7 +14,7 @@ export interface IEnvironment extends Document {
     solutionId: Schema.Types.ObjectId; // FK vers Solution
     // solutionId: Types.ObjectId;
     hostingId: string; // FK vers Hosting (P1)
-    env_type: 'production' | 'test' | 'dev' | 'backup'; // P1
+    env_type: string; // P1 - Validé contre la Value List "ENVIRONMENT_TYPES"
     // env_type: EnvType;
     tech_stack: string[]; // Languages, BDD, framework
     data_types: ('Personal' | 'Sensitive' | 'Health' | 'Financial' | 'Synthetic')[] | string[];
@@ -22,6 +22,7 @@ export interface IEnvironment extends Document {
     // redundancy: RedundancyType;
     backup: {
         exists: boolean,
+        schedule?: string,
         rto: number,
         rpo: number,
         restoration_test_frequency: string
@@ -33,6 +34,7 @@ export interface IEnvironment extends Document {
     deployment_type: 'monolith' | 'microservices' | 'hybrid'; // [2]
     virtualization: 'physical' | 'VM' | 'container' | 'k8s'; // [2]
     db_scaling_mechanism: 'Verticale' | 'Horizontale' | 'Non supportée' | string;
+    network_security_mechanisms?: string[];
 
     // ... Autres champs D.D.
 
@@ -49,7 +51,9 @@ const EnvironmentSchema = new Schema<IEnvironment>({
     envId: { type: String, required: true, unique: true }, // PK
     solutionId: { type: Schema.Types.ObjectId, ref: 'Solution', required: true },
     hostingId: { type: String, required: true }, // FK vers Hosting (string, pas ObjectId)
-    env_type: { type: String, enum: ['production', 'test', 'dev', 'backup'], required: true },
+    // env_type n'a plus de contrainte d'enum stricte pour permettre des valeurs dynamiques depuis les Value Lists
+    // La validation est effectuée côté GraphQL resolver contre la Value List "ENVIRONMENT_TYPES"
+    env_type: { type: String, required: true },
     data_types: [{ type: String }], // Array of strings
     deployment_type: { type: String, enum: ['monolith', 'microservices', 'hybrid'] },
     virtualization: { type: String, enum: ['physical', 'VM', 'container', 'k8s'] },
@@ -58,6 +62,7 @@ const EnvironmentSchema = new Schema<IEnvironment>({
     backup: { type: BackupSchema, required: true }, // Utilisation du schéma imbriqué
     disaster_recovery_plan: { type: String, enum: ['Documented', 'Tested', 'None'] }, // Donnée DD
     db_scaling_mechanism: { type: String },
+    network_security_mechanisms: [{ type: String }],
     sla_offered: { type: String },
     
     // Champs d'archivage

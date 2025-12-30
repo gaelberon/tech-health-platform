@@ -12,6 +12,7 @@ import { GET_EDITOR_WITH_DETAILS } from '../../../graphql/queries';
 import { parseGraphQLError } from '../../../utils/errorHandler';
 import type { ParsedError } from '../../../utils/errorHandler';
 import { getFieldClasses } from '../../../utils/fieldValidation';
+import { useLookups } from '../../../hooks/useLookups';
 import ErrorMessage from '../ErrorMessage';
 import FieldLabel from '../FieldLabel';
 
@@ -33,6 +34,7 @@ const DevelopmentMetricsSection: React.FC<DevelopmentMetricsSectionProps> = ({
   onSuccess,
 }) => {
   const { t } = useTranslation();
+  const { lookups, loading: lookupsLoading } = useLookups();
   const [updateDevelopmentMetrics, { loading: updating }] = useMutation(UPDATE_DEVELOPMENT_METRICS);
   const [error, setError] = useState<ParsedError | null>(null);
 
@@ -116,12 +118,24 @@ const DevelopmentMetricsSection: React.FC<DevelopmentMetricsSectionProps> = ({
             onChange={(e) => setFormData({ ...formData, sdlc_process: e.target.value })}
             className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.sdlc_process)}
             required
+            disabled={lookupsLoading}
           >
-            <option value="Scrum">Scrum</option>
-            <option value="Kanban">Kanban</option>
-            <option value="Waterfall">Waterfall</option>
-            <option value="Agile">Agile</option>
-            <option value="Hybrid">Hybrid</option>
+            <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
+            {lookups.sdlcProcess.length > 0 ? (
+              lookups.sdlcProcess.map((opt) => (
+                <option key={opt.code} value={opt.code}>{opt.label}</option>
+              ))
+            ) : (
+              <>
+                <option value="Scrum">Scrum</option>
+                <option value="Kanban">Kanban</option>
+                <option value="Waterfall">Waterfall</option>
+                <option value="Agile">Agile</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
+              </>
+            )}
           </select>
         </div>
 
@@ -136,11 +150,23 @@ const DevelopmentMetricsSection: React.FC<DevelopmentMetricsSectionProps> = ({
             onChange={(e) => setFormData({ ...formData, devops_automation_level: e.target.value })}
             className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.devops_automation_level)}
             required
+            disabled={lookupsLoading}
           >
-            <option value="None">None</option>
-            <option value="Manual">Manual</option>
-            <option value="Partial CI">Partial CI</option>
-            <option value="Full CI/CD">Full CI/CD</option>
+            <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
+            {lookups.devopsAutomationLevel.length > 0 ? (
+              lookups.devopsAutomationLevel.map((opt) => (
+                <option key={opt.code} value={opt.code}>{opt.label}</option>
+              ))
+            ) : (
+              <>
+                <option value="None">None</option>
+                <option value="Manual">Manual</option>
+                <option value="Partial CI">Partial CI</option>
+                <option value="Full CI/CD">Full CI/CD</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
+              </>
+            )}
           </select>
         </div>
 

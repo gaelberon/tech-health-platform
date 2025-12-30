@@ -12,6 +12,32 @@ interface ICategoricalScores {
     compliance: number; // 20% [4]
 }
 
+// Structure pour les détails de calcul d'une composante
+export interface ICalculationComponent {
+    name: string; // Nom de la composante (ex: "Authentification", "Backup RTO/RPO")
+    value: number; // Points obtenus
+    max: number; // Points maximum possibles
+    reason: string; // Raison de la note (ex: "SSO configuré", "RPO > 4h")
+}
+
+// Structure pour les détails de calcul d'une catégorie
+export interface ICalculationCategory {
+    category: string; // Nom de la catégorie (ex: "Sécurité", "Résilience")
+    weight: number; // Poids dans le score global (ex: 0.30 pour 30%)
+    rawScore: number; // Score brut (points obtenus)
+    maxRawScore: number; // Score brut maximum
+    percentage: number; // Score en pourcentage (0-100)
+    contribution: number; // Contribution au score global (après pondération)
+    components: ICalculationComponent[]; // Détails des composantes
+}
+
+// Structure complète des détails de calcul
+export interface ICalculationDetails {
+    categories: ICalculationCategory[]; // Détails par catégorie
+    globalScore: number; // Score global final
+    riskLevel: RiskLevel; // Niveau de risque
+}
+
 // Types Enum
 type CollectionType = 'snapshot' | 'DD'; // Type de collecte : snapshot (instantané) ou DD (Due Diligence)
 
@@ -28,6 +54,8 @@ export interface IScoringSnapshot extends Document {
     global_score: number; // Score global normalisé (0-100) (P1) [1, 6]
     risk_level: RiskLevel; // Niveau de risque (Low, Medium, High, Critical) (P1) [1, 6]
     notes: string; // Recommandations automatiques ou manuelles (P1) [1, 5]
+    calculationDetails?: ICalculationDetails; // Détails détaillés du calcul (optionnel)
+    calculationReport?: string; // Rapport détaillé du calcul en langage naturel (optionnel)
 }
 
 // 2. Définition du Schéma Mongoose
@@ -96,6 +124,20 @@ const ScoringSnapshotSchema = new Schema<IScoringSnapshot>({
         type: String, 
         required: false,
         description: "Recommandations générées ou commentaires manuels" 
+    },
+    
+    // Détails de calcul (optionnel)
+    calculationDetails: {
+        type: Object,
+        required: false,
+        description: "Détails détaillés du calcul avec composantes, valeurs, max et raisons"
+    },
+    
+    // Rapport de calcul (optionnel)
+    calculationReport: {
+        type: String,
+        required: false,
+        description: "Rapport détaillé du calcul en langage naturel, généré automatiquement"
     }
 }, {
     timestamps: true // Ajoute createdAt et updatedAt

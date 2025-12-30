@@ -35,13 +35,8 @@ const typeDefs = gql`
         FullWeb # Ajouté baser sur Technocarte
     }
 
-    # Environnement (P1)
-    enum EnvType {
-        production
-        test
-        dev
-        backup
-    }
+    # Note: EnvType est maintenant un String pour permettre des valeurs dynamiques depuis les Value Lists
+    # Les valeurs sont validées côté serveur contre la Value List "ENVIRONMENT_TYPES"
 
     # Environnement (P2)
     enum DeploymentType {
@@ -327,6 +322,32 @@ const typeDefs = gql`
         upload_date: String # Date de l'ajout (P4) [7]
     }
 
+    # Détails de calcul d'une composante
+    type CalculationComponent {
+        name: String! # Nom de la composante (ex: "Authentification", "Backup RTO/RPO")
+        value: Float! # Points obtenus
+        max: Float! # Points maximum possibles
+        reason: String! # Raison de la note (ex: "SSO configuré", "RPO > 4h")
+    }
+
+    # Détails de calcul d'une catégorie
+    type CalculationCategory {
+        category: String! # Nom de la catégorie (ex: "Sécurité", "Résilience")
+        weight: Float! # Poids dans le score global (ex: 0.30 pour 30%)
+        rawScore: Float! # Score brut (points obtenus)
+        maxRawScore: Float! # Score brut maximum
+        percentage: Float! # Score en pourcentage (0-100)
+        contribution: Float! # Contribution au score global (après pondération)
+        components: [CalculationComponent!]! # Détails des composantes
+    }
+
+    # Structure complète des détails de calcul
+    type CalculationDetails {
+        categories: [CalculationCategory!]! # Détails par catégorie
+        globalScore: Float! # Score global final
+        riskLevel: RiskLevel! # Niveau de risque (Low, Medium, High, Critical)
+    }
+
     # ENTITÉ SCORING SNAPSHOT (P1 - Historique) [7, 16]
     type ScoringSnapshot {
         scoreId: ID! # PK [7]
@@ -338,6 +359,8 @@ const typeDefs = gql`
         global_score: Float! # Score global normalisé (P1) [7]
         risk_level: RiskLevel! # Niveau de risque (P1) [7]
         notes: String # Recommandations automatiques ou manuelles (P1) [7]
+        calculationDetails: CalculationDetails # Détails détaillés du calcul (optionnel)
+        calculationReport: String # Rapport détaillé du calcul en langage naturel (optionnel)
     }
 
     # ENTITÉ UTILISATEUR (P1) - Contrôle d'accès / RBAC
@@ -445,7 +468,7 @@ const typeDefs = gql`
         solutionId: ID! # FK vers Solution [3, 4]
         hostingId: ID! # FK vers Hosting [3]
         
-        env_type: EnvType! # P1 [3, 4]
+        env_type: String! # P1 [3, 4] - Validé contre la Value List "ENVIRONMENT_TYPES"
         deployment_type: DeploymentType # P2 [3, 4]
         virtualization: VirtualizationType # P2 [3]
         tech_stack: [String] # P2 [3, 4]
@@ -478,6 +501,7 @@ const typeDefs = gql`
         performanceMetrics: [PerformanceMetrics] # Timeseries [17]
         roadmapItems: [RoadmapItem] # Polymorphe [17]
         documents: [Document] # Polymorphe [17]
+        scoringSnapshots: [ScoringSnapshot] # Historique des scores pour cet environnement (P1) [17]
     }
 
     # ENTITÉ SOLUTION (P1) - Liée à Editor (1:N) [18, 19]
@@ -492,10 +516,13 @@ const typeDefs = gql`
 
         # Champs DD spécifiques
         api_robustness: String # Section 1d DD [19]
-        api_documentation_quality: String # Section 1d DD [19]
-        ip_ownership_clear: Boolean # Section 4a DD [19]
+        api_documentation_quality: String # Section 1d DD [19] - Validé contre la Value List "API_DOCUMENTATION_QUALITY"
+        ip_ownership_clear: String # Section 4a DD [19] - Validé contre la Value List "IP_OWNERSHIP_CLEAR"
         licensing_model: String # Section 4b DD [19]
-        license_compliance_assured: Boolean # Section 4b DD [19]
+        license_compliance_assured: String # Section 4b DD [19] - Validé contre la Value List "LICENSE_COMPLIANCE_ASSURED"
+        
+        # Stack technique logicielle (P2)
+        tech_stack: [String] # Langages, frameworks, bibliothèques
         
         # Champs d'archivage
         archived: Boolean
@@ -567,10 +594,11 @@ const typeDefs = gql`
         type: SolutionType
         product_criticality: Criticality
         api_robustness: String
-        api_documentation_quality: String
-        ip_ownership_clear: Boolean
+        api_documentation_quality: String # Validé contre la Value List "API_DOCUMENTATION_QUALITY"
+        ip_ownership_clear: String # Validé contre la Value List "IP_OWNERSHIP_CLEAR"
         licensing_model: String
-        license_compliance_assured: Boolean
+        license_compliance_assured: String # Validé contre la Value List "LICENSE_COMPLIANCE_ASSURED"
+        tech_stack: [String]
     }
 
     # DevelopmentMetrics Inputs (pour la Mutation updateDevelopmentMetrics) [20]
@@ -669,7 +697,7 @@ const typeDefs = gql`
     input UpdateEnvironmentInput {
         envId: ID!
         solutionId: ID!
-        env_type: EnvType
+        env_type: String # Validé contre la Value List "ENVIRONMENT_TYPES"
         deployment_type: DeploymentType
         virtualization: VirtualizationType
         tech_stack: [String]
@@ -691,16 +719,17 @@ const typeDefs = gql`
         type: SolutionType!
         product_criticality: Criticality!
         api_robustness: String
-        api_documentation_quality: String
-        ip_ownership_clear: Boolean
+        api_documentation_quality: String # Validé contre la Value List "API_DOCUMENTATION_QUALITY"
+        ip_ownership_clear: String # Validé contre la Value List "IP_OWNERSHIP_CLEAR"
         licensing_model: String
-        license_compliance_assured: Boolean
+        license_compliance_assured: String # Validé contre la Value List "LICENSE_COMPLIANCE_ASSURED"
+        tech_stack: [String]
     }
     
     input CreateEnvironmentInput {
         solutionId: ID!
         hostingId: ID!
-        env_type: EnvType!
+        env_type: String! # Validé contre la Value List "ENVIRONMENT_TYPES"
         deployment_type: DeploymentType
         tech_stack: [String]
         data_types: [String]
@@ -858,10 +887,11 @@ const typeDefs = gql`
         description: String
         # Champs DD (optionnels)
         api_robustness: String
-        api_documentation_quality: String
-        ip_ownership_clear: Boolean
+        api_documentation_quality: String # Validé contre la Value List "API_DOCUMENTATION_QUALITY"
+        ip_ownership_clear: String # Validé contre la Value List "IP_OWNERSHIP_CLEAR"
         licensing_model: String
-        license_compliance_assured: Boolean
+        license_compliance_assured: String # Validé contre la Value List "LICENSE_COMPLIANCE_ASSURED"
+        tech_stack: [String]
     }
 
     input HostingInputP1 {

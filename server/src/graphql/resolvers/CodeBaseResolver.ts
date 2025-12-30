@@ -5,7 +5,8 @@
 import { Document, Types } from 'mongoose'; 
 // Import du modèle et de l'interface CodeBase (avec .js pour la résolution ESM)
 import { CodeBaseModel, ICodeBase } from '../../models/CodeBase.model.js';
-import { SolutionModel } from '../../models/Solution.model.js'; 
+import { SolutionModel } from '../../models/Solution.model.js';
+import { validateLookupValue } from '../../utils/validateLookupValue.js'; 
 
 // ------------------ INTERFACES DE TYPAGE ------------------
 
@@ -57,6 +58,14 @@ const CodeBaseResolver = {
         
         // Mutation pour créer ou mettre à jour le profil Codebase d'une solution (DD Section 1)
         updateCodebase: async (_: any, { input }: { input: UpdateCodebaseInput }) => {
+            // Validation contre les Value Lists
+            if (input.documentation_level) {
+                const isValid = await validateLookupValue('DOCUMENTATION_LEVEL', input.documentation_level);
+                if (!isValid) {
+                    throw new Error(`Le niveau de documentation "${input.documentation_level}" n'est pas valide. Veuillez utiliser une valeur de la liste "DOCUMENTATION_LEVEL".`);
+                }
+            }
+
             // Convertir solutionId en ObjectId si c'est une string
             let solutionIdObjectId: Types.ObjectId;
             if (typeof input.solutionId === 'string') {

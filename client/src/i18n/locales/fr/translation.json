@@ -736,7 +736,9 @@
       "ipOwnershipClear": "Droits de propriété clairs",
       "licenseComplianceAssured": "Conformité des licences assurée",
       "licensingModel": "Modèle de licence",
-      "licensingModelPlaceholder": "Décrivez les modèles de licence utilisés..."
+      "licensingModelPlaceholder": "Décrivez les modèles de licence utilisés...",
+      "techStack": "Stack technique logicielle",
+      "techStackPlaceholder": "Entrez une technologie par ligne...\nExemple:\nNode.js\nPostgreSQL\nReact\nDocker\nMongoDB"
     },
     "codebase": {
       "title": "Code Source",

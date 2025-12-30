@@ -81,9 +81,10 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
     product_criticality: 'Medium',
     api_robustness: '',
     api_documentation_quality: '',
-    ip_ownership_clear: false,
+    ip_ownership_clear: '',
     licensing_model: '',
-    license_compliance_assured: false,
+    license_compliance_assured: '',
+    tech_stack: [] as string[],
   });
 
   // Formulaire environnement
@@ -180,9 +181,10 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
             product_criticality: 'Medium',
             api_robustness: '',
             api_documentation_quality: '',
-            ip_ownership_clear: false,
+            ip_ownership_clear: '',
             licensing_model: '',
-            license_compliance_assured: false,
+            license_compliance_assured: '',
+            tech_stack: [],
           },
           environmentForm: {
             env_type: 'production',
@@ -219,9 +221,10 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
               product_criticality: solution.product_criticality || 'Medium',
               api_robustness: solution.api_robustness || '',
               api_documentation_quality: solution.api_documentation_quality || '',
-              ip_ownership_clear: solution.ip_ownership_clear ?? false,
+              ip_ownership_clear: solution.ip_ownership_clear ?? '',
               licensing_model: solution.licensing_model || '',
-              license_compliance_assured: solution.license_compliance_assured ?? false,
+              license_compliance_assured: solution.license_compliance_assured ?? '',
+              tech_stack: solution.tech_stack || [],
             };
             initialStatesRef.current!.solutionForm = initialSolutionForm;
             setSolutionForm(initialSolutionForm);
@@ -352,9 +355,10 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
             product_criticality: solution.product_criticality || 'Medium',
             api_robustness: solution.api_robustness || '',
             api_documentation_quality: solution.api_documentation_quality || '',
-            ip_ownership_clear: solution.ip_ownership_clear ?? false,
+            ip_ownership_clear: solution.ip_ownership_clear ?? '',
             licensing_model: solution.licensing_model || '',
-            license_compliance_assured: solution.license_compliance_assured ?? false,
+            license_compliance_assured: solution.license_compliance_assured ?? '',
+            tech_stack: solution.tech_stack || [],
           };
           initialStatesRef.current.solutionForm = initialSolutionForm;
           initialStatesRef.current.selectedSolutionId = selectedSolutionId;
@@ -463,7 +467,14 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
       }
       if (editorForm.contracts_for_review.length > 0) {
         // Filtrer les contrats avec au moins un type (requis)
-        const validContracts = editorForm.contracts_for_review.filter(c => c.type && c.type.trim().length > 0);
+        const validContracts = editorForm.contracts_for_review
+          .filter((c: any) => c && c.type && c.type.trim().length > 0)
+          // Important : ne pas envoyer __typename à l'input GraphQL
+          .map((c: any) => ({
+            type: c.type,
+            summary: c.summary || '',
+          }));
+
         if (validContracts.length > 0) {
           inputData.contracts_for_review = validContracts;
         }
@@ -530,8 +541,11 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
       if (solutionForm.licensing_model) {
         inputData.licensing_model = solutionForm.licensing_model;
       }
-      if (solutionForm.license_compliance_assured !== undefined) {
+      if (solutionForm.license_compliance_assured) {
         inputData.license_compliance_assured = solutionForm.license_compliance_assured;
+      }
+      if (solutionForm.tech_stack && solutionForm.tech_stack.length > 0) {
+        inputData.tech_stack = solutionForm.tech_stack;
       }
 
       await updateSolution({
@@ -636,8 +650,11 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
       if (solutionForm.licensing_model) {
         inputData.licensing_model = solutionForm.licensing_model;
       }
-      if (solutionForm.license_compliance_assured !== undefined) {
+      if (solutionForm.license_compliance_assured) {
         inputData.license_compliance_assured = solutionForm.license_compliance_assured;
+      }
+      if (solutionForm.tech_stack && solutionForm.tech_stack.length > 0) {
+        inputData.tech_stack = solutionForm.tech_stack;
       }
 
       await createSolution({
@@ -654,6 +671,12 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
         main_use_case: '',
         type: 'SaaS',
         product_criticality: 'Medium',
+        api_robustness: '',
+        api_documentation_quality: '',
+        ip_ownership_clear: '',
+        licensing_model: '',
+        license_compliance_assured: '',
+        tech_stack: [],
       });
       onDataUpdated();
     } catch (err: any) {
@@ -945,7 +968,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                 showFieldReference={showFieldReferences}
               />
               <textarea
-                value={editorForm.internal_it_systems.join(', ')}
+                value={(editorForm.internal_it_systems || []).join(', ')}
                 onChange={(e) => {
                   const systems = e.target.value
                     .split(',')
@@ -983,7 +1006,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                 showFieldReference={showFieldReferences}
               />
               <textarea
-                value={editorForm.it_security_strategy.join('\n')}
+                value={(editorForm.it_security_strategy || []).join('\n')}
                 onChange={(e) => {
                   const strategies = e.target.value
                     .split('\n')
@@ -1250,6 +1273,12 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                       main_use_case: '',
                       type: 'SaaS',
                       product_criticality: 'Medium',
+                      api_robustness: '',
+                      api_documentation_quality: '',
+                      ip_ownership_clear: false,
+                      licensing_model: '',
+                      license_compliance_assured: false,
+                      tech_stack: [],
                     });
                   }}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -1500,13 +1529,25 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                   showFieldReference={showFieldReferences}
                 />
                 <select
-                  value={solutionForm.ip_ownership_clear ? 'true' : 'false'}
-                  onChange={(e) => setSolutionForm({ ...solutionForm, ip_ownership_clear: e.target.value === 'true' })}
+                  value={solutionForm.ip_ownership_clear}
+                  onChange={(e) => setSolutionForm({ ...solutionForm, ip_ownership_clear: e.target.value })}
                   className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", solutionForm.ip_ownership_clear)}
                   required
+                  disabled={lookupsLoading}
                 >
-                  <option value="true">{t('dataManagement.form.yes', 'Oui')}</option>
-                  <option value="false">{t('dataManagement.form.no', 'Non')}</option>
+                  <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
+                  {lookups.ipOwnershipClear.length > 0 ? (
+                    lookups.ipOwnershipClear.map((opt) => (
+                      <option key={opt.code} value={opt.code}>{opt.label}</option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Yes">{t('dataManagement.form.yes', 'Oui')}</option>
+                      <option value="No">{t('dataManagement.form.no', 'Non')}</option>
+                      <option value="TBD">TBD</option>
+                      <option value="N/A">N/A</option>
+                    </>
+                  )}
                 </select>
               </div>
               <div>
@@ -1515,12 +1556,24 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                   showFieldReference={showFieldReferences}
                 />
                 <select
-                  value={solutionForm.license_compliance_assured ? 'true' : 'false'}
-                  onChange={(e) => setSolutionForm({ ...solutionForm, license_compliance_assured: e.target.value === 'true' })}
+                  value={solutionForm.license_compliance_assured}
+                  onChange={(e) => setSolutionForm({ ...solutionForm, license_compliance_assured: e.target.value })}
                   className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", solutionForm.license_compliance_assured)}
+                  disabled={lookupsLoading}
                 >
-                  <option value="false">{t('dataManagement.form.no', 'Non')}</option>
-                  <option value="true">{t('dataManagement.form.yes', 'Oui')}</option>
+                  <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
+                  {lookups.licenseComplianceAssured.length > 0 ? (
+                    lookups.licenseComplianceAssured.map((opt) => (
+                      <option key={opt.code} value={opt.code}>{opt.label}</option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Yes">{t('dataManagement.form.yes', 'Oui')}</option>
+                      <option value="No">{t('dataManagement.form.no', 'Non')}</option>
+                      <option value="TBD">TBD</option>
+                      <option value="N/A">N/A</option>
+                    </>
+                  )}
                 </select>
               </div>
               <div className="md:col-span-2">
@@ -1536,6 +1589,44 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                   placeholder={t('dataManagement.solution.licensingModelPlaceholder', 'Décrivez les modèles de licence utilisés...')}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Champs DD - Stack technique logicielle */}
+          <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              {t('dataManagement.solution.techStack', 'Stack technique logicielle')}
+            </h4>
+            <div>
+              <FieldLabel
+                translationKey="dataManagement.solution.techStack"
+                showFieldReference={showFieldReferences}
+              />
+              <textarea
+                value={(solutionForm.tech_stack || []).join('\n')}
+                onChange={(e) => {
+                  const stack = e.target.value
+                    .split('\n')
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0);
+                  setSolutionForm({ ...solutionForm, tech_stack: stack });
+                }}
+                rows={5}
+                className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", solutionForm.tech_stack)}
+                placeholder={t('dataManagement.solution.techStackPlaceholder', 'Entrez une technologie par ligne...\nExemple:\nNode.js\nPostgreSQL\nReact\nDocker\nMongoDB')}
+              />
+              {(solutionForm.tech_stack || []).length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {(solutionForm.tech_stack || []).map((tech, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

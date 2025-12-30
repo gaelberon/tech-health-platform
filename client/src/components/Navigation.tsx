@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSession } from '../session/SessionContext';
+import { useEditor } from '../contexts/EditorContext';
 import { TAB_METADATA, hasAccessToTab, type TabType } from '../utils/permissions';
 import { usePagePermissions } from '../hooks/usePagePermissions';
 import UserMenu from './UserMenu';
@@ -17,6 +18,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userButtonRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useSession();
+  const { selectedEditorId, setSelectedEditorId, editors, canSelectMultiple, hasSingleEditor, singleEditorName } = useEditor();
   
   // Charger les permissions depuis la base de données
   const { permissions: pagePermissions } = usePagePermissions(user?.role);
@@ -91,8 +93,40 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
               })}
             </div>
 
-            {/* User profile picture/name & Menu */}
+            {/* Editor selector / Name & User profile picture/name & Menu */}
             <div className="flex items-center space-x-4">
+              {/* Sélecteur d'éditeur pour utilisateurs multi-éditeurs */}
+              {canSelectMultiple && (
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={selectedEditorId || ''}
+                    onChange={(e) => setSelectedEditorId(e.target.value || null)}
+                    className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  >
+                    <option value="">{t('navigation.allEntities', 'Toutes les entités')}</option>
+                    {editors.map((editor) => (
+                      <option key={editor.editorId} value={editor.editorId}>
+                        {editor.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              {/* Nom de l'éditeur pour utilisateurs single-éditeur */}
+              {hasSingleEditor && singleEditorName && (
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {singleEditorName}
+                </div>
+              )}
+              
+              {/* Prénom de l'utilisateur */}
+              {user?.firstName && (
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {user.firstName}
+                </div>
+              )}
+              
               <div
                 ref={userButtonRef}
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -200,6 +234,33 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
                 );
               })}
               <div className="border-t border-gray-200 pt-2 mt-2">
+                {/* Sélecteur d'éditeur pour utilisateurs multi-éditeurs (mobile) */}
+                {canSelectMultiple && (
+                  <div className="px-4 py-2 mb-2">
+                    <select
+                      value={selectedEditorId || ''}
+                      onChange={(e) => setSelectedEditorId(e.target.value || null)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    >
+                      <option value="">{t('navigation.allEntities', 'Toutes les entités')}</option>
+                      {editors.map((editor) => (
+                        <option key={editor.editorId} value={editor.editorId}>
+                          {editor.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                
+                {/* Nom de l'éditeur pour utilisateurs single-éditeur (mobile) */}
+                {hasSingleEditor && singleEditorName && (
+                  <div className="px-4 py-2 mb-2">
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {singleEditorName}
+                    </div>
+                  </div>
+                )}
+                
                 <div
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="px-4 py-2 flex items-center space-x-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
@@ -220,7 +281,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, onNavig
                     </div>
                   )}
                   <div className="flex-1">
-                    <div className="text-xs font-medium text-gray-900 dark:text-gray-100">{user?.firstName || user?.email}</div>
+                    <div className="text-xs font-medium text-gray-900 dark:text-gray-100">
+                      {user?.firstName || user?.email}
+                    </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">{user?.role}</div>
                   </div>
                 </div>

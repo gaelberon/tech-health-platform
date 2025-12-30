@@ -12,6 +12,7 @@ import { GET_EDITOR_WITH_DETAILS } from '../../../graphql/queries';
 import { parseGraphQLError } from '../../../utils/errorHandler';
 import type { ParsedError } from '../../../utils/errorHandler';
 import { getFieldClasses } from '../../../utils/fieldValidation';
+import { useLookups } from '../../../hooks/useLookups';
 import ErrorMessage from '../ErrorMessage';
 import FieldLabel from '../FieldLabel';
 
@@ -33,6 +34,7 @@ const CodeBaseSection: React.FC<CodeBaseSectionProps> = ({
   onSuccess,
 }) => {
   const { t } = useTranslation();
+  const { lookups, loading: lookupsLoading } = useLookups();
   const [updateCodebase, { loading: updating }] = useMutation(UPDATE_CODEBASE);
   const [error, setError] = useState<ParsedError | null>(null);
 
@@ -122,11 +124,23 @@ const CodeBaseSection: React.FC<CodeBaseSectionProps> = ({
             onChange={(e) => setFormData({ ...formData, documentation_level: e.target.value })}
             className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.documentation_level)}
             required
+            disabled={lookupsLoading}
           >
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-            <option value="None">None</option>
+            <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
+            {lookups.documentationLevel.length > 0 ? (
+              lookups.documentationLevel.map((opt) => (
+                <option key={opt.code} value={opt.code}>{opt.label}</option>
+              ))
+            ) : (
+              <>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+                <option value="None">None</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
+              </>
+            )}
           </select>
         </div>
 

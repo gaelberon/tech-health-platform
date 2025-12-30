@@ -60,13 +60,14 @@ function mapSolutionType(csvType: string | undefined): 'SaaS' | 'OnPrem' | 'Hybr
 /**
  * Convertit le type d'environnement du CSV vers le format attendu
  */
-function mapEnvironmentType(csvType: string | undefined): 'production' | 'test' | 'dev' | 'backup' {
+function mapEnvironmentType(csvType: string | undefined): 'production' | 'test' | 'dev' | 'backup' | 'recette' {
   if (!csvType) return 'production';
   const type = csvType.toLowerCase();
   if (type.includes('production') || type.includes('prod')) return 'production';
   if (type.includes('test')) return 'test';
   if (type.includes('dev') || type.includes('développement')) return 'dev';
   if (type.includes('backup')) return 'backup';
+  if (type.includes('recette') || type.includes('staging') || type.includes('preprod')) return 'recette';
   if (type.includes('infrastructure interne')) return 'production'; // Par défaut pour infrastructure
   return 'production';
 }

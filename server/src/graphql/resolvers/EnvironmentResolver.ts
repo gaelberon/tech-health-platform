@@ -13,6 +13,8 @@ import { PerformanceMetricsModel, IPerformanceMetrics } from '../../models/Perfo
 import { RoadmapItemModel, IRoadmapItem } from '../../models/RoadmapItem.model.js';
 import { DocumentModel, IDocument } from '../../models/Document.model.js';
 import { SolutionModel } from '../../models/Solution.model.js';
+import { ScoringSnapshotModel } from '../../models/ScoringSnapshot.model.js';
+import { validateLookupValue } from '../../utils/validateLookupValue.js';
 
 
 // ------------------ INTERFACES DE TYPAGE ------------------
@@ -39,7 +41,7 @@ export interface UpdateEnvironmentInput {
     hostingId?: Types.ObjectId; // FK vers Hosting
     
     // Champs P1/P2
-    env_type?: 'production' | 'test' | 'dev' | 'backup'; // P1 [2]
+    env_type?: string; // P1 [2] - Validé contre la Value List "ENVIRONMENT_TYPES"
     deployment_type?: 'monolith' | 'microservices' | 'hybrid'; // P2 [2]
     virtualization?: 'physical' | 'VM' | 'container' | 'k8s'; // P2 [2]
     tech_stack?: string[]; // P2 [2, 3]
@@ -115,6 +117,14 @@ const EnvironmentResolver = {
             const { assertAuthorized } = await import('../authorization.js');
             await assertAuthorized(ctx, 'updateEnvironment');
 
+            // Valider env_type contre les Value Lists si fourni
+            if (input.env_type) {
+                const isValid = await validateLookupValue('ENVIRONMENT_TYPES', input.env_type);
+                if (!isValid) {
+                    throw new Error(`Le type d'environnement "${input.env_type}" n'est pas valide. Veuillez utiliser une valeur de la liste "ENVIRONMENT_TYPES".`);
+                }
+            }
+
             // Préparer les données de mise à jour
             const updateData: any = { ...input };
             
@@ -155,6 +165,14 @@ const EnvironmentResolver = {
             // Vérifier que l'utilisateur a le droit (Admin ou Supervisor)
             if (ctx.user.role !== 'Admin' && ctx.user.role !== 'Supervisor') {
                 throw new Error('Seuls les administrateurs et superviseurs peuvent créer des environnements');
+            }
+
+            // Valider env_type contre les Value Lists
+            if (input.env_type) {
+                const isValid = await validateLookupValue('ENVIRONMENT_TYPES', input.env_type);
+                if (!isValid) {
+                    throw new Error(`Le type d'environnement "${input.env_type}" n'est pas valide. Veuillez utiliser une valeur de la liste "ENVIRONMENT_TYPES".`);
+                }
             }
             
             // Trouver la Solution par son solutionId (string) pour obtenir son ObjectId MongoDB
@@ -287,6 +305,12 @@ const EnvironmentResolver = {
                 parentId: parent._id, 
                 linkedTo: 'Environment' 
             });
+        },
+
+        // Relation 0..N vers ScoringSnapshot (Historique des scores pour cet environnement)
+        scoringSnapshots: async (parent: IEnvironment & Document) => {
+            // Les snapshots sont P1 et liés à un environnement spécifique via envId
+            return await ScoringSnapshotModel.find({ envId: parent._id }).sort({ date: -1 }); // Tri par date récente
         }
     }
 };

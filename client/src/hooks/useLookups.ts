@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Query pour charger plusieurs lookups en une seule requête
-const GET_LOOKUPS_BATCH = gql`
+export const GET_LOOKUPS_BATCH = gql`
   query GetLookupsBatch($lang: String!) {
     businessCriticality: getLookups(keys: ["BUSINESS_CRITICALITY"], lang: $lang) {
       key
@@ -221,8 +221,92 @@ const GET_LOOKUPS_BATCH = gql`
         active
       }
     }
-    # API_DOCUMENTATION_QUALITY n'existe pas encore, on utilise un fallback vide
     apiDocumentationQuality: getLookups(keys: ["API_DOCUMENTATION_QUALITY"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    # Outils de monitoring
+    monitoringTools: getLookups(keys: ["MONITORING_TOOLS"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    ipOwnershipClear: getLookups(keys: ["IP_OWNERSHIP_CLEAR"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    licenseComplianceAssured: getLookups(keys: ["LICENSE_COMPLIANCE_ASSURED"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    devopsAutomationLevel: getLookups(keys: ["DEVOPS_AUTOMATION_LEVEL"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    sdlcProcess: getLookups(keys: ["SDLC_PROCESS"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    documentationLevel: getLookups(keys: ["DOCUMENTATION_LEVEL"], lang: $lang) {
+      key
+      values {
+        code
+        label
+        label_fr
+        label_en
+        description
+        order
+        active
+      }
+    }
+    backupSchedule: getLookups(keys: ["BACKUP_SCHEDULE"], lang: $lang) {
       key
       values {
         code
@@ -267,9 +351,10 @@ export function useLookups() {
   const { i18n } = useTranslation();
   const lang = i18n.language || 'fr';
 
-  const { data, loading, error } = useQuery(GET_LOOKUPS_BATCH, {
+  const { data, loading, error, refetch } = useQuery(GET_LOOKUPS_BATCH, {
     variables: { lang },
     fetchPolicy: 'cache-and-network', // Utiliser le cache mais aussi vérifier les mises à jour
+    notifyOnNetworkStatusChange: true, // Notifier lors des changements de statut réseau
   });
 
   const lookups = useMemo(() => {
@@ -293,6 +378,13 @@ export function useLookups() {
       hostingTiers: [] as Array<{ code: string; label: string }>,
       monitoringStatus: [] as Array<{ code: string; label: string }>,
       apiDocumentationQuality: [] as Array<{ code: string; label: string }>,
+      monitoringTools: [] as Array<{ code: string; label: string }>,
+      ipOwnershipClear: [] as Array<{ code: string; label: string }>,
+      licenseComplianceAssured: [] as Array<{ code: string; label: string }>,
+      devopsAutomationLevel: [] as Array<{ code: string; label: string }>,
+      sdlcProcess: [] as Array<{ code: string; label: string }>,
+      documentationLevel: [] as Array<{ code: string; label: string }>,
+      backupSchedule: [] as Array<{ code: string; label: string }>,
     };
 
     if (!data) return defaultLookups;
@@ -316,6 +408,13 @@ export function useLookups() {
       hostingTiers: extractLookupValues(data.hostingTiers || [], lang),
       monitoringStatus: extractLookupValues(data.monitoringStatus || [], lang),
       apiDocumentationQuality: extractLookupValues(data.apiDocumentationQuality || [], lang),
+      monitoringTools: extractLookupValues(data.monitoringTools || [], lang),
+      ipOwnershipClear: extractLookupValues(data.ipOwnershipClear || [], lang),
+      licenseComplianceAssured: extractLookupValues(data.licenseComplianceAssured || [], lang),
+      devopsAutomationLevel: extractLookupValues(data.devopsAutomationLevel || [], lang),
+      sdlcProcess: extractLookupValues(data.sdlcProcess || [], lang),
+      documentationLevel: extractLookupValues(data.documentationLevel || [], lang),
+      backupSchedule: extractLookupValues(data.backupSchedule || [], lang),
     };
   }, [data, lang]);
 
@@ -323,6 +422,7 @@ export function useLookups() {
     lookups,
     loading,
     error,
+    refetch, // Exposer refetch pour permettre un rechargement manuel
   };
 }
 

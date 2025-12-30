@@ -136,6 +136,8 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
                 <option value="Passwords">Passwords</option>
                 <option value="MFA">MFA</option>
                 <option value="SSO">SSO</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -163,6 +165,8 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
                 <option value="ad_hoc">Ad hoc</option>
                 <option value="scheduled">Scheduled</option>
                 <option value="automated">Automated</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -190,6 +194,8 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
                 <option value="never">Never</option>
                 <option value="annual">Annual</option>
                 <option value="quarterly">Quarterly</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -217,6 +223,8 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
                 <option value="none">None</option>
                 <option value="manual">Manual</option>
                 <option value="automated">Automated</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -350,7 +358,7 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
             value={formData.known_security_flaws}
             onChange={(e) => setFormData({ ...formData, known_security_flaws: e.target.value })}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.known_security_flaws)}
             placeholder="Failles de sécurité actuellement connues..."
           />
         </div>

@@ -58,43 +58,51 @@ const MonitoringSection: React.FC<MonitoringSectionProps> = ({
   // Charger les lookups pour les outils de monitoring
   const { data: lookupsData } = useQuery(GET_MONITORING_TOOLS_LOOKUP, {
     variables: { lang: i18n.language || 'fr' },
+    fetchPolicy: 'cache-and-network', // Forcer le rechargement pour avoir les dernières données
+    notifyOnNetworkStatusChange: true,
   });
 
   // Extraire les options de monitoring depuis les lookups
   const monitoringToolsOptions = useMemo(() => {
-    if (!lookupsData?.monitoringTools || lookupsData.monitoringTools.length === 0) {
-      // Fallback vers les options par défaut si les lookups ne sont pas disponibles
-      return [
-        { code: 'prometheus', label: 'Prometheus' },
-        { code: 'grafana', label: 'Grafana' },
-        { code: 'elk', label: 'ELK Stack' },
-        { code: 'datadog', label: 'Datadog' },
-        { code: 'splunk', label: 'Splunk' },
-        { code: 'newrelic', label: 'New Relic' },
-        { code: 'zabbix', label: 'Zabbix' },
-        { code: 'graylog', label: 'Graylog' },
-        { code: 'other', label: 'Other' }
-      ];
+    // Priorité 1 : Utiliser les lookups du hook useLookups (plus récent)
+    if (lookups.monitoringTools && lookups.monitoringTools.length > 0) {
+      return lookups.monitoringTools;
     }
-
-    const values = lookupsData.monitoringTools[0]?.values || [];
-    // Filtrer les valeurs actives et les trier par ordre
-    return values
-      .filter((v: any) => v.active !== false)
-      .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-      .map((v: any) => {
-        // Utiliser le label localisé si disponible, sinon le label par défaut
-        const lang = i18n.language || 'fr';
-        let label = v.label || v.code;
-        if (lang === 'fr' && v.label_fr) label = v.label_fr;
-        if (lang === 'en' && v.label_en) label = v.label_en;
-        
-        return {
-          code: v.code,
-          label: label
-        };
-      });
-  }, [lookupsData, i18n.language]);
+    
+    // Priorité 2 : Utiliser la query séparée
+    if (lookupsData?.monitoringTools && lookupsData.monitoringTools.length > 0) {
+      const values = lookupsData.monitoringTools[0]?.values || [];
+      // Filtrer les valeurs actives et les trier par ordre
+      return values
+        .filter((v: any) => v.active !== false)
+        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+        .map((v: any) => {
+          // Utiliser le label localisé si disponible, sinon le label par défaut
+          const lang = i18n.language || 'fr';
+          let label = v.label || v.code;
+          if (lang === 'fr' && v.label_fr) label = v.label_fr;
+          if (lang === 'en' && v.label_en) label = v.label_en;
+          
+          return {
+            code: v.code,
+            label: label
+          };
+        });
+    }
+    
+    // Fallback vers les options par défaut si les lookups ne sont pas disponibles
+    return [
+      { code: 'prometheus', label: 'Prometheus' },
+      { code: 'grafana', label: 'Grafana' },
+      { code: 'elk', label: 'ELK Stack' },
+      { code: 'datadog', label: 'Datadog' },
+      { code: 'splunk', label: 'Splunk' },
+      { code: 'newrelic', label: 'New Relic' },
+      { code: 'zabbix', label: 'Zabbix' },
+      { code: 'graylog', label: 'Graylog' },
+      { code: 'other', label: 'Other' }
+    ];
+  }, [lookups.monitoringTools, lookupsData, i18n.language]);
 
   const [formData, setFormData] = useState({
     envId: environmentId,

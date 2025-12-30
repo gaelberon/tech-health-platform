@@ -219,6 +219,8 @@ const HostingSection: React.FC<HostingSectionProps> = ({
                 <option value="private">Private</option>
                 <option value="public">Public</option>
                 <option value="cloud">Cloud</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>

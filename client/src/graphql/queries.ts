@@ -236,6 +236,38 @@ export const GET_SOLUTION_HOSTING_VIEW = gql`
           ops_hours_monthly_equiv
           comments
         }
+        scoringSnapshots {
+          scoreId
+          date
+          global_score
+          risk_level
+          scores {
+            security
+            resilience
+            observability
+            architecture
+            compliance
+          }
+          calculationDetails {
+            globalScore
+            riskLevel
+            categories {
+              category
+              weight
+              rawScore
+              maxRawScore
+              percentage
+              contribution
+              components {
+                name
+                value
+                max
+                reason
+              }
+            }
+          }
+          calculationReport
+        }
       }
     }
   }
@@ -289,6 +321,7 @@ export const GET_SOLUTION_DD_TECH_VIEW = gql`
       ip_ownership_clear
       licensing_model
       license_compliance_assured
+      tech_stack
       codebase {
         codebaseId
         repo_location
@@ -329,11 +362,30 @@ export const GET_SOLUTION_DD_TECH_VIEW = gql`
         global_score
         risk_level
         scores {
-          Security
-          Resilience
-          Observability
-          Architecture
-          Compliance
+          security
+          resilience
+          observability
+          architecture
+          compliance
+        }
+        calculationDetails {
+          globalScore
+          riskLevel
+          categories {
+            category
+            weight
+            rawScore
+            maxRawScore
+            percentage
+            contribution
+            components {
+              name
+              value
+              max
+              reason
+            }
+          }
+          calculationReport
         }
       }
       environments {
@@ -469,6 +521,7 @@ export const GET_EDITOR_WITH_DETAILS = gql`
         ip_ownership_clear
         licensing_model
         license_compliance_assured
+        tech_stack
         archived
         archivedAt
         archivedBy

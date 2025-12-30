@@ -97,3 +97,5 @@ npm run calculate-dd-tech -- "GI Informatique" "Cogima"
 - La recherche d'éditeurs est insensible à la casse et gère les espaces en début/fin de chaîne
 - Les scripts sont compilés en JavaScript avant exécution (`npm run build`)
 
+
+

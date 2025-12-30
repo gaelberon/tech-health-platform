@@ -62,6 +62,8 @@ export async function seedInitialLookups() {
         { code: 'full', label: 'Complète (full perimeter)', label_fr: 'Complète (périmètre complet)', label_en: 'Full (Full Perimeter)', description: 'Redondance complète sur tout le périmètre', order: 3, active: true },
         { code: 'geo-redundant', label: 'Géo-redondante', label_fr: 'Géo-redondante', label_en: 'Geo-redundant', description: 'Redondance géographique (plusieurs datacenters)', order: 4, active: true },
         { code: 'high', label: 'Élevée', label_fr: 'Élevée', label_en: 'High', description: 'Redondance élevée avec failover automatique', order: 5, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 6, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 7, active: true },
       ],
     },
     {
@@ -75,6 +77,8 @@ export async function seedInitialLookups() {
         { code: 'Passwords', label: 'Mots de passe', label_fr: 'Mots de passe', label_en: 'Passwords', description: 'Authentification par mot de passe simple', order: 2, active: true },
         { code: 'MFA', label: 'Authentification Multi-Facteurs', label_fr: 'Authentification Multi-Facteurs', label_en: 'Multi-Factor Authentication', description: 'Authentification à deux facteurs (2FA/MFA)', order: 3, active: true },
         { code: 'SSO', label: 'Single Sign-On', label_fr: 'Authentification Unique', label_en: 'Single Sign-On', description: 'Authentification unique via un fournisseur d\'identité', order: 4, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 5, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 6, active: true },
       ],
     },
     // ========== LOOKUPS DD (Due Diligence) ==========
@@ -95,6 +99,7 @@ export async function seedInitialLookups() {
         { code: 'backup', label: 'Sauvegarde', label_fr: 'Sauvegarde', label_en: 'Backup', description: 'Environnement de sauvegarde', order: 8, active: true },
         { code: 'infrastructure', label: 'Infrastructure Interne', label_fr: 'Infrastructure Interne', label_en: 'Internal Infrastructure', description: 'Infrastructure interne (emails, GED, outils collaboratifs)', order: 9, active: true },
         { code: 'repo', label: 'Repository Source Code', label_fr: 'Repository Source Code', label_en: 'Source Code Repository', description: 'Repository distant pour collaboration et sauvegarde', order: 10, active: true },
+        { code: 'recette', label: 'Recette', label_fr: 'Recette', label_en: 'UAT (User Acceptance Testing)', description: 'Environnement de recette pour les tests d\'acceptation utilisateur', order: 11, active: true },
       ],
     },
     {
@@ -112,6 +117,8 @@ export async function seedInitialLookups() {
         { code: 'cloud_public', label: 'Cloud Public', label_fr: 'Cloud Public (AWS, Azure, GCP, etc.)', label_en: 'Public Cloud (AWS, Azure, GCP, etc.)', description: 'Cloud public (AWS, Azure, GCP, etc.)', order: 6, active: true },
         { code: 'cloud_hybrid', label: 'Cloud Hybride', label_fr: 'Cloud Hybride', label_en: 'Hybrid Cloud', description: 'Cloud hybride', order: 7, active: true },
         { code: 'internal', label: 'En Interne', label_fr: 'En Interne (chez l\'éditeur)', label_en: 'Internal (at Publisher)', description: 'Hébergement interne chez l\'éditeur', order: 8, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 9, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 10, active: true },
       ],
     },
     {
@@ -124,6 +131,8 @@ export async function seedInitialLookups() {
         { code: 'monolith', label: 'Monolithique', label_fr: 'Monolithique', label_en: 'Monolithic', description: 'Architecture monolithique', order: 1, active: true },
         { code: 'microservices', label: 'Microservices', label_fr: 'Microservices', label_en: 'Microservices', description: 'Architecture microservices', order: 2, active: true },
         { code: 'hybrid', label: 'Hybride', label_fr: 'Hybride', label_en: 'Hybrid', description: 'Architecture hybride', order: 3, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 4, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 5, active: true },
       ],
     },
     {
@@ -184,6 +193,7 @@ export async function seedInitialLookups() {
         { code: 'jaeger', label: 'Jaeger', label_fr: 'Jaeger (Observabilité Spécialisée)', label_en: 'Jaeger (Specialized Observability)', description: 'Jaeger pour le distributed tracing', order: 12, active: true },
         { code: 'opentelemetry', label: 'OpenTelemetry', label_fr: 'OpenTelemetry (Observabilité Spécialisée)', label_en: 'OpenTelemetry (Specialized Observability)', description: 'OpenTelemetry pour l\'observabilité standardisée', order: 13, active: true },
         { code: 'sentry', label: 'Sentry', label_fr: 'Sentry (Observabilité Spécialisée)', label_en: 'Sentry (Specialized Observability)', description: 'Sentry pour le monitoring d\'erreurs', order: 14, active: true },
+        { code: 'elastic_co', label: 'Elastic.co', label_fr: 'Elastic.co (Elasticsearch, Logstash, Kibana)', label_en: 'Elastic.co (Elasticsearch, Logstash, Kibana)', description: 'Elastic.co pour la recherche et l\'analyse de données', order: 15, active: true },
       ],
     },
     {
@@ -229,14 +239,249 @@ export async function seedInitialLookups() {
         { code: 'https_certs', label: 'Certificats HTTPS Automatisés', label_fr: 'Certificats HTTPS automatisés', label_en: 'Automated HTTPS Certificates', description: 'Certificats HTTPS renouvelés automatiquement', order: 9, active: true },
       ],
     },
+    {
+      key: 'IP_OWNERSHIP_CLEAR',
+      category: 'DD',
+      entity: 'Solution',
+      formLabel: 'Clear IP Ownership',
+      description: 'Clarté de la propriété intellectuelle',
+      values: [
+        { code: 'Yes', label: 'Oui', label_fr: 'Oui', label_en: 'Yes', description: 'Propriété intellectuelle claire', order: 1, active: true },
+        { code: 'No', label: 'Non', label_fr: 'Non', label_en: 'No', description: 'Propriété intellectuelle non claire', order: 2, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 3, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 4, active: true },
+      ],
+    },
+    {
+      key: 'LICENSE_COMPLIANCE_ASSURED',
+      category: 'DD',
+      entity: 'Solution',
+      formLabel: 'License Compliance Assured',
+      description: 'Conformité des licences assurée',
+      values: [
+        { code: 'Yes', label: 'Oui', label_fr: 'Oui', label_en: 'Yes', description: 'Conformité des licences assurée', order: 1, active: true },
+        { code: 'No', label: 'Non', label_fr: 'Non', label_en: 'No', description: 'Conformité des licences non assurée', order: 2, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 3, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 4, active: true },
+      ],
+    },
+    {
+      key: 'DEVOPS_AUTOMATION_LEVEL',
+      category: 'DD',
+      entity: 'DevelopmentMetrics',
+      formLabel: 'DevOps Automation Level',
+      description: 'Niveau d\'automatisation DevOps/CI/CD',
+      values: [
+        { code: 'None', label: 'Aucune', label_fr: 'Aucune', label_en: 'None', description: 'Aucune automatisation', order: 1, active: true },
+        { code: 'Manual', label: 'Manuelle', label_fr: 'Manuelle', label_en: 'Manual', description: 'Automatisation manuelle', order: 2, active: true },
+        { code: 'Partial CI', label: 'CI Partiel', label_fr: 'CI Partiel', label_en: 'Partial CI', description: 'Intégration continue partielle', order: 3, active: true },
+        { code: 'Full CI/CD', label: 'CI/CD Complet', label_fr: 'CI/CD Complet', label_en: 'Full CI/CD', description: 'Intégration et déploiement continus complets', order: 4, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 5, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 6, active: true },
+      ],
+    },
+    {
+      key: 'SDLC_PROCESS',
+      category: 'DD',
+      entity: 'DevelopmentMetrics',
+      formLabel: 'SDLC Process',
+      description: 'Processus de développement logiciel (SDLC)',
+      values: [
+        { code: 'Scrum', label: 'Scrum', label_fr: 'Scrum', label_en: 'Scrum', description: 'Méthodologie Scrum', order: 1, active: true },
+        { code: 'Kanban', label: 'Kanban', label_fr: 'Kanban', label_en: 'Kanban', description: 'Méthodologie Kanban', order: 2, active: true },
+        { code: 'Waterfall', label: 'Waterfall', label_fr: 'Cascade', label_en: 'Waterfall', description: 'Méthodologie en cascade', order: 3, active: true },
+        { code: 'Agile', label: 'Agile', label_fr: 'Agile', label_en: 'Agile', description: 'Méthodologie Agile', order: 4, active: true },
+        { code: 'Hybrid', label: 'Hybride', label_fr: 'Hybride', label_en: 'Hybrid', description: 'Méthodologie hybride', order: 5, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 6, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 7, active: true },
+      ],
+    },
+    {
+      key: 'DOCUMENTATION_LEVEL',
+      category: 'DD',
+      entity: 'CodeBase',
+      formLabel: 'Documentation Level',
+      description: 'Niveau de documentation du code',
+      values: [
+        { code: 'High', label: 'Élevé', label_fr: 'Élevé', label_en: 'High', description: 'Documentation complète et détaillée', order: 1, active: true },
+        { code: 'Medium', label: 'Moyen', label_fr: 'Moyen', label_en: 'Medium', description: 'Documentation moyenne', order: 2, active: true },
+        { code: 'Low', label: 'Faible', label_fr: 'Faible', label_en: 'Low', description: 'Documentation minimale', order: 3, active: true },
+        { code: 'None', label: 'Aucune', label_fr: 'Aucune', label_en: 'None', description: 'Aucune documentation', order: 4, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 5, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 6, active: true },
+      ],
+    },
+    {
+      key: 'API_DOCUMENTATION_QUALITY',
+      category: 'DD',
+      entity: 'Solution',
+      formLabel: 'API Documentation Quality',
+      description: 'Qualité de la documentation des APIs',
+      values: [
+        { code: 'High', label: 'Élevée', label_fr: 'Élevée', label_en: 'High', description: 'Documentation API complète et détaillée', order: 1, active: true },
+        { code: 'Medium', label: 'Moyenne', label_fr: 'Moyenne', label_en: 'Medium', description: 'Documentation API moyenne', order: 2, active: true },
+        { code: 'Low', label: 'Faible', label_fr: 'Faible', label_en: 'Low', description: 'Documentation API minimale', order: 3, active: true },
+        { code: 'None', label: 'Aucune', label_fr: 'Aucune', label_en: 'None', description: 'Aucune documentation API', order: 4, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 5, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 6, active: true },
+      ],
+    },
+    {
+      key: 'PATCHING_TYPES',
+      category: 'DD',
+      entity: 'SecurityProfile',
+      formLabel: 'Gestion des Patchs',
+      description: 'Types de gestion des patchs de sécurité',
+      values: [
+        { code: 'ad_hoc', label: 'Ad Hoc', label_fr: 'Ad Hoc', label_en: 'Ad Hoc', description: 'Gestion des patchs à la demande', order: 1, active: true },
+        { code: 'scheduled', label: 'Planifiée', label_fr: 'Planifiée', label_en: 'Scheduled', description: 'Gestion des patchs planifiée', order: 2, active: true },
+        { code: 'automated', label: 'Automatisée', label_fr: 'Automatisée', label_en: 'Automated', description: 'Gestion des patchs automatisée', order: 3, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 4, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 5, active: true },
+      ],
+    },
+    {
+      key: 'PENTEST_FREQ',
+      category: 'DD',
+      entity: 'SecurityProfile',
+      formLabel: 'Fréquence des Tests de Pénétration',
+      description: 'Fréquence des tests de pénétration',
+      values: [
+        { code: 'never', label: 'Jamais', label_fr: 'Jamais', label_en: 'Never', description: 'Aucun test de pénétration', order: 1, active: true },
+        { code: 'annual', label: 'Annuel', label_fr: 'Annuel', label_en: 'Annual', description: 'Tests de pénétration annuels', order: 2, active: true },
+        { code: 'quarterly', label: 'Trimestriel', label_fr: 'Trimestriel', label_en: 'Quarterly', description: 'Tests de pénétration trimestriels', order: 3, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 4, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 5, active: true },
+      ],
+    },
+    {
+      key: 'VULN_MGMT',
+      category: 'DD',
+      entity: 'SecurityProfile',
+      formLabel: 'Gestion des Vulnérabilités',
+      description: 'Types de gestion des vulnérabilités',
+      values: [
+        { code: 'none', label: 'Aucune', label_fr: 'Aucune', label_en: 'None', description: 'Aucune gestion des vulnérabilités', order: 1, active: true },
+        { code: 'manual', label: 'Manuelle', label_fr: 'Manuelle', label_en: 'Manual', description: 'Gestion manuelle des vulnérabilités', order: 2, active: true },
+        { code: 'automated', label: 'Automatisée', label_fr: 'Automatisée', label_en: 'Automated', description: 'Gestion automatisée des vulnérabilités', order: 3, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 4, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 5, active: true },
+      ],
+    },
+    {
+      key: 'DISASTER_RECOVERY_PLAN',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Plan de Reprise après Sinistre',
+      description: 'Types de plans de reprise après sinistre',
+      values: [
+        {
+          code: 'Documented',
+          label: 'Documenté',
+          label_fr: 'Plan documenté',
+          label_en: 'Documented plan',
+          description: 'Plan de reprise après sinistre formalisé et documenté',
+          order: 1,
+          active: true,
+        },
+        {
+          code: 'Tested',
+          label: 'Testé régulièrement',
+          label_fr: 'Plan testé régulièrement',
+          label_en: 'Regularly tested plan',
+          description: 'Plan documenté et testé régulièrement (ex: au moins une fois par an)',
+          order: 2,
+          active: true,
+        },
+        {
+          code: 'None',
+          label: 'Aucun plan',
+          label_fr: 'Aucun plan formel',
+          label_en: 'No formal plan',
+          description: 'Aucun plan de reprise après sinistre formellement défini',
+          order: 3,
+          active: true,
+        },
+        {
+          code: 'TBD',
+          label: 'TBD',
+          label_fr: 'À déterminer',
+          label_en: 'TBD',
+          description: 'À déterminer',
+          order: 4,
+          active: true,
+        },
+        {
+          code: 'N/A',
+          label: 'N/A',
+          label_fr: 'Non applicable',
+          label_en: 'N/A',
+          description: 'Non applicable',
+          order: 5,
+          active: true,
+        },
+      ],
+    },
+    {
+      key: 'RESTORATION_TEST_FREQUENCY',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Fréquence des Tests de Restauration',
+      description: 'Fréquence des tests de restauration de sauvegarde',
+      values: [
+        { code: 'annual', label: 'Annuel', label_fr: 'Annuel', label_en: 'Annual', description: 'Tests de restauration annuels', order: 1, active: true },
+        { code: 'quarterly', label: 'Trimestriel', label_fr: 'Trimestriel', label_en: 'Quarterly', description: 'Tests de restauration trimestriels', order: 2, active: true },
+        { code: 'never', label: 'Jamais', label_fr: 'Jamais', label_en: 'Never', description: 'Aucun test de restauration', order: 3, active: true },
+        { code: 'TBD', label: 'TBD', label_fr: 'À déterminer', label_en: 'TBD', description: 'À déterminer', order: 4, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'Non applicable', label_en: 'N/A', description: 'Non applicable', order: 5, active: true },
+      ],
+    },
+    {
+      key: 'BACKUP_SCHEDULE',
+      category: 'DD',
+      entity: 'Environment',
+      formLabel: 'Planification des Sauvegardes',
+      description: 'Fréquence des sauvegardes',
+      values: [
+        { code: 'TBD', label: 'TBD', label_fr: 'TBD', label_en: 'TBD', description: 'À déterminer', order: 1, active: true },
+        { code: 'N/A', label: 'N/A', label_fr: 'N/A', label_en: 'N/A', description: 'Non applicable', order: 2, active: true },
+        { code: 'Quotidienne', label: 'Quotidienne', label_fr: 'Quotidienne', label_en: 'Daily', description: 'Sauvegarde quotidienne', order: 3, active: true },
+        { code: 'Bi-quotidienne', label: 'Bi-quotidienne', label_fr: 'Bi-quotidienne', label_en: 'Twice Daily', description: 'Sauvegarde deux fois par jour', order: 4, active: true },
+        { code: 'Hebdomadaire', label: 'Hebdomadaire', label_fr: 'Hebdomadaire', label_en: 'Weekly', description: 'Sauvegarde hebdomadaire', order: 5, active: true },
+        { code: 'Bi-hebdomadaire', label: 'Bi-hebdomadaire', label_fr: 'Bi-hebdomadaire', label_en: 'Bi-weekly', description: 'Sauvegarde bi-hebdomadaire', order: 6, active: true },
+        { code: 'Monthly', label: 'Monthly', label_fr: 'Mensuelle', label_en: 'Monthly', description: 'Sauvegarde mensuelle', order: 7, active: true },
+        { code: 'Bi-Monthly', label: 'Bi-Monthly', label_fr: 'Bi-mensuelle', label_en: 'Bi-Monthly', description: 'Sauvegarde bi-mensuelle', order: 8, active: true },
+        { code: 'Other', label: 'Other', label_fr: 'Autre', label_en: 'Other', description: 'Autre fréquence', order: 9, active: true },
+      ],
+    },
   ];
 
   for (const lookup of lookups) {
-    await LookupModel.findOneAndUpdate(
-      { key: lookup.key },
-      lookup,
-      { upsert: true, new: true }
-    );
+    // Récupérer le lookup existant pour préserver les valeurs ajoutées manuellement
+    const existingLookup = await LookupModel.findOne({ key: lookup.key });
+    
+    if (existingLookup) {
+      // Fusionner les valeurs : garder les valeurs existantes et ajouter les nouvelles si elles n'existent pas
+      const existingCodes = new Set(existingLookup.values.map((v: any) => v.code));
+      const newValues = lookup.values.filter((v: any) => !existingCodes.has(v.code));
+      
+      // Mettre à jour avec les valeurs fusionnées
+      await LookupModel.findOneAndUpdate(
+        { key: lookup.key },
+        {
+          ...lookup,
+          values: [...existingLookup.values, ...newValues],
+        },
+        { new: true }
+      );
+    } else {
+      // Créer le lookup s'il n'existe pas
+      await LookupModel.findOneAndUpdate(
+        { key: lookup.key },
+        lookup,
+        { upsert: true, new: true }
+      );
+    }
   }
 
   console.log('✅ Lookups P1 et DD initialisés avec succès');

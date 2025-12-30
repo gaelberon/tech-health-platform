@@ -18,11 +18,12 @@ export interface ISolution extends Document {
     product_criticality: Criticality; // Criticité du produit (mapping à business_criticality) [1, 2]
     
     // Champs de Due Diligence Technique (DD)
-    api_robustness: string; // Robustesse des APIs [2] (DD Section 1d)
-    api_documentation_quality: 'High' | 'Medium' | 'Low' | 'None'; // Qualité de la documentation des interfaces [2] (DD Section 1d)
-    ip_ownership_clear: boolean; // Droits de propriété clairs [2] (DD Section 4a)
-    licensing_model: string; // Modèles de licence utilisés [2] (DD Section 4b)
-    license_compliance_assured: boolean; // Conformité des licences tierces/Open Source [2] (DD Section 4b)
+    api_robustness: string; // Robustesse des APIs [2] (DD 1.d.1)
+    api_documentation_quality: 'High' | 'Medium' | 'Low' | 'None' | 'TBD' | 'N/A'; // Qualité de la documentation des interfaces [2] (DD 1.d.2)
+    ip_ownership_clear: 'Yes' | 'No' | 'TBD' | 'N/A'; // Droits de propriété clairs [2] (DD 4.a.1)
+    licensing_model: string; // Modèles de licence utilisés [2] (DD 4.b.1)
+    license_compliance_assured: 'Yes' | 'No' | 'TBD' | 'N/A'; // Conformité des licences tierces/Open Source [2] (DD 4.b.2)
+    tech_stack: string[]; // Stack technique logicielle (langages, frameworks, bibliothèques) [P2]
     
     // Champs d'archivage
     archived?: boolean;
@@ -70,33 +71,41 @@ const SolutionSchema = new Schema<ISolution>({
     api_robustness: { 
         type: String, 
         required: false,
-        description: "Robustesse des APIs et des possibilités d'intégration (DD Section 1d)" // DD [2]
+        description: "Robustesse des APIs et des possibilités d'intégration (DD 1.d.1)" // DD [2]
     },
     
     api_documentation_quality: { 
         type: String, 
-        enum: ['High', 'Medium', 'Low', 'None'],
+        enum: ['High', 'Medium', 'Low', 'None', 'TBD', 'N/A'],
         required: false,
-        description: "Qualité de la documentation des interfaces (DD Section 1d)" // DD [2]
+        description: "Qualité de la documentation des interfaces (DD 1.d.2)" // DD [2]
     },
     
     ip_ownership_clear: { 
-        type: Boolean, 
+        type: String, 
+        enum: ['Yes', 'No', 'TBD', 'N/A'],
         required: true,
-        description: "Droits de propriété clairs sur le code source (DD Section 4a)" // DD [2]
+        description: "Droits de propriété clairs sur le code source (DD 4.a.1)" // DD [2]
     },
     
     licensing_model: { 
         type: String, 
         required: false,
-        description: "Modèles de licence utilisés (DD Section 4b)" // DD [2]
+        description: "Modèles de licence utilisés (DD 4.b.1)" // DD [2]
     },
     
     license_compliance_assured: { 
-        type: Boolean, 
+        type: String, 
+        enum: ['Yes', 'No', 'TBD', 'N/A'],
         required: false,
-        description: "Conformité des licences pour les logiciels tiers/Open Source (DD Section 4b)" // DD [2]
+        description: "Conformité des licences pour les logiciels tiers/Open Source (DD 4.b.2)" // DD [2]
     },
+    
+    tech_stack: [{ 
+        type: String,
+        required: false,
+        description: "Stack technique logicielle (langages, frameworks, bibliothèques) - P2"
+    }],
     
     // Champs d'archivage
     archived: { 

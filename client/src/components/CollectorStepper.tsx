@@ -111,6 +111,8 @@ const CollectorStepper: React.FC = () => {
   // Chargement des lookups P1 avec la langue de l'utilisateur
   const { data: lookupsData, loading: lookupsLoading } = useQuery(GET_P1_LOOKUPS, {
     variables: { lang: currentLang },
+    fetchPolicy: 'cache-and-network', // Forcer le rechargement pour avoir les dernières données
+    notifyOnNetworkStatusChange: true,
   });
 
   // Chargement des éditeurs existants

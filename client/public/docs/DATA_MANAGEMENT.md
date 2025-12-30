@@ -107,6 +107,10 @@ Le formulaire permet de gérer toutes les données de l'éditeur sélectionné, 
     - Clarté de la propriété intellectuelle
     - Modèle de licence
     - Conformité des licences assurée
+  - **Stack technique logicielle** (P2) :
+    - Liste des technologies utilisées (langages, frameworks, bibliothèques)
+    - Saisie par ligne dans un champ texte
+    - Affichage sous forme de badges
   - **Code Source** (CodeBase) :
     - Localisation du dépôt
     - Niveau de documentation

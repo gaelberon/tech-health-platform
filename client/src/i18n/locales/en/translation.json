@@ -704,7 +704,9 @@
       "ipOwnershipClear": "Clear IP Ownership",
       "licenseComplianceAssured": "License Compliance Assured",
       "licensingModel": "Licensing Model",
-      "licensingModelPlaceholder": "Describe the licensing models used..."
+      "licensingModelPlaceholder": "Describe the licensing models used...",
+      "techStack": "Software Tech Stack",
+      "techStackPlaceholder": "Enter one technology per line...\nExample:\nNode.js\nPostgreSQL\nReact\nDocker\nMongoDB"
     },
     "codebase": {
       "title": "Source Code",

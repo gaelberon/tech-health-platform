@@ -103,7 +103,15 @@ const ScoringSnapshotResolver = {
     },
     
     // Résolveurs de CHAMP (Field Resolvers)
-    // Non requis ici, car ScoringSnapshot est un nœud de données historiques.
+    ScoringSnapshot: {
+        // Convertir la date en string ISO pour GraphQL
+        date: (parent: IScoringSnapshot & Document) => {
+            if (!parent.date) return new Date().toISOString();
+            return parent.date instanceof Date 
+                ? parent.date.toISOString() 
+                : new Date(parent.date).toISOString();
+        },
+    },
 };
 
 export default ScoringSnapshotResolver;

@@ -42,3 +42,5 @@ const SettingsSchema = new Schema<ISettings>(
 export const SettingsModel = model<ISettings>('Settings', SettingsSchema, 'settings');
 
 
+
+

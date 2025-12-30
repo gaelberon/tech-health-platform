@@ -16,7 +16,7 @@ export interface IMonitoringObservability extends Document {
     log_centralization: MonitoringStatus; // Centralisation des logs (Oui/Partiel/Non) [2, 4]
     tools: MonitoringTools[]; // Outils utilisés (Prometheus, Grafana, ELK, Datadog, etc.) [2, 4]
     
-    // Champ DD additionnel pour détailler la stratégie (lié à Section 65.a)
+    // Champ DD additionnel pour détailler la stratégie (5.a.2)
     alerting_strategy: string; // Comment les alertes sont-elles gérées et routées
 }
 
@@ -65,7 +65,7 @@ const MonitoringObservabilitySchema = new Schema<IMonitoringObservability>({
     alerting_strategy: { 
         type: String, 
         required: false,
-        description: "Processus et outils pour surveiller l'état de fonctionnement et détecter les erreurs (DD Section 5a)"
+        description: "Processus et outils pour surveiller l'état de fonctionnement et détecter les erreurs (DD 5.a.2)"
     }
 }, {
     timestamps: true // Ajoute createdAt et updatedAt

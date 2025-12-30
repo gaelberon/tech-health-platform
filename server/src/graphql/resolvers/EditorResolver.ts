@@ -108,13 +108,9 @@ const EditorResolver = {
         // Mutation pour créer ou mettre à jour les données de l'éditeur
         updateEditor: async (_: any, { input }: { input: UpdateEditorInput }, ctx: any) => {
             // Utilisation de '_: any' pour satisfaire noImplicitAny
-            
-            if (!input.editorId) {
-                // Création d'un nouvel éditeur (si editorId n'est pas fourni dans l'input)
-                 return await EditorModel.create(input);
-            }
+            // On normalise les données d'input pour qu'elles correspondent bien au schéma Mongoose.
 
-            // Préparer les données de mise à jour
+            // Préparer les données communes (création + mise à jour)
             const updateData: any = {};
             
             // Copier les champs simples
@@ -169,33 +165,39 @@ const EditorResolver = {
                 }
             }
 
-            // Gérer contracts_for_review (array d'objets avec type et summary)
+            // Gérer contracts_for_review (array d'objets avec type et summary côté API,
+            // stocké en base comme array de strings "Type - Résumé" pour simplifier le schéma)
             if (input.contracts_for_review !== undefined) {
                 if (Array.isArray(input.contracts_for_review)) {
-                    // S'assurer que chaque élément est un objet avec type et summary
-                    updateData.contracts_for_review = input.contracts_for_review.map((contract: any) => {
-                        if (typeof contract === 'object' && contract !== null) {
-                            return {
-                                type: contract.type || '',
-                                summary: contract.summary || '',
-                            };
-                        }
-                        return { type: '', summary: '' };
-                    }).filter((contract: any) => contract.type && contract.type.trim().length > 0);
+                    // S'assurer que chaque élément est un objet avec type et summary,
+                    // puis sérialiser en string "Type - Résumé"
+                    updateData.contracts_for_review = input.contracts_for_review
+                        .map((contract: any) => {
+                            if (typeof contract === 'object' && contract !== null) {
+                                const type = (contract.type || '').toString().trim();
+                                const summary = (contract.summary || '').toString().trim();
+                                if (!type && !summary) return null;
+                                return summary ? `${type} - ${summary}` : type;
+                            }
+                            return null;
+                        })
+                        .filter((val: any) => typeof val === 'string' && val.trim().length > 0);
                 } else if (typeof input.contracts_for_review === 'string') {
                     // Si c'est une string, essayer de parser
                     try {
                         const parsed = JSON.parse(input.contracts_for_review);
                         if (Array.isArray(parsed)) {
-                            updateData.contracts_for_review = parsed.map((contract: any) => {
-                                if (typeof contract === 'object' && contract !== null) {
-                                    return {
-                                        type: contract.type || '',
-                                        summary: contract.summary || '',
-                                    };
-                                }
-                                return { type: '', summary: '' };
-                            }).filter((contract: any) => contract.type && contract.type.trim().length > 0);
+                            updateData.contracts_for_review = parsed
+                                .map((contract: any) => {
+                                    if (typeof contract === 'object' && contract !== null) {
+                                        const type = (contract.type || '').toString().trim();
+                                        const summary = (contract.summary || '').toString().trim();
+                                        if (!type && !summary) return null;
+                                        return summary ? `${type} - ${summary}` : type;
+                                    }
+                                    return null;
+                                })
+                                .filter((val: any) => typeof val === 'string' && val.trim().length > 0);
                         } else {
                             updateData.contracts_for_review = [];
                         }
@@ -208,7 +210,19 @@ const EditorResolver = {
                 }
             }
 
-            // Mise à jour des informations DD et générales
+            // Si pas d'editorId, on est en mode création
+            if (!input.editorId) {
+                // Générer éventuellement un editorId si non fourni
+                if (!updateData.editorId && input.name) {
+                    updateData.editorId = input.name
+                        .toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^a-z0-9\-]/g, '');
+                }
+                return await EditorModel.create(updateData as any);
+            }
+
+            // Sinon, mise à jour avec upsert sur editorId
             const updatedEditor = await EditorModel.findOneAndUpdate(
                 { editorId: input.editorId },
                 { $set: updateData },
@@ -220,14 +234,52 @@ const EditorResolver = {
     },
     
     // Résolveurs de CHAMP (Field Resolvers) : Pour lier les entités 
-    // qui ne sont pas *embedded* (Solution, DevelopmentTeam, Document)
+    // qui ne sont pas *embedded* (Solution, DevelopmentTeam, Document, etc.)
     Editor: {
+        
+        // Normalisation des contrats à réviser pour le type GraphQL ContractForReview
+        contracts_for_review: (parent: any) => {
+            const raw = (parent as any)?.contracts_for_review || [];
+
+            return raw
+                .map((item: any) => {
+                    if (!item) return null;
+
+                    // Cas 1 : déjà un objet { type, summary }
+                    if (typeof item === 'object') {
+                        const type = (item.type ?? '').toString().trim();
+                        const summary = (item.summary ?? '').toString().trim();
+                        if (!type && !summary) return null;
+                        return { type: type || 'Autre', summary: summary || null };
+                    }
+
+                    // Cas 2 : stocké comme simple string "Type - Résumé"
+                    if (typeof item === 'string') {
+                        const text = item.trim();
+                        if (!text) return null;
+                        const [maybeType, ...rest] = text.split(' - ');
+                        const type = (maybeType || 'Autre').trim();
+                        const summary = rest.join(' - ').trim() || text;
+                        return { type, summary };
+                    }
+
+                    return null;
+                })
+                .filter((v: any) => v !== null);
+        },
         
         // Relation 1:N vers Solution [1]
         solutions: async (parent: IEditor & Document) => {
             // Utilise l'ID Mongoose interne (_id) ou editorId pour la jointure
             // Inclut les solutions archivées (tous les utilisateurs peuvent les voir)
-            return await SolutionModel.find({ editorId: parent._id }).sort({ archived: 1, createdAt: -1 }); 
+            const solutions = await SolutionModel.find({ editorId: parent._id }).sort({ archived: 1, createdAt: -1 });
+            // Debug: log pour vérifier les solutions récupérées
+            if (solutions.length === 0) {
+                console.log(`Debug EditorResolver.solutions: Aucune solution trouvée pour editorId=${parent._id}, editorId string=${parent.editorId}`);
+            } else {
+                console.log(`Debug EditorResolver.solutions: ${solutions.length} solution(s) trouvée(s) pour editorId=${parent._id}`);
+            }
+            return solutions;
         },
 
         // Relation 1:1 vers DevelopmentTeam [5]

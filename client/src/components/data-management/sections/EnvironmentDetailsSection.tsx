@@ -292,7 +292,7 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
             className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.deployment_type)}
             disabled={lookupsLoading}
           >
-            <option value="">-</option>
+            <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
             {lookups.deploymentTypes.length > 0 ? (
               lookups.deploymentTypes.map((opt) => (
                 <option key={opt.code} value={opt.code}>{opt.label}</option>
@@ -302,6 +302,8 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
                 <option value="monolith">Monolith</option>
                 <option value="microservices">Microservices</option>
                 <option value="hybrid">Hybrid</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -318,7 +320,7 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
             className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.virtualization)}
             disabled={lookupsLoading}
           >
-            <option value="">-</option>
+            <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
             {lookups.virtualizationTypes.length > 0 ? (
               lookups.virtualizationTypes.map((opt) => (
                 <option key={opt.code} value={opt.code}>{opt.label}</option>
@@ -329,6 +331,8 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
                 <option value="VM">VM</option>
                 <option value="container">Container</option>
                 <option value="k8s">Kubernetes</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -359,16 +363,15 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
             className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.disaster_recovery_plan)}
             disabled={lookupsLoading}
           >
-            <option value="">-</option>
+            <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
             {lookups.disasterRecoveryPlan.length > 0 ? (
               lookups.disasterRecoveryPlan.map((opt) => (
                 <option key={opt.code} value={opt.code}>{opt.label}</option>
               ))
             ) : (
               <>
-                <option value="Documented">Documented</option>
-                <option value="Tested">Tested</option>
-                <option value="None">None</option>
+                <option value="TBD">TBD</option>
+                <option value="N/A">N/A</option>
               </>
             )}
           </select>
@@ -538,16 +541,34 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
               translationKey="dataManagement.environment.backupSchedule"
               showFieldReference={showFieldReferences}
             />
-            <input
-              type="text"
+            <select
               value={formData.backup.schedule}
               onChange={(e) => setFormData({ 
                 ...formData, 
                 backup: { ...formData.backup, schedule: e.target.value } 
               })}
               className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.backup.schedule)}
-              placeholder="Quotidien, Hebdomadaire, etc."
-            />
+              disabled={lookupsLoading}
+            >
+              <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
+              {lookups.backupSchedule.length > 0 ? (
+                lookups.backupSchedule.map((opt) => (
+                  <option key={opt.code} value={opt.code}>{opt.label}</option>
+                ))
+              ) : (
+                <>
+                  <option value="TBD">TBD</option>
+                  <option value="N/A">N/A</option>
+                  <option value="Quotidienne">Quotidienne</option>
+                  <option value="Bi-quotidienne">Bi-quotidienne</option>
+                  <option value="Hebdomadaire">Hebdomadaire</option>
+                  <option value="Bi-hebdomadaire">Bi-hebdomadaire</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Bi-Monthly">Bi-Monthly</option>
+                  <option value="Other">Other</option>
+                </>
+              )}
+            </select>
           </div>
           <div>
             <FieldLabel
@@ -595,15 +616,18 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
               className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.backup.restoration_test_frequency)}
               disabled={lookupsLoading}
             >
+              <option value="">{t('dataManagement.form.select', 'Sélectionner...')}</option>
               {lookups.restorationTestFrequency.length > 0 ? (
                 lookups.restorationTestFrequency.map((opt) => (
                   <option key={opt.code} value={opt.code}>{opt.label}</option>
                 ))
               ) : (
                 <>
-                  <option value="never">Never</option>
-                  <option value="quarterly">Quarterly</option>
                   <option value="annual">Annual</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="never">Never</option>
+                  <option value="TBD">TBD</option>
+                  <option value="N/A">N/A</option>
                 </>
               )}
             </select>

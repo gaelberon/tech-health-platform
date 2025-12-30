@@ -5,25 +5,21 @@
  * Pour les autres utilisateurs : éditeur lié automatiquement
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useSession } from '../session/SessionContext';
-import { LIST_EDITORS_FOR_USER, GET_EDITOR_WITH_DETAILS } from '../graphql/queries';
+import { useEditor } from '../contexts/EditorContext';
+import { GET_EDITOR_WITH_DETAILS } from '../graphql/queries';
 import EditorDashboard from '../components/data-management/EditorDashboard';
 import DataManagementForm from '../components/data-management/DataManagementForm';
 
 const DataManagement: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useSession();
-  const [selectedEditorId, setSelectedEditorId] = useState<string | null>(null);
+  const { selectedEditorId, canSelectMultiple } = useEditor();
   const [activeView, setActiveView] = useState<'dashboard' | 'form'>('dashboard');
   const [showFieldReferences, setShowFieldReferences] = useState<boolean>(false);
-
-  // Récupérer les éditeurs disponibles
-  const { data: editorsData, loading: editorsLoading } = useQuery(LIST_EDITORS_FOR_USER, {
-    skip: !user,
-  });
 
   // Récupérer les détails de l'éditeur sélectionné
   const { data: editorDetails, loading: editorDetailsLoading, error: editorDetailsError, refetch: refetchEditorDetails } = useQuery(
@@ -36,31 +32,6 @@ const DataManagement: React.FC = () => {
     }
   );
 
-  // Déterminer l'éditeur par défaut selon le rôle
-  useEffect(() => {
-    if (!user || editorsLoading) return;
-
-    const editors = editorsData?.listEditorsForUser || [];
-
-    if (editors.length > 0 && !selectedEditorId) {
-      // Sélectionner l'éditeur le plus ancien (basé sur createdAt) ou le premier si pas de date
-      let defaultEditor = editors[0];
-      if (editors.length > 1) {
-        const sortedEditors = [...editors].sort((a: any, b: any) => {
-          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-          if (dateA === 0 && dateB === 0) {
-            // Fallback: utiliser editorId (séquentiel)
-            return a.editorId.localeCompare(b.editorId);
-          }
-          return dateA - dateB; // Tri croissant (plus ancienne en premier)
-        });
-        defaultEditor = sortedEditors[0];
-      }
-      setSelectedEditorId(defaultEditor.editorId);
-    }
-  }, [user, editorsData, editorsLoading, selectedEditorId]);
-
   if (!user) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -69,8 +40,6 @@ const DataManagement: React.FC = () => {
     );
   }
 
-  const editors = editorsData?.listEditorsForUser || [];
-  const selectedEditor = editors.find((e: any) => e.editorId === selectedEditorId);
   const editor = editorDetails?.getEditor;
 
   return (
@@ -104,42 +73,6 @@ const DataManagement: React.FC = () => {
         </div>
       )}
 
-      {/* Sélection d'éditeur (uniquement pour les admins) */}
-      {user.role === 'Admin' && (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {t('dataManagement.selectEditor')}
-          </label>
-          {editorsLoading ? (
-            <p className="text-gray-500 dark:text-gray-400">{t('dataManagement.loading')}</p>
-          ) : (
-            <select
-              value={selectedEditorId || ''}
-              onChange={(e) => {
-                setSelectedEditorId(e.target.value);
-                setActiveView('dashboard');
-              }}
-              className="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="">{t('dataManagement.selectEditorPlaceholder')}</option>
-              {editors.map((editor: any) => (
-                <option key={editor.editorId} value={editor.editorId}>
-                  {editor.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-      )}
-
-      {/* Affichage de l'éditeur pour les non-admins */}
-      {user.role !== 'Admin' && selectedEditor && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            <span className="font-medium">{t('dataManagement.currentEditor')}:</span> {selectedEditor.name}
-          </p>
-        </div>
-      )}
 
       {/* Navigation entre dashboard et formulaire */}
       {selectedEditorId && (
@@ -173,8 +106,8 @@ const DataManagement: React.FC = () => {
       {!selectedEditorId ? (
         <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
           <p className="text-gray-500 dark:text-gray-400">
-            {user.role === 'Admin'
-              ? t('dataManagement.selectEditorFirst')
+            {canSelectMultiple
+              ? t('dataManagement.selectEditorFirst', 'Veuillez sélectionner une entité dans le menu en haut à droite pour afficher les données.')
               : t('dataManagement.noEditorAssociated')}
           </p>
         </div>

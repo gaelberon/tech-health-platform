@@ -6,7 +6,7 @@ export interface IDevelopmentTeam extends Document {
     teamId: string; // Identifiant unique (PK)
     editorId: Types.ObjectId; // Lien vers l'entité Editor (FK)
     
-    // Champs pour les Capacités de Développement (Section 6b du DD)
+    // Champs pour les Capacités de Développement (6.b)
     team_size_adequate: string; // L'équipe est-elle suffisante pour la roadmap prévue (boolean/text dans le MCD)
     key_person_dependency: string; // Dépendances envers des personnes clés dans l'équipe
 }
@@ -29,14 +29,14 @@ const DevelopmentTeamSchema = new Schema<IDevelopmentTeam>({
         unique: true // Assure qu'il n'y a qu'un seul document DevelopmentTeam par Editor
     },
 
-    // Capacités de Développement (Donnée DD Section 6b)
+        // Capacités de Développement (Donnée DD 6.b)
     team_size_adequate: { 
         type: String, 
         required: true, 
         description: "L'équipe de développement est-elle suffisante pour mettre en œuvre les fonctionnalités prévues et la roadmap ?"
     },
     
-    // Dépendances (Donnée DD Section 6b)
+        // Dépendances (Donnée DD 6.b)
     key_person_dependency: { 
         type: String, 
         required: false, // Peut être vide si aucune dépendance forte

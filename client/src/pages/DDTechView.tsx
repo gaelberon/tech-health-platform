@@ -1,8 +1,158 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { LIST_EDITORS_FOR_USER, GET_SOLUTION_DD_TECH_VIEW, GET_EDITOR_DD_TECH_VIEW } from '../graphql/queries';
 import { useSession } from '../session/SessionContext';
+import { useEditor } from '../contexts/EditorContext';
+
+// Composant pour afficher un snapshot de scoring avec détails
+const ScoringSnapshotCard: React.FC<{ snapshot: any }> = ({ snapshot }) => {
+  const [showDetails, setShowDetails] = useState(false);
+  const { t } = useTranslation();
+
+  const getRiskColor = (score: number) => {
+    if (score >= 80) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+    if (score >= 60) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+    return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+  };
+
+  // Formater la date correctement
+  const formatDate = (dateValue: any) => {
+    if (!dateValue) return 'Date inconnue';
+    try {
+      // Si c'est déjà une string au format ISO ou autre
+      const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+      if (isNaN(date.getTime())) {
+        return 'Date invalide';
+      }
+      return date.toLocaleDateString('fr-FR');
+    } catch (e) {
+      return 'Date invalide';
+    }
+  };
+
+  return (
+    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          {formatDate(snapshot.date)}
+        </span>
+        <div className="flex items-center gap-2">
+          <span className={`px-2 py-1 text-xs font-semibold rounded ${getRiskColor(snapshot.global_score)}`}>
+            {snapshot.global_score.toFixed(1)}/100
+          </span>
+          {snapshot.calculationDetails && (
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+            >
+              {showDetails ? 'Masquer détails' : 'Voir détails'}
+            </button>
+          )}
+        </div>
+      </div>
+      {snapshot.scores && (
+        <div className="space-y-3 mb-2">
+          {/* Scores par catégorie */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs text-gray-600 dark:text-gray-400">
+            <div className="font-medium">Sécurité: {snapshot.scores.Security?.toFixed(1) || snapshot.scores.security?.toFixed(1) || 'N/A'}%</div>
+            <div className="font-medium">Résilience: {snapshot.scores.Resilience?.toFixed(1) || snapshot.scores.resilience?.toFixed(1) || 'N/A'}%</div>
+            <div className="font-medium">Observabilité: {snapshot.scores.Observability?.toFixed(1) || snapshot.scores.observability?.toFixed(1) || 'N/A'}%</div>
+            <div className="font-medium">Architecture: {snapshot.scores.Architecture?.toFixed(1) || snapshot.scores.architecture?.toFixed(1) || 'N/A'}%</div>
+            <div className="font-medium">Conformité: {snapshot.scores.Compliance?.toFixed(1) || snapshot.scores.compliance?.toFixed(1) || 'N/A'}%</div>
+          </div>
+          
+          {/* Détails des composantes par catégorie */}
+          {snapshot.calculationDetails && snapshot.calculationDetails.categories && (
+            <div className="space-y-3 pt-2 border-t border-gray-200 dark:border-gray-600">
+              {snapshot.calculationDetails.categories.map((category: any, catIdx: number) => (
+                <div key={catIdx} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                  <div className="flex justify-between items-center mb-2">
+                    <h5 className="text-xs font-semibold text-gray-900 dark:text-gray-100">
+                      {category.category} ({category.percentage.toFixed(1)}%)
+                    </h5>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {category.rawScore.toFixed(1)}/{category.maxRawScore} pts
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    {category.components.map((component: any, compIdx: number) => (
+                      <div key={compIdx} className="flex justify-between items-center text-xs">
+                        <div className="flex-1 pr-2">
+                          <span className="text-gray-700 dark:text-gray-300">{component.name}</span>
+                          <span className="ml-1 text-gray-500 dark:text-gray-500 text-[10px]">({component.reason})</span>
+                        </div>
+                        <span className={`font-semibold text-[11px] ${
+                          component.value === component.max ? 'text-green-600 dark:text-green-400' :
+                          component.value === 0 ? 'text-red-600 dark:text-red-400' :
+                          'text-yellow-600 dark:text-yellow-400'
+                        }`}>
+                          {component.value.toFixed(1)}/{component.max}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {showDetails && snapshot.calculationDetails && (
+        <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600 space-y-4">
+          {/* Rapport de calcul */}
+          {snapshot.calculationReport && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                📊 Rapport de calcul
+              </h4>
+              <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono leading-relaxed">
+                {snapshot.calculationReport}
+              </pre>
+            </div>
+          )}
+          
+          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            Détails du calcul - Score global: {snapshot.calculationDetails.globalScore.toFixed(1)}/100 
+            (Risque: {snapshot.calculationDetails.riskLevel})
+          </div>
+          {snapshot.calculationDetails.categories.map((category: any, catIdx: number) => (
+            <div key={catIdx} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                  {category.category} (Pondération: {(category.weight * 100).toFixed(0)}%)
+                </h4>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {category.rawScore.toFixed(1)}/{category.maxRawScore} points → {category.percentage.toFixed(1)}% 
+                  → Contribution: {category.contribution.toFixed(1)} points
+                </div>
+              </div>
+              <div className="space-y-2 mt-3">
+                {category.components.map((component: any, compIdx: number) => (
+                  <div key={compIdx} className="flex justify-between items-start text-xs">
+                    <div className="flex-1">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{component.name}:</span>
+                      <span className="ml-2 text-gray-600 dark:text-gray-400">{component.reason}</span>
+                    </div>
+                    <div className="ml-4 text-right">
+                      <span className={`font-semibold ${
+                        component.value === component.max ? 'text-green-600 dark:text-green-400' :
+                        component.value === 0 ? 'text-red-600 dark:text-red-400' :
+                        'text-yellow-600 dark:text-yellow-400'
+                      }`}>
+                        {component.value.toFixed(1)}/{component.max}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface Editor {
   editorId: string;
@@ -17,10 +167,10 @@ interface Editor {
 const DDTechView: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useSession();
-  const [selectedEditorId, setSelectedEditorId] = useState<string>('');
+  const { selectedEditorId, canSelectMultiple } = useEditor();
   const [selectedSolutionId, setSelectedSolutionId] = useState<string>('');
 
-  // Récupérer les éditeurs accessibles
+  // Récupérer les éditeurs accessibles (pour obtenir les solutions)
   const { data: editorsData, loading: editorsLoading } = useQuery(LIST_EDITORS_FOR_USER);
 
   // Récupérer les données DD Tech de la solution
@@ -34,42 +184,10 @@ const DDTechView: React.FC = () => {
   // Récupérer les données DD Tech de l'éditeur
   const { data: editorData, loading: editorLoading } = useQuery(GET_EDITOR_DD_TECH_VIEW, {
     variables: {
-      editorId: selectedEditorId,
+      editorId: selectedEditorId || '',
     },
     skip: !selectedEditorId,
   });
-
-  // Déterminer si l'utilisateur doit sélectionner un éditeur
-  const shouldSelectEditor = useMemo(() => {
-    if (!user || !editorsData?.listEditorsForUser) return false;
-    
-    if (user.role === 'Admin') {
-      return editorsData.listEditorsForUser.length > 1;
-    }
-    
-    if ((user.role === 'Editor' || user.role === 'EntityDirector') && editorsData.listEditorsForUser.length === 1) {
-      return false;
-    }
-    
-    if (user.role === 'Supervisor') {
-      return editorsData.listEditorsForUser.length > 1;
-    }
-    
-    return false;
-  }, [user, editorsData]);
-
-  // Sélectionner automatiquement le premier éditeur si un seul disponible
-  useEffect(() => {
-    if (editorsData?.listEditorsForUser && !selectedEditorId) {
-      if ((user?.role === 'Editor' || user?.role === 'EntityDirector') && editorsData.listEditorsForUser.length === 1) {
-        setSelectedEditorId(editorsData.listEditorsForUser[0].editorId);
-      } else if (user?.role === 'Supervisor' && editorsData.listEditorsForUser.length === 1) {
-        setSelectedEditorId(editorsData.listEditorsForUser[0].editorId);
-      } else if (user?.role === 'Admin' && editorsData.listEditorsForUser.length > 0) {
-        setSelectedEditorId(editorsData.listEditorsForUser[0].editorId);
-      }
-    }
-  }, [editorsData, selectedEditorId, user]);
 
   // Sélectionner automatiquement la première solution quand un éditeur est sélectionné
   useEffect(() => {
@@ -78,6 +196,9 @@ const DDTechView: React.FC = () => {
       if (editor && editor.solutions && editor.solutions.length > 0 && !selectedSolutionId) {
         setSelectedSolutionId(editor.solutions[0].solutionId);
       }
+    } else if (!selectedEditorId) {
+      // Réinitialiser la solution si aucun éditeur n'est sélectionné
+      setSelectedSolutionId('');
     }
   }, [selectedEditorId, editorsData, selectedSolutionId]);
 
@@ -107,6 +228,17 @@ const DDTechView: React.FC = () => {
     );
   }
 
+  // Si l'utilisateur peut sélectionner plusieurs éditeurs et qu'aucun n'est sélectionné
+  if (canSelectMultiple && !selectedEditorId) {
+    return (
+      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center transition-colors">
+        <p className="text-gray-500 dark:text-gray-400">
+          Veuillez sélectionner une entité dans le menu en haut à droite pour afficher les données.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -121,41 +253,20 @@ const DDTechView: React.FC = () => {
 
       {/* Navigation hiérarchique */}
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4 transition-colors">
-        {/* Sélecteur d'éditeur */}
-        {shouldSelectEditor ? (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {t('ddTech.editor')}
-            </label>
-            <select
-              value={selectedEditorId}
-              onChange={(e) => {
-                setSelectedEditorId(e.target.value);
-                setSelectedSolutionId('');
-              }}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            >
-              <option value="">{t('ddTech.selectEditor')}</option>
-              {editorsData.listEditorsForUser.map((editor: Editor) => (
-                <option key={editor.editorId} value={editor.editorId}>
-                  {editor.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
+        {/* Affichage de l'éditeur (sélectionné dans le header) */}
+        {selectedEditorId && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t('ddTech.editor')}
             </label>
             <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300">
-              {selectedEditor?.name || editorsData.listEditorsForUser[0]?.name}
+              {editorsData.listEditorsForUser.find((e: Editor) => e.editorId === selectedEditorId)?.name || 'Éditeur inconnu'}
             </div>
           </div>
         )}
 
         {/* Sélecteur de solution */}
-        {selectedEditor && (
+        {selectedEditorId && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t('ddTech.solution')}
@@ -166,7 +277,7 @@ const DDTechView: React.FC = () => {
               className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               <option value="">{t('ddTech.selectSolution')}</option>
-              {selectedEditor.solutions?.map((solution: any) => (
+              {editorsData.listEditorsForUser.find((e: Editor) => e.editorId === selectedEditorId)?.solutions?.map((solution: any) => (
                 <option key={solution.solutionId} value={solution.solutionId}>
                   {solution.name} ({solution.type})
                 </option>
@@ -515,32 +626,7 @@ const SectionEContent: React.FC<{ solution: any; t: any }> = ({ solution, t }) =
           </label>
           <div className="space-y-2">
             {solution.scoringSnapshots.map((snapshot: any, idx: number) => (
-              <div
-                key={idx}
-                className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 border border-gray-200 dark:border-gray-600"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {new Date(snapshot.date).toLocaleDateString('fr-FR')}
-                  </span>
-                  <span className={`px-2 py-1 text-xs font-semibold rounded ${
-                    snapshot.global_score >= 80 ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
-                    snapshot.global_score >= 60 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
-                    'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
-                  }`}>
-                    {snapshot.global_score.toFixed(1)}/100
-                  </span>
-                </div>
-                {snapshot.scores && (
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs text-gray-600 dark:text-gray-400">
-                    <div>Sécurité: {snapshot.scores.Security}</div>
-                    <div>Résilience: {snapshot.scores.Resilience}</div>
-                    <div>Observabilité: {snapshot.scores.Observability}</div>
-                    <div>Architecture: {snapshot.scores.Architecture}</div>
-                    <div>Conformité: {snapshot.scores.Compliance}</div>
-                  </div>
-                )}
-              </div>
+              <ScoringSnapshotCard key={idx} snapshot={snapshot} />
             ))}
           </div>
         </div>

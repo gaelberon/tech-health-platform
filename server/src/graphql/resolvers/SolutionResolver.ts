@@ -13,6 +13,7 @@ import { AIFeaturesModel, IAIFeatures } from '../../models/AIFeatures.model.js';
 import { RoadmapItemModel, IRoadmapItem } from '../../models/RoadmapItem.model.js'; // 0..N (Polymorphe) [10]
 import { DocumentModel, IDocument } from '../../models/Document.model.js'; // 0..N (Polymorphe) [11]
 import { ScoringSnapshotModel, IScoringSnapshot } from '../../models/ScoringSnapshot.model.js'; // 0..N [11]
+import { validateLookupValue } from '../../utils/validateLookupValue.js';
 
 // ------------------ INTERFACES DE TYPAGE ------------------
 
@@ -34,10 +35,11 @@ export interface UpdateSolutionInput {
     
     // Champs DD spécifiques
     api_robustness?: string; // Robustesse des APIs [4]
-    api_documentation_quality?: string; // Qualité de la documentation des interfaces [4]
-    ip_ownership_clear?: boolean; // Droits de propriété clairs [4]
+    api_documentation_quality?: string; // Qualité de la documentation des interfaces [4] - Validé contre "API_DOCUMENTATION_QUALITY"
+    ip_ownership_clear?: string; // Droits de propriété clairs [4] - Validé contre "IP_OWNERSHIP_CLEAR"
     licensing_model?: string; // Modèles de licence [4]
-    license_compliance_assured?: boolean; // Conformité des licences tiers [4]
+    license_compliance_assured?: string; // Conformité des licences tiers [4] - Validé contre "LICENSE_COMPLIANCE_ASSURED"
+    tech_stack?: string[]; // Stack technique logicielle (P2)
 }
 
 // 3. Interface pour l'Input de la Mutation updateDevelopmentMetrics (redéfinie localement ou importée)
@@ -85,6 +87,26 @@ const SolutionResolver = {
 
             // Utilisation de '_: any' pour satisfaire noImplicitAny
             const { solutionId, ...updateFields } = input;
+            
+            // Validation contre les Value Lists
+            if (updateFields.api_documentation_quality) {
+                const isValid = await validateLookupValue('API_DOCUMENTATION_QUALITY', updateFields.api_documentation_quality);
+                if (!isValid) {
+                    throw new Error(`La qualité de documentation API "${updateFields.api_documentation_quality}" n'est pas valide. Veuillez utiliser une valeur de la liste "API_DOCUMENTATION_QUALITY".`);
+                }
+            }
+            if (updateFields.ip_ownership_clear) {
+                const isValid = await validateLookupValue('IP_OWNERSHIP_CLEAR', updateFields.ip_ownership_clear);
+                if (!isValid) {
+                    throw new Error(`La valeur "${updateFields.ip_ownership_clear}" n'est pas valide pour la propriété intellectuelle. Veuillez utiliser une valeur de la liste "IP_OWNERSHIP_CLEAR".`);
+                }
+            }
+            if (updateFields.license_compliance_assured) {
+                const isValid = await validateLookupValue('LICENSE_COMPLIANCE_ASSURED', updateFields.license_compliance_assured);
+                if (!isValid) {
+                    throw new Error(`La valeur "${updateFields.license_compliance_assured}" n'est pas valide pour la conformité des licences. Veuillez utiliser une valeur de la liste "LICENSE_COMPLIANCE_ASSURED".`);
+                }
+            }
             
             // Mise à jour des informations P1 (Critique) et DD (PI, API)
             const updatedSolution = await SolutionModel.findOneAndUpdate(
@@ -189,10 +211,12 @@ const SolutionResolver = {
             
             // CORRECTION DÉFINITIVE :
             // Forcer le cast de l'objet de filtre à 'any' pour contourner le typage strict de Mongoose
+            // Exclure les environnements archivés
             
             return await EnvironmentModel.find({
                 // On utilise la conversion en chaîne, car Mongoose sait la gérer à l'exécution.
-                solutionId: parent._id.toString()
+                solutionId: parent._id.toString(),
+                $or: [{ archived: { $exists: false } }, { archived: false }, { archived: null }, { archived: { $ne: true } }]
             } as any);
         },
         
@@ -223,7 +247,35 @@ const SolutionResolver = {
         // Lien 0..N vers ScoringSnapshot (P1)
         scoringSnapshots: async (parent: ISolution & Document) => {
             // L'historique des scores est lié à la Solution [11, 18]
-            return await ScoringSnapshotModel.find({ solutionId: parent._id }).sort({ date: -1 });
+            // Exclure les snapshots liés à des solutions/environnements archivés
+            // Filtrer uniquement les snapshots de type 'snapshot' (pas 'DD')
+            
+            // Vérifier d'abord si la solution elle-même est archivée
+            if (parent.archived === true) {
+                return [];
+            }
+            
+            const snapshots = await ScoringSnapshotModel.find({ 
+                solutionId: parent._id,
+                collection_type: 'snapshot'
+            }).sort({ date: -1 });
+            
+            // Filtrer les snapshots liés à des environnements archivés
+            const filteredSnapshots = [];
+            for (const snapshot of snapshots) {
+                if (snapshot.envId) {
+                    const env = await EnvironmentModel.findOne({ _id: snapshot.envId });
+                    // Inclure seulement si l'environnement n'est pas archivé
+                    if (env && env.archived !== true) {
+                        filteredSnapshots.push(snapshot);
+                    }
+                } else {
+                    // Si pas d'envId, inclure (cas rare mais possible)
+                    filteredSnapshots.push(snapshot);
+                }
+            }
+            
+            return filteredSnapshots;
         }
     }
 };

@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 // Types pour les onglets
-type AboutTab = 'overview' | 'data-model' | 'collector-workflow' | 'dd-tech-view' | 'hosting-view' | 'audit-trail' | 'user-profile' | 'deployment-ci-cd' | 'data-management';
+type AboutTab = 'overview' | 'data-model' | 'collector-workflow' | 'dd-tech-view' | 'hosting-view' | 'audit-trail' | 'user-profile' | 'deployment-ci-cd' | 'data-management' | 'data-model-mapping';
 
 // Composants personnalisés pour le rendu Markdown
 const MarkdownComponents = {
@@ -161,6 +161,7 @@ const About: React.FC = () => {
   const [ddTechViewContent, setDdTechViewContent] = useState<string>('');
   const [deploymentCiCdContent, setDeploymentCiCdContent] = useState<string>('');
   const [dataManagementContent, setDataManagementContent] = useState<string>('');
+  const [dataModelMappingContent, setDataModelMappingContent] = useState<string>('');
 
   // Charger le README.md
   useEffect(() => {
@@ -250,6 +251,17 @@ const About: React.FC = () => {
       });
   }, []);
 
+  // Charger DATA_MODEL_MAPPING.md
+  useEffect(() => {
+    fetch('/docs/DATA_MODEL_MAPPING.md')
+      .then((res) => res.text())
+      .then((text) => setDataModelMappingContent(text))
+      .catch((err) => {
+        console.error('Erreur lors du chargement de la doc Data Model Mapping:', err);
+        setDataModelMappingContent('# Mapping du Modèle de Données\n\nDocumentation non disponible.');
+      });
+  }, []);
+
   const tabs = [
     { id: 'overview' as AboutTab, label: 'Vue d\'ensemble', icon: '📖' },
     { id: 'data-model' as AboutTab, label: 'Données collectées', icon: '📊' },
@@ -257,6 +269,7 @@ const About: React.FC = () => {
     { id: 'dd-tech-view' as AboutTab, label: 'DD Tech (Vue)', icon: '🔍' },
     { id: 'hosting-view' as AboutTab, label: 'Hébergement (Vue)', icon: '🏗️' },
     { id: 'data-management' as AboutTab, label: 'Data Management', icon: '💾' },
+    { id: 'data-model-mapping' as AboutTab, label: 'Mapping Référentiels', icon: '🗺️' },
     { id: 'audit-trail' as AboutTab, label: 'Pistes d\'audit', icon: '🔍' },
     { id: 'user-profile' as AboutTab, label: 'Profils', icon: '👤' },
     { id: 'deployment-ci-cd' as AboutTab, label: 'Déploiement & CI/CD', icon: '🚀' },
@@ -337,6 +350,14 @@ const About: React.FC = () => {
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
               {dataManagementContent || 'Chargement...'}
+            </ReactMarkdown>
+          </div>
+        );
+      case 'data-model-mapping':
+        return (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+              {dataModelMappingContent || 'Chargement...'}
             </ReactMarkdown>
           </div>
         );
@@ -423,16 +444,17 @@ const DataModelContent: React.FC = () => {
         { name: 'product_criticality', type: 'enum', priority: 'P1', required: true, description: 'Criticité produit' },
         { name: 'api_robustness', type: 'string', priority: 'DD', required: false, description: 'Robustesse des APIs' },
         { name: 'api_documentation_quality', type: 'enum', priority: 'DD', required: false, description: 'Qualité documentation API' },
-        { name: 'ip_ownership_clear', type: 'boolean', priority: 'DD', required: true, description: 'Propriété intellectuelle claire' },
+        { name: 'ip_ownership_clear', type: 'enum', priority: 'DD', required: true, description: 'Propriété intellectuelle claire (Yes/No/TBD/N/A)' },
         { name: 'licensing_model', type: 'string', priority: 'DD', required: false, description: 'Modèle de licence' },
-        { name: 'license_compliance_assured', type: 'boolean', priority: 'DD', required: false, description: 'Conformité licences' },
+        { name: 'license_compliance_assured', type: 'enum', priority: 'DD', required: false, description: 'Conformité licences (Yes/No/TBD/N/A)' },
+        { name: 'tech_stack', type: 'string[]', priority: 'P2', required: false, description: 'Stack technique logicielle (langages, frameworks, bibliothèques)' },
       ],
     },
     {
       id: 'environment',
       name: 'Environment',
       priority: 'P1/P2',
-      description: 'Environnement d\'exécution (Production, Test, Dev, Backup)',
+      description: 'Environnement d\'exécution (Production, Test, Dev, Backup, Recette)',
       fields: [
         { name: 'envId', type: 'string', priority: 'P1', required: true, description: 'Identifiant unique' },
         { name: 'solutionId', type: 'ObjectId', priority: 'P1', required: true, description: 'Référence vers Solution' },
@@ -524,7 +546,7 @@ const DataModelContent: React.FC = () => {
         { name: 'codebaseId', type: 'string', priority: 'DD', required: true, description: 'Identifiant unique' },
         { name: 'solutionId', type: 'ObjectId', priority: 'DD', required: true, description: 'Référence vers Solution' },
         { name: 'repo_location', type: 'string', priority: 'DD', required: true, description: 'Localisation du dépôt' },
-        { name: 'documentation_level', type: 'enum', priority: 'DD', required: true, description: 'Niveau documentation (High/Medium/Low/None)' },
+        { name: 'documentation_level', type: 'enum', priority: 'DD', required: true, description: 'Niveau documentation (High/Medium/Low/None/TBD/N/A)' },
         { name: 'code_review_process', type: 'string', priority: 'DD', required: false, description: 'Processus de revue de code' },
         { name: 'version_control_tool', type: 'string', priority: 'DD', required: false, description: 'Outil de contrôle de version' },
         { name: 'technical_debt_known', type: 'string', priority: 'DD', required: false, description: 'Dette technique connue' },

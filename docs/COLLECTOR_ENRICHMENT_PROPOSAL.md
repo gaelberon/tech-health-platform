@@ -287,3 +287,5 @@ Les champs DD nécessiteront des lookups supplémentaires :
 6. ✅ Ajouter les traductions i18n pour les nouveaux champs
 
 
+
+

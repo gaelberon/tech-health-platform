@@ -1,15 +1,15 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
 // Définitions des types Enum possibles pour les champs DD
-type SdlcProcess = 'Scrum' | 'Kanban' | 'Waterfall' | 'Agile' | 'Hybrid';
-type AutomationLevel = 'None' | 'Manual' | 'Partial CI' | 'Full CI/CD';
+type SdlcProcess = 'Scrum' | 'Kanban' | 'Waterfall' | 'Agile' | 'Hybrid' | 'TBD' | 'N/A';
+type AutomationLevel = 'None' | 'Manual' | 'Partial CI' | 'Full CI/CD' | 'TBD' | 'N/A';
 
 // 1. Définition de l'Interface TypeScript pour l'entité
 export interface IDevelopmentMetrics extends Document {
     metricsId: string; // Identifiant unique (PK)
     solutionId: Types.ObjectId; // Lien vers l'entité Solution (FK)
     
-    // Métriques DD (Section 6c, 2d, 5b, 7a du DD)
+    // Métriques DD (6.c, 2.d, 5.b, 7.a)
     sdlc_process: SdlcProcess; // Processus de développement logiciel [1]
     devops_automation_level: AutomationLevel; // Degré d'automatisation CI/CD [1]
     
@@ -41,14 +41,14 @@ const DevelopmentMetricsSchema = new Schema<IDevelopmentMetrics>({
     // Processus et Automatisation
     sdlc_process: { 
         type: String, 
-        enum: ['Scrum', 'Kanban', 'Waterfall', 'Agile', 'Hybrid'], 
+        enum: ['Scrum', 'Kanban', 'Waterfall', 'Agile', 'Hybrid', 'TBD', 'N/A'], 
         required: true,
         description: "Processus de développement logiciel (Scrum, Kanban, Cascade, etc.) [1, 3]" 
     },
     
     devops_automation_level: { 
         type: String, 
-        enum: ['None', 'Manual', 'Partial CI', 'Full CI/CD'], 
+        enum: ['None', 'Manual', 'Partial CI', 'Full CI/CD', 'TBD', 'N/A'], 
         required: true,
         description: "Degré d'automatisation des pipelines CI/CD [1, 5]"
     },

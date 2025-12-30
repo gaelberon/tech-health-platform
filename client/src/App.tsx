@@ -19,6 +19,7 @@ import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { I18nProvider } from './i18n/I18nProvider';
+import { EditorProvider } from './contexts/EditorContext';
 import { hasAccessToTab, getDefaultTab, type TabType } from './utils/permissions';
 import { usePagePermissions } from './hooks/usePagePermissions';
 
@@ -252,7 +253,9 @@ function App() {
     <SessionProvider>
       <I18nProvider>
         <ThemeProvider>
-          <AppShell />
+          <EditorProvider>
+            <AppShell />
+          </EditorProvider>
         </ThemeProvider>
       </I18nProvider>
     </SessionProvider>
