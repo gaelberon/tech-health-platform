@@ -796,9 +796,35 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
   };
 
   const solutions = editor?.solutions || [];
+  // Filtrer les solutions : si showArchived est false, exclure celles où archived === true
+  // Note: archived peut être undefined pour les solutions non archivées, ce qui est équivalent à false
   const filteredSolutions = showArchived 
     ? solutions 
-    : solutions.filter((s: any) => !(s.archived === true));
+    : solutions.filter((s: any) => s.archived !== true);
+  
+  // Debug: log pour vérifier les solutions
+  if (editor && activeSection === 'solutions') {
+    console.log('Debug Solutions tab - Editor:', editor.name);
+    console.log('Debug Solutions tab - editor.solutions:', editor.solutions);
+    console.log('Debug Solutions tab - solutions array:', solutions);
+    console.log('Debug Solutions tab - filteredSolutions:', filteredSolutions);
+    console.log('Debug Solutions tab - showArchived:', showArchived);
+    solutions.forEach((s: any) => {
+      console.log(`  - Solution: ${s.name}, archived: ${s.archived}, type: ${typeof s.archived}`);
+    });
+  }
+  
+  if (editor && activeSection === 'environments') {
+    console.log('Debug Environments tab - Editor:', editor.name);
+    console.log('Debug Environments tab - solutions:', solutions);
+    console.log('Debug Environments tab - selectedSolutionId:', selectedSolutionId);
+    console.log('Debug Environments tab - showArchived:', showArchived);
+    if (selectedSolutionId) {
+      const selectedSol = solutions.find((s: any) => s.solutionId === selectedSolutionId);
+      console.log('Debug Environments tab - selectedSolution:', selectedSol);
+      console.log('Debug Environments tab - environments:', selectedSol?.environments);
+    }
+  }
 
   // Trouver la solution sélectionnée pour accéder à codebase et developmentMetrics
   const selectedSolution = selectedSolutionId 
@@ -982,7 +1008,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
               />
               {editorForm.internal_it_systems.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {editorForm.internal_it_systems.map((system, index) => (
+                  {editorForm.internal_it_systems.map((system: string, index: number) => (
                     <span
                       key={index}
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
@@ -1020,7 +1046,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
               />
               {editorForm.it_security_strategy.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {editorForm.it_security_strategy.map((strategy, index) => (
+                  {editorForm.it_security_strategy.map((strategy: string, index: number) => (
                     <span
                       key={index}
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
@@ -1058,7 +1084,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
               </p>
             ) : (
               <div className="space-y-4">
-                {editorForm.contracts_for_review.map((contract, index) => (
+                {editorForm.contracts_for_review.map((contract: any, index: number) => (
                   <div
                     key={index}
                     className="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900/50"
@@ -1070,7 +1096,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          const newContracts = editorForm.contracts_for_review.filter((_, i) => i !== index);
+                          const newContracts = editorForm.contracts_for_review.filter((_: any, i: number) => i !== index);
                           setEditorForm({ ...editorForm, contracts_for_review: newContracts });
                         }}
                         className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm"
@@ -1275,9 +1301,9 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                       product_criticality: 'Medium',
                       api_robustness: '',
                       api_documentation_quality: '',
-                      ip_ownership_clear: false,
+                      ip_ownership_clear: '',
                       licensing_model: '',
-                      license_compliance_assured: false,
+                      license_compliance_assured: '',
                       tech_stack: [],
                     });
                   }}
@@ -1297,7 +1323,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
           )}
           
           {/* Sélection de solution */}
-          {filteredSolutions.length > 0 && (
+          {solutions.length > 0 ? (
             <div className="mb-4">
               <FieldLabel
                 translationKey="dataManagement.form.selectSolution"
@@ -1318,6 +1344,17 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                   </option>
                 ))}
               </select>
+              {filteredSolutions.length === 0 && solutions.length > 0 && (
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  {t('dataManagement.form.allSolutionsArchived', 'Toutes les solutions sont archivées. Activez "Afficher les archivées" pour les voir.')}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {t('dataManagement.form.noSolutions', 'Aucune solution disponible.')}
+              </p>
             </div>
           )}
           
@@ -1815,39 +1852,62 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               >
                 <option value="">{t('dataManagement.form.selectSolutionPlaceholder')}</option>
-                {solutions.map((solution: any) => (
+                {filteredSolutions.map((solution: any) => (
                   <option key={solution.solutionId} value={solution.solutionId}>
-                    {solution.name}
+                    {solution.name} {solution.archived ? `(${t('dataManagement.form.archived')})` : ''}
                   </option>
                 ))}
               </select>
+              {filteredSolutions.length === 0 && solutions.length > 0 && (
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  {t('dataManagement.form.allSolutionsArchived', 'Toutes les solutions sont archivées. Activez "Afficher les archivées" pour les voir.')}
+                </p>
+              )}
             </div>
-            {selectedSolutionId && (
-              <div>
-                <FieldLabel
-                  translationKey="dataManagement.form.selectEnvironment"
-                  showFieldReference={showFieldReferences}
-                  className="mb-2"
-                />
-                <select
-                  value={selectedEnvId || ''}
-                  onChange={(e) => {
-                    setSelectedEnvId(e.target.value || null);
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-                >
-                  <option value="">{t('dataManagement.form.selectEnvironmentPlaceholder')}</option>
-                  {(showArchived
-                    ? solutions.find((s: any) => s.solutionId === selectedSolutionId)?.environments || []
-                    : solutions.find((s: any) => s.solutionId === selectedSolutionId)?.environments?.filter((e: any) => !(e.archived === true)) || []
-                  ).map((env: any) => (
-                    <option key={env.envId} value={env.envId}>
-                      {env.env_type} - {env.envId} {env.archived ? `(${t('dataManagement.form.archived')})` : ''}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+            {selectedSolutionId && (() => {
+              const selectedSolution = solutions.find((s: any) => s.solutionId === selectedSolutionId);
+              const allEnvironments = selectedSolution?.environments || [];
+              const filteredEnvironments = showArchived 
+                ? allEnvironments 
+                : allEnvironments.filter((e: any) => !(e.archived === true));
+              
+              return (
+                <div>
+                  <FieldLabel
+                    translationKey="dataManagement.form.selectEnvironment"
+                    showFieldReference={showFieldReferences}
+                    className="mb-2"
+                  />
+                  {allEnvironments.length > 0 ? (
+                    <>
+                      <select
+                        value={selectedEnvId || ''}
+                        onChange={(e) => {
+                          setSelectedEnvId(e.target.value || null);
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                      >
+                        <option value="">{t('dataManagement.form.selectEnvironmentPlaceholder')}</option>
+                        {filteredEnvironments.map((env: any) => (
+                          <option key={env.envId} value={env.envId}>
+                            {env.env_type} - {env.envId} {env.archived ? `(${t('dataManagement.form.archived')})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                      {filteredEnvironments.length === 0 && allEnvironments.length > 0 && (
+                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                          {t('dataManagement.form.allEnvironmentsArchived', 'Tous les environnements sont archivés. Activez "Afficher les archivées" pour les voir.')}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t('dataManagement.form.noEnvironmentsForSolution', 'Aucun environnement disponible pour cette solution.')}
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
           
           {/* Liste des environnements avec actions d'archivage */}
