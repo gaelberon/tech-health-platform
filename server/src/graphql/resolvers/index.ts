@@ -33,6 +33,8 @@ import AuditResolver from './AuditResolver.js';
 import CollectorResolver from './CollectorResolver.js';
 import CollectorDraftResolver from './CollectorDraftResolver.js';
 import SettingsResolver from './SettingsResolver.js';
+import ReportingResolver from './ReportingResolver.js';
+import { AssetResolver } from './AssetResolver.js';
 
 
 // ------------------ FONCTION D'AGREGATION ------------------
@@ -52,6 +54,7 @@ function combineResolvers(resolversArray: any[]): any {
         Solution: {},
         Environment: {},
         Hosting: {},
+        Asset: {},
         ...resolversArray
             .filter(r => r.Query || r.Mutation || r.Solution || r.Environment || r.Editor || r.Hosting) // Filtre pour les resolvers valides
             .reduce((acc, resolver) => {
@@ -64,10 +67,11 @@ function combineResolvers(resolversArray: any[]): any {
                 if (resolver.Solution) Object.assign(acc.Solution, resolver.Solution);
                 if (resolver.Environment) Object.assign(acc.Environment, resolver.Environment);
                 if (resolver.Hosting) Object.assign(acc.Hosting, resolver.Hosting);
+                if (resolver.Asset) Object.assign(acc.Asset, resolver.Asset);
                 // Ajoutez ici la gestion des autres Type Resolvers si nécessaire (ex: SecurityProfile)
                 
                 return acc;
-            }, { Query: {}, Mutation: {}, Editor: {}, Solution: {}, Environment: {}, Hosting: {} }),
+            }, { Query: {}, Mutation: {}, Editor: {}, Solution: {}, Environment: {}, Hosting: {}, Asset: {} }),
     };
     
     // Pour ne pas inclure des objets vides si aucune Query/Mutation n'a été trouvée
@@ -102,8 +106,10 @@ const allResolvers = combineResolvers([
     UserResolver,
     AuditResolver,
     CollectorResolver,
-    CollectorDraftResolver,
-    SettingsResolver,
+        CollectorDraftResolver,
+        SettingsResolver,
+        ReportingResolver,
+        AssetResolver,
 ]);
 
 export default allResolvers;

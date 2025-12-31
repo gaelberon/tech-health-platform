@@ -90,8 +90,91 @@ export const UPDATE_EDITOR = gql`
       country
       size
       business_criticality
-      internal_it_systems
       it_security_strategy
+    }
+  }
+`;
+
+// Mutations pour la gestion des assets
+export const CREATE_ASSET = gql`
+  mutation CreateAsset($input: CreateAssetInput!) {
+    createAsset(input: $input) {
+      assetId
+      editorId
+      name
+      category
+      type
+      description
+      operational_purpose
+      information_owner
+      custodian
+      confidentiality_level
+      integrity_level
+      availability_level
+      criticality_status
+      mtd_hours
+      rpo_mtdl_hours
+      approval_status
+      encryption_status
+      physical_location
+      version_firmware
+      sbom_reference
+      end_of_life_date
+      last_inventory_date
+      disposal_method
+      ownership
+      acceptable_use
+      return_policy
+    }
+  }
+`;
+
+export const UPDATE_ASSET = gql`
+  mutation UpdateAsset($input: UpdateAssetInput!) {
+    updateAsset(input: $input) {
+      assetId
+      editorId
+      name
+      category
+      type
+      description
+      operational_purpose
+      information_owner
+      custodian
+      confidentiality_level
+      integrity_level
+      availability_level
+      criticality_status
+      mtd_hours
+      rpo_mtdl_hours
+      approval_status
+      encryption_status
+      physical_location
+      version_firmware
+      sbom_reference
+      end_of_life_date
+      last_inventory_date
+      disposal_method
+      ownership
+      acceptable_use
+      return_policy
+    }
+  }
+`;
+
+export const DELETE_ASSET = gql`
+  mutation DeleteAsset($assetId: ID!) {
+    deleteAsset(assetId: $assetId)
+  }
+`;
+
+export const ARCHIVE_ASSET = gql`
+  mutation ArchiveAsset($assetId: ID!) {
+    archiveAsset(assetId: $assetId) {
+      assetId
+      archived
+      archivedAt
+      archivedBy
     }
   }
 `;

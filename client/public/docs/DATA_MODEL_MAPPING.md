@@ -309,3 +309,5 @@ Les contrôles AISA suivants ne sont pas encore représentés dans le modèle de
 - **CIEC** : Cadre d'Intervention pour l'Évaluation des Capacités - "Editeurs-Overview - Entities, CIEC & Dictionary.pdf"
 - **AISA** : Altamount Information Security Assessment v1.0 (09.05.2025) - Basé sur ISA Catalog VDA (non officiellement approuvé)
 
+
+

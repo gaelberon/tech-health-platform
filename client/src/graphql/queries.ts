@@ -474,11 +474,40 @@ export const GET_EDITOR_DD_TECH_VIEW = gql`
       country
       size
       business_criticality
-      internal_it_systems
       it_security_strategy
       contracts_for_review {
         type
         summary
+      }
+      assets {
+        assetId
+        name
+        category
+        type
+        description
+        operational_purpose
+        information_owner
+        custodian
+        confidentiality_level
+        integrity_level
+        availability_level
+        criticality_status
+        mtd_hours
+        rpo_mtdl_hours
+        approval_status
+        encryption_status
+        physical_location
+        version_firmware
+        sbom_reference
+        end_of_life_date
+        last_inventory_date
+        disposal_method
+        ownership
+        acceptable_use
+        return_policy
+        archived
+        archivedAt
+        archivedBy
       }
       developmentTeam {
         teamId
@@ -498,11 +527,56 @@ export const GET_EDITOR_WITH_DETAILS = gql`
       country
       size
       business_criticality
-      internal_it_systems
       it_security_strategy
       contracts_for_review {
         type
         summary
+      }
+      information_security_policy
+      information_security_roles
+      information_security_in_projects
+      external_it_service_provider_responsibilities
+      external_it_service_evaluation
+      information_security_risk_management
+      information_security_compliance_procedures
+      isms_reviewed_by_independent_authority
+      security_incident_management
+      employee_qualification_for_sensitive_work
+      staff_contractually_bound_to_security_policies
+      security_awareness_training
+      mobile_work_policy
+      supplier_security_management
+      compliance_with_regulatory_provisions
+      personal_data_protection
+      assets {
+        assetId
+        name
+        category
+        type
+        description
+        operational_purpose
+        information_owner
+        custodian
+        confidentiality_level
+        integrity_level
+        availability_level
+        criticality_status
+        mtd_hours
+        rpo_mtdl_hours
+        approval_status
+        encryption_status
+        physical_location
+        version_firmware
+        sbom_reference
+        end_of_life_date
+        last_inventory_date
+        disposal_method
+        ownership
+        acceptable_use
+        return_policy
+        archived
+        archivedAt
+        archivedBy
       }
       developmentTeam {
         teamId
@@ -549,6 +623,10 @@ export const GET_EDITOR_WITH_DETAILS = gql`
           network_security_mechanisms
           db_scaling_mechanism
           disaster_recovery_plan
+          security_zones_managed
+          network_services_requirements
+          information_assets_removal_policy
+          shared_external_it_services_protection
           sla_offered
           hosting {
             hostingId
@@ -578,6 +656,9 @@ export const GET_EDITOR_WITH_DETAILS = gql`
             pentest_results_summary
             known_security_flaws
             incident_reporting_process
+            change_management
+            malware_protection
+            key_management
           }
           monitoringObservability {
             monId
@@ -623,6 +704,16 @@ export const GET_EDITOR_WITH_DETAILS = gql`
           continuous_improvement
         }
       }
+    }
+  }
+`;
+
+// Mutation pour générer le rapport AISA
+export const GENERATE_AISA_REPORT = gql`
+  mutation GenerateAisaReport($editorId: ID!) {
+    generateAisaReport(editorId: $editorId) {
+      csvContent
+      filename
     }
   }
 `;

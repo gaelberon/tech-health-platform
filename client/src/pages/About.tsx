@@ -424,7 +424,7 @@ const DataModelContent: React.FC = () => {
         { name: 'country', type: 'string', priority: 'P2', required: false, description: 'Pays' },
         { name: 'size', type: 'enum', priority: 'P2', required: false, description: 'Taille (Micro/SME/Mid/Enterprise)' },
         { name: 'business_criticality', type: 'enum', priority: 'P1', required: true, description: 'Criticité métier (Low/Medium/High/Critical)' },
-        { name: 'internal_it_systems', type: 'string[]', priority: 'DD', required: false, description: 'Systèmes IT internes' },
+        // Note: internal_it_systems a été remplacé par l'entité Asset
         { name: 'it_security_strategy', type: 'string', priority: 'DD', required: false, description: 'Stratégie de sécurité IT' },
         { name: 'contracts_for_review', type: 'object[]', priority: 'DD', required: false, description: 'Contrats à réviser' },
       ],
@@ -826,7 +826,7 @@ const DataModelContent: React.FC = () => {
         <ul className="list-disc ml-6 space-y-1 text-gray-600 dark:text-gray-400">
           <li>
             <span className="font-semibold">Editor</span>&nbsp;: editorId, name, country, size, business_criticality,
-            internal_it_systems, it_security_strategy, contracts_for_review
+            assets (remplace internal_it_systems), it_security_strategy, contracts_for_review
           </li>
           <li>
             <span className="font-semibold">Solution</span>&nbsp;: solutionId, name, description, main_use_case, type,
@@ -885,7 +885,7 @@ const DataModelContent: React.FC = () => {
           sous forme d&apos;une seule ligne (<strong>87 critères uniques</strong> séparés par des virgules, après suppression des FK redondantes)&nbsp;:
         </p>
         <div className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs font-mono overflow-x-auto">
-          editorId, name, country, size, business_criticality, internal_it_systems, it_security_strategy, contracts_for_review,
+          editorId, name, country, size, business_criticality, assets (remplace internal_it_systems), it_security_strategy, contracts_for_review,
           solutionId, name, description, main_use_case, type, product_criticality, api_robustness, api_documentation_quality,
           ip_ownership_clear, licensing_model, license_compliance_assured, envId, env_type, tech_stack, data_types, redundancy,
           backup_exists, backup_schedule, backup_rto, backup_rpo, backup_restoration_test_frequency, deployment_type,

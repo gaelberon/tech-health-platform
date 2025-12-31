@@ -15,6 +15,7 @@ import DDTechView from './pages/DDTechView';
 import Dashboard from './pages/Dashboard';
 import DataManagement from './pages/DataManagement';
 import MyProfile from './pages/MyProfile';
+import Reporting from './pages/Reporting';
 import Navigation from './components/Navigation';
 import { SessionProvider, useSession } from './session/SessionContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -34,7 +35,7 @@ const AppShell: React.FC = () => {
   const { permissions: pagePermissions, loading: permissionsLoading } = usePagePermissions(user?.role);
   
   // Charger le nom de l'entreprise depuis les paramètres
-  const { data: settingsData, loading: settingsLoading } = useQuery(GET_COMPANY_NAME, {
+  const { data: settingsData } = useQuery(GET_COMPANY_NAME, {
     fetchPolicy: 'cache-first', // Utiliser le cache si disponible, sinon faire une requête
     errorPolicy: 'ignore', // Ignorer les erreurs pour ne pas bloquer l'affichage
   });
@@ -52,8 +53,8 @@ const AppShell: React.FC = () => {
   // Vérifier les permissions et rediriger si nécessaire
   useEffect(() => {
     if (isAuthenticated && user && !permissionsLoading) {
-      // Le profil est toujours accessible, ne pas rediriger
-      if (activeTab === 'profile' || activeTab === 'third-party-docs' || activeTab === 'admin') {
+      // Le profil, reporting et admin sont toujours accessibles, ne pas rediriger
+      if (activeTab === 'profile' || activeTab === 'third-party-docs' || activeTab === 'admin' || activeTab === 'reporting') {
         return;
       }
       // Si l'utilisateur n'a pas accès à l'onglet actuel, rediriger vers un onglet autorisé
@@ -71,8 +72,8 @@ const AppShell: React.FC = () => {
   // Lors de la connexion, rediriger vers un onglet autorisé
   useEffect(() => {
     if (isAuthenticated && user && !permissionsLoading) {
-      // Le profil, docs tiers et admin sont toujours accessibles si l'utilisateur a cliqué dessus, ne pas rediriger
-      if (activeTab === 'profile' || activeTab === 'third-party-docs' || activeTab === 'admin') {
+      // Le profil, docs tiers, admin et reporting sont toujours accessibles si l'utilisateur a cliqué dessus, ne pas rediriger
+      if (activeTab === 'profile' || activeTab === 'third-party-docs' || activeTab === 'admin' || activeTab === 'reporting') {
         return;
       }
       // Si l'utilisateur arrive sur collector mais a accès au dashboard, rediriger vers dashboard
@@ -141,8 +142,8 @@ const AppShell: React.FC = () => {
     }
 
     // Double vérification de sécurité avant de rendre le contenu
-    // Le profil est toujours accessible, ne pas bloquer
-    if (!user || (activeTab !== 'profile' && activeTab !== 'third-party-docs' && activeTab !== 'admin' && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
+    // Le profil, reporting et admin sont toujours accessibles, ne pas bloquer
+    if (!user || (activeTab !== 'profile' && activeTab !== 'third-party-docs' && activeTab !== 'admin' && activeTab !== 'reporting' && !permissionsLoading && !hasAccessToTab(user.role, activeTab, pagePermissions))) {
       return (
           <div className="space-y-6">
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -210,6 +211,8 @@ const AppShell: React.FC = () => {
           );
         }
         return <ThirdPartyDocs />;
+      case 'reporting':
+        return <Reporting />;
       default:
         return null;
     }
@@ -217,7 +220,7 @@ const AppShell: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} onNavigate={setActiveTab} />
+      <Navigation activeTab={activeTab} onTabChange={setActiveTab} onNavigate={(tab) => setActiveTab(tab as TabType)} />
       
       <main className="flex-1">
         {activeTab === 'dashboard' ? (

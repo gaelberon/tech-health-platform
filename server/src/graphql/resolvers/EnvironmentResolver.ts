@@ -54,6 +54,12 @@ export interface UpdateEnvironmentInput {
     network_security_mechanisms?: string[]; // VPN, pare-feux, IDS/IPS [3, 6]
     db_scaling_mechanism?: string; // Comment les bases de données évoluent [3, 5]
     disaster_recovery_plan?: string; // Plan de reprise après sinistre documenté et testé [3, 7]
+    
+    // Champs AISA
+    security_zones_managed?: string; // AISA 3.1.1
+    network_services_requirements?: string; // AISA 5.3.2
+    information_assets_removal_policy?: string; // AISA 5.3.3
+    shared_external_it_services_protection?: string; // AISA 5.3.4
 }
 
 // ------------------ RESOLVER ------------------

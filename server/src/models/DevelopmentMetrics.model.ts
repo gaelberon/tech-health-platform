@@ -43,14 +43,14 @@ const DevelopmentMetricsSchema = new Schema<IDevelopmentMetrics>({
         type: String, 
         enum: ['Scrum', 'Kanban', 'Waterfall', 'Agile', 'Hybrid', 'TBD', 'N/A'], 
         required: true,
-        description: "Processus de développement logiciel (Scrum, Kanban, Cascade, etc.) [1, 3]" 
+        description: "Processus de développement logiciel (DD 6.c.1, AISA 6.1, 6.2)" 
     },
     
     devops_automation_level: { 
         type: String, 
         enum: ['None', 'Manual', 'Partial CI', 'Full CI/CD', 'TBD', 'N/A'], 
         required: true,
-        description: "Degré d'automatisation des pipelines CI/CD [1, 5]"
+        description: "Degré d'automatisation des pipelines CI/CD (DD 2.d.1, AISA 6.1, 6.2, 12.1)"
     },
     
     // Métriques temporelles et de ratio (stockées en tant que nombres)
@@ -58,26 +58,30 @@ const DevelopmentMetricsSchema = new Schema<IDevelopmentMetrics>({
         type: Number, 
         required: true,
         min: 0,
-        max: 1 
+        max: 1,
+        description: "Ratio travail planifié/non planifié (DD 6.c.4)"
     },
     
     lead_time_for_changes_days: { 
         type: Number, 
         required: true,
-        min: 0 
+        min: 0,
+        description: "Délai de mise en œuvre des changements en jours (DD 6.c.5)"
     },
     
     mttr_hours: { 
         type: Number, 
         required: true,
-        min: 0 
+        min: 0,
+        description: "Mean Time to Restore en heures (DD 5.b.3, AISA 16.1, 16.2)"
     },
     
     internal_vs_external_bug_ratio: { 
         type: Number, 
         required: true,
         min: 0,
-        max: 1 
+        max: 1,
+        description: "Ratio bugs internes/externes (DD 7.a.3, AISA 12.1, 12.2)"
     }
 }, {
     timestamps: true // Ajoute createdAt et updatedAt

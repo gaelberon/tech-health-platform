@@ -50,6 +50,10 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
     network_security_mechanisms: environment?.network_security_mechanisms || [] as string[],
     db_scaling_mechanism: environment?.db_scaling_mechanism || '',
     disaster_recovery_plan: environment?.disaster_recovery_plan || '',
+    security_zones_managed: environment?.security_zones_managed || '',
+    network_services_requirements: environment?.network_services_requirements || '',
+    information_assets_removal_policy: environment?.information_assets_removal_policy || '',
+    shared_external_it_services_protection: environment?.shared_external_it_services_protection || '',
     sla_offered: environment?.sla_offered || '',
     backup: {
       exists: environment?.backup?.exists || false,
@@ -73,6 +77,10 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
         network_security_mechanisms: environment.network_security_mechanisms || [],
         db_scaling_mechanism: environment.db_scaling_mechanism || '',
         disaster_recovery_plan: environment.disaster_recovery_plan || '',
+        security_zones_managed: environment.security_zones_managed || '',
+        network_services_requirements: environment.network_services_requirements || '',
+        information_assets_removal_policy: environment.information_assets_removal_policy || '',
+        shared_external_it_services_protection: environment.shared_external_it_services_protection || '',
         sla_offered: environment.sla_offered || '',
         backup: {
           exists: environment.backup?.exists || false,
@@ -174,6 +182,20 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
       
       if (formData.disaster_recovery_plan && formData.disaster_recovery_plan !== '-') {
         cleanedData.disaster_recovery_plan = formData.disaster_recovery_plan;
+      }
+      
+      // Ajouter les nouveaux champs AISA si présents
+      if (formData.security_zones_managed) {
+        cleanedData.security_zones_managed = formData.security_zones_managed;
+      }
+      if (formData.network_services_requirements) {
+        cleanedData.network_services_requirements = formData.network_services_requirements;
+      }
+      if (formData.information_assets_removal_policy) {
+        cleanedData.information_assets_removal_policy = formData.information_assets_removal_policy;
+      }
+      if (formData.shared_external_it_services_protection) {
+        cleanedData.shared_external_it_services_protection = formData.shared_external_it_services_protection;
       }
       
       await updateEnvironment({
@@ -512,6 +534,70 @@ const EnvironmentDetailsSection: React.FC<EnvironmentDetailsSectionProps> = ({
             ))}
           </div>
         )}
+      </div>
+
+      {/* Nouveaux champs AISA */}
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+        <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          {t('dataManagement.environment.aisaFields', 'Champs AISA supplémentaires')}
+        </h4>
+        <div className="space-y-4">
+          <div>
+            <FieldLabel
+              translationKey="dataManagement.environment.securityZonesManaged"
+              showFieldReference={showFieldReferences}
+            />
+            <textarea
+              value={formData.security_zones_managed}
+              onChange={(e) => setFormData({ ...formData, security_zones_managed: e.target.value })}
+              rows={3}
+              className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.security_zones_managed)}
+              placeholder="Gestion des zones de sécurité pour protéger les actifs d'information..."
+            />
+          </div>
+
+          <div>
+            <FieldLabel
+              translationKey="dataManagement.environment.networkServicesRequirements"
+              showFieldReference={showFieldReferences}
+            />
+            <textarea
+              value={formData.network_services_requirements}
+              onChange={(e) => setFormData({ ...formData, network_services_requirements: e.target.value })}
+              rows={3}
+              className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.network_services_requirements)}
+              placeholder="Exigences pour les services réseau..."
+            />
+          </div>
+
+          <div>
+            <FieldLabel
+              translationKey="dataManagement.environment.informationAssetsRemovalPolicy"
+              showFieldReference={showFieldReferences}
+            />
+            <textarea
+              value={formData.information_assets_removal_policy}
+              onChange={(e) => setFormData({ ...formData, information_assets_removal_policy: e.target.value })}
+              rows={3}
+              className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.information_assets_removal_policy)}
+              placeholder="Politique de retour et suppression sécurisée des actifs d'information..."
+            />
+          </div>
+
+          <div>
+            <FieldLabel
+              translationKey="dataManagement.environment.sharedExternalItServicesProtection"
+              showFieldReference={showFieldReferences}
+            />
+            <textarea
+              value={formData.shared_external_it_services_protection}
+              onChange={(e) => setFormData({ ...formData, shared_external_it_services_protection: e.target.value })}
+              rows={3}
+              className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.shared_external_it_services_protection)}
+              placeholder="Protection de l'information dans les services IT externes partagés..."
+            />
+          </div>
+        </div>
       </div>
 
       {/* Backup */}

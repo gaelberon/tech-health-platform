@@ -53,7 +53,7 @@ const HostingSchema = new Schema<IHosting>({
     // Certifications (P2)
     certifications: [{ 
         type: String, 
-        description: "Liste des certifications (ISO27001, HDS, SOC2, etc.)"
+        description: "Liste des certifications (ISO27001, HDS, SOC2, etc.) (P2/P3, AISA 5.1.1, 5.2.1, 18.1)"
     }],
     
     // Contact (P4)

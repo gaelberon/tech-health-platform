@@ -13,7 +13,10 @@
     "delete-editor": "npm run build && node dist/scripts/deleteEditor.js",
     "merge-editors": "npm run build && node dist/scripts/mergeEditors.js",
     "calculate-hosting-snapshots": "npm run build && node dist/scripts/calculateHostingSnapshots.js",
-    "calculate-dd-tech": "npm run build && node dist/scripts/calculateDDTech.js"
+    "calculate-dd-tech": "npm run build && node dist/scripts/calculateDDTech.js",
+    "migrate-internal-it-systems-to-assets": "node --loader ts-node/esm src/scripts/migrateInternalItSystemsToAssets.ts",
+    "update-inedee-assets": "node --loader ts-node/esm src/scripts/updateInedeeAssets.ts",
+    "cleanup-duplicate-assets": "node --loader ts-node/esm src/scripts/cleanupDuplicateAssets.ts"
   },
   "keywords": [],
   "author": "",

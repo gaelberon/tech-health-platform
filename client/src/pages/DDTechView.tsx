@@ -400,10 +400,18 @@ const SectionAContent: React.FC<{ editor: any; solution: any; t: any }> = ({ edi
       <DataRow label={t('ddTech.sectionA.country')} value={editor?.country} />
       <DataRow label={t('ddTech.sectionA.editorSize')} value={editor?.size} />
       <DataRow label={t('ddTech.sectionA.businessCriticality')} value={editor?.business_criticality} />
-      {editor?.internal_it_systems && editor.internal_it_systems.length > 0 && (
+      {editor?.assets && editor.assets.filter((asset: any) => 
+        asset.category === 'digital_and_data' || asset.type === 'it_hardware'
+      ).length > 0 && (
         <DataRow
-          label={t('ddTech.sectionA.internalItSystems')}
-          value={<ul className="list-disc list-inside">{editor.internal_it_systems.map((sys: string, idx: number) => <li key={idx}>{sys}</li>)}</ul>}
+          label={t('ddTech.sectionA.technicalAssets', 'Actifs techniques (systèmes IT internes)')}
+          value={
+            <ul className="list-disc list-inside">
+              {editor.assets
+                .filter((asset: any) => asset.category === 'digital_and_data' || asset.type === 'it_hardware')
+                .map((asset: any) => <li key={asset.assetId}>{asset.name}</li>)}
+            </ul>
+          }
         />
       )}
       <DataRow label={t('ddTech.sectionA.itSecurityStrategy')} value={editor?.it_security_strategy} />

@@ -211,6 +211,9 @@ const typeDefs = gql`
         pentest_results_summary: String # Résumé des derniers pentests [8]
         known_security_flaws: String # Failles connues [8]
         incident_reporting_process: String # Processus de résolution des incidents [8]
+        change_management: String # AISA 5.2.1
+        malware_protection: String # AISA 5.2.3
+        key_management: String # ISO 27001 A.10.2 / AISA 5.1.2
     }
 
     # ENTITÉ MONITORING/OBSERVABILITY (P2) - Liée à Environment [9, 10]
@@ -287,6 +290,55 @@ const typeDefs = gql`
         editorId: ID! # FK vers Editor [10]
         team_size_adequate: String # Taille de l'équipe suffisante [10]
         key_person_dependency: String # Dépendances envers des personnes clés [10]
+    }
+
+    # ENTITÉ ASSET (AISA 1.3, 3.1, 3.2, 3.3, 3.4)
+    type Asset {
+        assetId: ID! # PK
+        editorId: ID! # FK vers Editor
+        name: String! # Nom de l'actif (P1, AISA 1.3.1)
+        category: String! # intangible, digital_and_data, tangible, financial (P1, AISA 1.3.1)
+        type: String! # Type spécifique de l'actif (P1, AISA 1.3.1)
+        description: String # Description optionnelle (P2)
+        
+        # Champs AISA - Gestion des actifs (Section 1.3)
+        operational_purpose: String # AISA 1.3.1 - But opérationnel spécifique
+        information_owner: String # AISA 1.3.1 - Personne responsable de l'information (Risk Owner)
+        custodian: String # AISA 1.3.1 - Responsable technique de la maintenance (ex: Admin IT)
+        
+        # Classification selon CIA (AISA 1.3.2)
+        confidentiality_level: String # Niveau de confidentialité (Public, Interne, Confidentiel, Strictement Confidentiel)
+        integrity_level: String # Niveau requis pour l'intégrité
+        availability_level: String # Niveau requis pour la disponibilité
+        
+        # Criticité et continuité
+        criticality_status: Boolean # AISA 1.3.2 - Indicateur si l'actif est critique
+        mtd_hours: Float # Max Tolerable Downtime (en heures)
+        rpo_mtdl_hours: Float # Recovery Point Objective / Maximum Tolerable Data Loss (en heures)
+        
+        # Évaluation et approbation (AISA 1.3.3, 1.3.4)
+        approval_status: String # État de l'évaluation (Évalué, Approuvé, Rejeté)
+        encryption_status: String # AISA 3.1.4 - Type de chiffrement (notamment pour actifs mobiles)
+        
+        # Localisation et version
+        physical_location: String # AISA 3.1.3 - Site physique ou zone de sécurité
+        version_firmware: String # Version logicielle ou matérielle actuelle
+        sbom_reference: String # Lien vers la nomenclature logicielle (Software Bill of Materials)
+        
+        # Cycle de vie
+        end_of_life_date: String # Date de fin de support par le constructeur/éditeur
+        last_inventory_date: String # AISA 1.3.1 - Date de la dernière vérification physique ou logique
+        disposal_method: String # AISA 3.1.3 - Méthode prévue pour la destruction sécurisée
+        
+        # Champs AISA - Propriété et utilisation (Section 3.2, 3.3, 3.4)
+        ownership: String # AISA 3.2 - Ownership of Assets
+        acceptable_use: String # AISA 3.3 - Acceptable Use of Assets
+        return_policy: String # AISA 3.4 - Return of Assets
+        
+        # Champs d'archivage
+        archived: Boolean
+        archivedAt: String
+        archivedBy: String
     }
 
     # ENTITÉ ROADMAP ITEM (P3 - Polymorphe) [11, 16]
@@ -432,6 +484,12 @@ const typeDefs = gql`
         allowed: Boolean!
     }
 
+    # RAPPORT AISA
+    type AisaReportResponse {
+        csvContent: String!
+        filename: String!
+    }
+
     # PISTES D'AUDIT
     type AuditChange {
         field: String!
@@ -481,6 +539,10 @@ const typeDefs = gql`
         network_security_mechanisms: [String] # Section 2c DD [4]
         db_scaling_mechanism: String # Section 2b DD [4]
         disaster_recovery_plan: String # Section 5c DD [4]
+        security_zones_managed: String # AISA 3.1.1
+        network_services_requirements: String # AISA 5.3.2
+        information_assets_removal_policy: String # AISA 5.3.3
+        shared_external_it_services_protection: String # AISA 5.3.4
         
         # Champs d'archivage
         archived: Boolean
@@ -554,9 +616,29 @@ const typeDefs = gql`
         business_criticality: Criticality! # P1 [6, 18]
 
         # Champs DD internes
-        internal_it_systems: [String] # Systèmes IT internes (ERP, CRM) [6]
         it_security_strategy: [String] # Stratégies de sécurité interne (array) [6]
         contracts_for_review: [ContractForReview] # Contrats à examiner [6]
+        
+        # Relations 0..N via Field Resolvers
+        assets: [Asset]! # Tous les actifs de cet éditeur (AISA 3.1) [17]
+        
+        # Champs AISA - Organisation et Gouvernance
+        information_security_policy: String # AISA 1.1.1
+        information_security_roles: String # AISA 1.2.2
+        information_security_in_projects: String # AISA 1.2.3
+        external_it_service_provider_responsibilities: String # AISA 1.2.4
+        external_it_service_evaluation: String # AISA 1.3.3
+        information_security_risk_management: String # AISA 1.4.1
+        information_security_compliance_procedures: String # AISA 1.5.1
+        isms_reviewed_by_independent_authority: String # AISA 1.5.2
+        security_incident_management: String # AISA 1.6.1, 1.6.2, 1.6.3
+        employee_qualification_for_sensitive_work: String # AISA 2.1.1
+        staff_contractually_bound_to_security_policies: String # AISA 2.1.2
+        security_awareness_training: String # AISA 2.1.3
+        mobile_work_policy: String # AISA 2.1.4
+        supplier_security_management: String # AISA 6.1.1, 6.1.2
+        compliance_with_regulatory_provisions: String # AISA 7.1.1
+        personal_data_protection: String # AISA 7.1.2
         
         # Relations 0..N via Field Resolvers
         solutions: [Solution]! # Toutes les Solutions de cet éditeur [17]
@@ -580,9 +662,31 @@ const typeDefs = gql`
         country: String
         size: CompanySize
         business_criticality: Criticality
-        internal_it_systems: [String]
         it_security_strategy: [String]
         contracts_for_review: [ContractForReviewInput]
+    }
+    
+    # Asset Inputs
+    input CreateAssetInput {
+        editorId: ID!
+        name: String!
+        category: String! # intangible, digital_and_data, tangible, financial
+        type: String! # Type spécifique selon la catégorie
+        description: String
+        ownership: String # AISA 3.2
+        acceptable_use: String # AISA 3.3
+        return_policy: String # AISA 3.4
+    }
+    
+    input UpdateAssetInput {
+        assetId: ID!
+        name: String
+        category: String
+        type: String
+        description: String
+        ownership: String
+        acceptable_use: String
+        return_policy: String
     }
 
     # Solution Inputs
@@ -1047,6 +1151,10 @@ const typeDefs = gql`
         listPerformanceMetrics(envId: ID!, startDate: String, endDate: String): [PerformanceMetrics!]!
         listScoringSnapshots(solutionId: ID!, envId: ID): [ScoringSnapshot!]!
         
+        # Assets
+        listAssets(editorId: ID!, includeArchived: Boolean): [Asset!]!
+        getAsset(assetId: ID!): Asset
+        
         # Documents / Roadmap (Polymorphes)
         listDocumentsByParent(parentId: ID!, linkedTo: ParentEntity!): [Document!]!
         listRoadmapItems(parentId: ID!, linkedTo: ParentEntity!): [RoadmapItem!]!
@@ -1082,6 +1190,12 @@ const typeDefs = gql`
         # Editor & Team
         updateEditor(input: UpdateEditorInput!): Editor!
         updateDevelopmentTeam(input: UpdateDevelopmentTeamInput!): DevelopmentTeam!
+        
+        # Assets
+        createAsset(input: CreateAssetInput!): Asset!
+        updateAsset(input: UpdateAssetInput!): Asset!
+        deleteAsset(assetId: ID!): Boolean!
+        archiveAsset(assetId: ID!): Asset!
         
         # Solution & Metrics
         updateSolution(input: UpdateSolutionInput!): Solution!
@@ -1124,6 +1238,9 @@ const typeDefs = gql`
         # Actions : Archivage/Désarchivage (Data Management)
         archiveSolution(input: ArchiveInput!): Solution!
         archiveEnvironment(input: ArchiveInput!): Environment!
+        
+        # Action : Génération de rapport AISA
+        generateAisaReport(editorId: ID!): AisaReportResponse!
     }
 `;
 

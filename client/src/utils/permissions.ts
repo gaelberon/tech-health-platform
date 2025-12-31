@@ -3,7 +3,7 @@
 
 import type { UserRole } from '@common/types';
 
-export type TabType = 'collector' | 'admin' | 'dashboard' | 'data-management' | 'hosting' | 'dd-tech' | 'about' | 'profile' | 'third-party-docs';
+export type TabType = 'collector' | 'admin' | 'dashboard' | 'data-management' | 'hosting' | 'dd-tech' | 'about' | 'profile' | 'third-party-docs' | 'reporting';
 
 export interface TabPermission {
   tab: TabType;
@@ -47,6 +47,14 @@ export const TAB_METADATA: Record<TabType, { label: string; icon: string; subtit
     label: 'Docs Tiers',
     icon: '📚',
   },
+  reporting: {
+    label: 'Reporting',
+    icon: '📊',
+  },
+  profile: {
+    label: 'Mon Profil',
+    icon: '👤',
+  },
 };
 
 // Permissions par défaut (utilisées comme fallback avant le chargement depuis la DB)
@@ -60,6 +68,7 @@ const DEFAULT_PERMISSIONS: Record<TabType, UserRole[]> = {
   about: ['Admin', 'Supervisor', 'EntityDirector', 'Editor'],
   profile: ['Admin', 'Supervisor', 'EntityDirector', 'Editor'], // Tous les utilisateurs peuvent accéder à leur profil
   'third-party-docs': ['Admin'], // Uniquement les admins
+  reporting: ['Admin', 'Supervisor', 'EntityDirector', 'Editor'], // Tous les utilisateurs peuvent accéder au reporting
 };
 
 /**
@@ -95,7 +104,7 @@ export function getAccessibleTabs(
   permissionsFromDB?: Map<string, boolean>
 ): TabType[] {
   if (!userRole) return [];
-  const allTabs: TabType[] = ['dashboard', 'data-management', 'collector', 'admin', 'hosting', 'dd-tech', 'about', 'profile', 'third-party-docs'];
+  const allTabs: TabType[] = ['dashboard', 'data-management', 'collector', 'admin', 'hosting', 'dd-tech', 'about', 'profile', 'third-party-docs', 'reporting'];
   return allTabs.filter((tab) => hasAccessToTab(userRole, tab, permissionsFromDB));
 }
 
@@ -108,7 +117,7 @@ export function getDefaultTab(
 ): TabType {
   const accessibleTabs = getAccessibleTabs(userRole, permissionsFromDB);
     // Priorité : dashboard > data-management > collector > hosting > dd-tech > about > admin
-    const priority: TabType[] = ['dashboard', 'data-management', 'collector', 'hosting', 'dd-tech', 'about', 'admin', 'profile', 'third-party-docs'];
+    const priority: TabType[] = ['dashboard', 'data-management', 'collector', 'hosting', 'dd-tech', 'about', 'admin', 'profile', 'third-party-docs', 'reporting'];
   for (const tab of priority) {
     if (accessibleTabs.includes(tab)) {
       return tab;

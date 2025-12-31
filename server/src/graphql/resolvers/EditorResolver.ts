@@ -8,6 +8,7 @@ import { EditorModel, IEditor } from '../../models/Editor.model.js';
 import { SolutionModel, ISolution } from '../../models/Solution.model.js';
 import { DevelopmentTeamModel, IDevelopmentTeam } from '../../models/DevelopmentTeam.model.js';
 import { DocumentModel, IDocument } from '../../models/Document.model.js';
+import { AssetModel } from '../../models/Asset.model.js';
 // NOTE : DocumentModel est utilisé car les documents peuvent être attachés à l'Editor [1, 4]
 
 
@@ -35,9 +36,26 @@ export interface UpdateEditorInput {
     business_criticality?: string; // P1 [2]
 
     // Champs DD (Section 9a, 4c) [3]
-    internal_it_systems?: string[]; 
     it_security_strategy?: string[]; // Array de stratégies
-    contracts_for_review?: ContractForReviewInput[]; 
+    contracts_for_review?: ContractForReviewInput[];
+    
+    // Champs AISA
+    information_security_policy?: string;
+    information_security_roles?: string;
+    information_security_in_projects?: string;
+    external_it_service_provider_responsibilities?: string;
+    external_it_service_evaluation?: string;
+    information_security_risk_management?: string;
+    information_security_compliance_procedures?: string;
+    isms_reviewed_by_independent_authority?: string;
+    security_incident_management?: string;
+    employee_qualification_for_sensitive_work?: string;
+    staff_contractually_bound_to_security_policies?: string;
+    security_awareness_training?: string;
+    mobile_work_policy?: string;
+    supplier_security_management?: string;
+    compliance_with_regulatory_provisions?: string;
+    personal_data_protection?: string; 
 }
 
 // ------------------ RESOLVER ------------------
@@ -139,29 +157,6 @@ const EditorResolver = {
                     }
                 } else {
                     updateData.it_security_strategy = [];
-                }
-            }
-            
-            // Gérer internal_it_systems (array de strings)
-            // Note: GraphQL peut parfois envoyer des strings JSON au lieu d'arrays
-            if (input.internal_it_systems !== undefined) {
-                const internalItSystemsValue: any = input.internal_it_systems;
-                if (Array.isArray(internalItSystemsValue)) {
-                    updateData.internal_it_systems = internalItSystemsValue;
-                } else if (typeof internalItSystemsValue === 'string') {
-                    // Si c'est une string, essayer de parser ou split par virgules
-                    try {
-                        const parsed = JSON.parse(internalItSystemsValue);
-                        updateData.internal_it_systems = Array.isArray(parsed) ? parsed : [];
-                    } catch (e) {
-                        // Si ce n'est pas du JSON, split par virgules
-                        updateData.internal_it_systems = internalItSystemsValue
-                            .split(',')
-                            .map((s: string) => s.trim())
-                            .filter((s: string) => s.length > 0);
-                    }
-                } else {
-                    updateData.internal_it_systems = [];
                 }
             }
 
@@ -295,6 +290,15 @@ const EditorResolver = {
                 parentId: parent._id, 
                 linkedTo: 'Editor' 
             });
+        },
+        
+        // Relation 0..N vers Asset [AISA 3.1]
+        assets: async (parent: IEditor & Document) => {
+            // Récupère tous les assets de l'éditeur (non archivés par défaut, mais le frontend peut filtrer)
+            return await AssetModel.find({ 
+                editorId: parent._id,
+                archived: { $ne: true }
+            }).sort({ name: 1 });
         }
     }
 };

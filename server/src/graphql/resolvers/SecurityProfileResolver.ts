@@ -52,6 +52,11 @@ export interface UpdateSecurityProfileInput {
     pentest_results_summary?: string; // Résumé des derniers pentests [4]
     known_security_flaws?: string; // Failles connues [4]
     incident_reporting_process?: string; // Processus de résolution des incidents [4]
+    
+    // Champs AISA supplémentaires
+    change_management?: string; // AISA 5.2.1
+    malware_protection?: string; // AISA 5.2.3
+    key_management?: string; // ISO 27001 A.10.2 / AISA 5.1.2
 }
 
 // ------------------ RESOLVER ------------------

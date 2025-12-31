@@ -55,6 +55,9 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
     pentest_results_summary: securityProfile?.pentest_results_summary || '',
     known_security_flaws: securityProfile?.known_security_flaws || '',
     incident_reporting_process: securityProfile?.incident_reporting_process || '',
+    change_management: securityProfile?.change_management || '',
+    malware_protection: securityProfile?.malware_protection || '',
+    key_management: securityProfile?.key_management || '',
   });
 
   useEffect(() => {
@@ -76,6 +79,9 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
         pentest_results_summary: securityProfile.pentest_results_summary || '',
         known_security_flaws: securityProfile.known_security_flaws || '',
         incident_reporting_process: securityProfile.incident_reporting_process || '',
+        change_management: securityProfile.change_management || '',
+        malware_protection: securityProfile.malware_protection || '',
+        key_management: securityProfile.key_management || '',
       });
     }
   }, [securityProfile, environmentId]);
@@ -299,6 +305,19 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
               placeholder="Détails sur le chiffrement utilisé..."
             />
           </div>
+          <div className="md:col-span-2">
+            <FieldLabel
+              translationKey="dataManagement.security.keyManagement"
+              showFieldReference={showFieldReferences}
+            />
+            <textarea
+              value={formData.key_management}
+              onChange={(e) => setFormData({ ...formData, key_management: e.target.value })}
+              rows={3}
+              className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.key_management)}
+              placeholder="Détails sur la gestion des clés cryptographiques..."
+            />
+          </div>
         </div>
       </div>
 
@@ -321,6 +340,34 @@ const SecurityProfileSection: React.FC<SecurityProfileSectionProps> = ({
 
       {/* Champs texte libres */}
       <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+        <div>
+          <FieldLabel
+            translationKey="dataManagement.security.changeManagement"
+            showFieldReference={showFieldReferences}
+          />
+          <textarea
+            value={formData.change_management}
+            onChange={(e) => setFormData({ ...formData, change_management: e.target.value })}
+            rows={3}
+            className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.change_management)}
+            placeholder="Détails sur la gestion des changements..."
+          />
+        </div>
+
+        <div>
+          <FieldLabel
+            translationKey="dataManagement.security.malwareProtection"
+            showFieldReference={showFieldReferences}
+          />
+          <textarea
+            value={formData.malware_protection}
+            onChange={(e) => setFormData({ ...formData, malware_protection: e.target.value })}
+            rows={3}
+            className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", formData.malware_protection)}
+            placeholder="Détails sur la protection contre les malwares..."
+          />
+        </div>
+
         <div>
           <FieldLabel
             translationKey="dataManagement.security.internalAudits"

@@ -16,11 +16,16 @@ import {
   CREATE_ENVIRONMENT,
   ARCHIVE_SOLUTION,
   ARCHIVE_ENVIRONMENT,
+  CREATE_ASSET,
+  UPDATE_ASSET,
+  DELETE_ASSET,
+  ARCHIVE_ASSET,
 } from '../../graphql/mutations';
 import { GET_EDITOR_WITH_DETAILS } from '../../graphql/queries';
 import EnvironmentFullDetails from './EnvironmentFullDetails';
 import CodeBaseSection from './sections/CodeBaseSection';
 import DevelopmentMetricsSection from './sections/DevelopmentMetricsSection';
+import AssetsSection from './sections/AssetsSection';
 import { parseGraphQLError, formatErrorMessage, validateFormData } from '../../utils/errorHandler';
 import type { ParsedError } from '../../utils/errorHandler';
 import { getFieldClasses } from '../../utils/fieldValidation';
@@ -44,7 +49,7 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
   const { t } = useTranslation();
   const { user } = useSession();
   const { lookups, loading: lookupsLoading } = useLookups();
-  const [activeSection, setActiveSection] = useState<'editor' | 'solutions' | 'environments'>('editor');
+  const [activeSection, setActiveSection] = useState<'editor' | 'solutions' | 'environments' | 'assets'>('editor');
   const [selectedSolutionId, setSelectedSolutionId] = useState<string | null>(null);
   const [selectedEnvId, setSelectedEnvId] = useState<string | null>(null);
   const [showArchived, setShowArchived] = useState<boolean>(false);
@@ -67,9 +72,24 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
     country: editor?.country || '',
     size: editor?.size || '',
     business_criticality: editor?.business_criticality || 'Medium',
-    internal_it_systems: editor?.internal_it_systems || [],
     it_security_strategy: editor?.it_security_strategy || [],
     contracts_for_review: editor?.contracts_for_review || [],
+    information_security_policy: editor?.information_security_policy || '',
+    information_security_roles: editor?.information_security_roles || '',
+    information_security_in_projects: editor?.information_security_in_projects || '',
+    external_it_service_provider_responsibilities: editor?.external_it_service_provider_responsibilities || '',
+    external_it_service_evaluation: editor?.external_it_service_evaluation || '',
+    information_security_risk_management: editor?.information_security_risk_management || '',
+    information_security_compliance_procedures: editor?.information_security_compliance_procedures || '',
+    isms_reviewed_by_independent_authority: editor?.isms_reviewed_by_independent_authority || '',
+    security_incident_management: editor?.security_incident_management || '',
+    employee_qualification_for_sensitive_work: editor?.employee_qualification_for_sensitive_work || '',
+    staff_contractually_bound_to_security_policies: editor?.staff_contractually_bound_to_security_policies || '',
+    security_awareness_training: editor?.security_awareness_training || '',
+    mobile_work_policy: editor?.mobile_work_policy || '',
+    supplier_security_management: editor?.supplier_security_management || '',
+    compliance_with_regulatory_provisions: editor?.compliance_with_regulatory_provisions || '',
+    personal_data_protection: editor?.personal_data_protection || '',
   });
 
   // Formulaire solution
@@ -148,9 +168,24 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
         country: editor?.country || '',
         size: editor?.size || '',
         business_criticality: editor?.business_criticality || 'Medium',
-        internal_it_systems: editor?.internal_it_systems || [],
         it_security_strategy: editor?.it_security_strategy || [],
         contracts_for_review: editor?.contracts_for_review || [],
+        information_security_policy: editor?.information_security_policy || '',
+        information_security_roles: editor?.information_security_roles || '',
+        information_security_in_projects: editor?.information_security_in_projects || '',
+        external_it_service_provider_responsibilities: editor?.external_it_service_provider_responsibilities || '',
+        external_it_service_evaluation: editor?.external_it_service_evaluation || '',
+        information_security_risk_management: editor?.information_security_risk_management || '',
+        information_security_compliance_procedures: editor?.information_security_compliance_procedures || '',
+        isms_reviewed_by_independent_authority: editor?.isms_reviewed_by_independent_authority || '',
+        security_incident_management: editor?.security_incident_management || '',
+        employee_qualification_for_sensitive_work: editor?.employee_qualification_for_sensitive_work || '',
+        staff_contractually_bound_to_security_policies: editor?.staff_contractually_bound_to_security_policies || '',
+        security_awareness_training: editor?.security_awareness_training || '',
+        mobile_work_policy: editor?.mobile_work_policy || '',
+        supplier_security_management: editor?.supplier_security_management || '',
+        compliance_with_regulatory_provisions: editor?.compliance_with_regulatory_provisions || '',
+        personal_data_protection: editor?.personal_data_protection || '',
       };
 
       // Si c'est un nouvel editor, réinitialiser tout et initialiser les sélections par défaut
@@ -459,9 +494,6 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
       };
 
       // Ajouter les champs DD seulement s'ils ont des valeurs
-      if (editorForm.internal_it_systems.length > 0) {
-        inputData.internal_it_systems = editorForm.internal_it_systems;
-      }
       if (editorForm.it_security_strategy.length > 0) {
         inputData.it_security_strategy = editorForm.it_security_strategy;
       }
@@ -477,6 +509,32 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
 
         if (validContracts.length > 0) {
           inputData.contracts_for_review = validContracts;
+        }
+      }
+
+      // Ajouter les champs AISA seulement s'ils ont des valeurs
+      const aisaFields = [
+        'information_security_policy',
+        'information_security_roles',
+        'information_security_in_projects',
+        'external_it_service_provider_responsibilities',
+        'external_it_service_evaluation',
+        'information_security_risk_management',
+        'information_security_compliance_procedures',
+        'isms_reviewed_by_independent_authority',
+        'security_incident_management',
+        'employee_qualification_for_sensitive_work',
+        'staff_contractually_bound_to_security_policies',
+        'security_awareness_training',
+        'mobile_work_policy',
+        'supplier_security_management',
+        'compliance_with_regulatory_provisions',
+        'personal_data_protection',
+      ];
+
+      for (const field of aisaFields) {
+        if (editorForm[field as keyof typeof editorForm] && (editorForm[field as keyof typeof editorForm] as string).trim().length > 0) {
+          inputData[field] = (editorForm[field as keyof typeof editorForm] as string).trim();
         }
       }
 
@@ -892,6 +950,16 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
           >
             🌐 {t('dataManagement.form.environments')}
           </button>
+          <button
+            onClick={() => setActiveSection('assets')}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              activeSection === 'assets'
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b-2 border-blue-600 dark:border-blue-400'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
+            }`}
+          >
+            📋 {t('dataManagement.form.assets', 'Actifs')}
+          </button>
         </div>
       </div>
 
@@ -983,42 +1051,34 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
             </div>
           </div>
 
-          {/* Champs DD - Systèmes IT internes */}
+          {/* Assets techniques (remplace internal_it_systems) */}
           <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
             <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100 mb-4">
-              {t('dataManagement.editor.internalItSystems', 'Systèmes IT internes')}
+              {t('dataManagement.editor.technicalAssets', 'Actifs techniques (systèmes IT internes)')}
             </h4>
-            <div>
-              <FieldLabel
-                translationKey="dataManagement.editor.internalItSystemsList"
-                showFieldReference={showFieldReferences}
-              />
-              <textarea
-                value={(editorForm.internal_it_systems || []).join(', ')}
-                onChange={(e) => {
-                  const systems = e.target.value
-                    .split(',')
-                    .map(s => s.trim())
-                    .filter(s => s.length > 0);
-                  setEditorForm({ ...editorForm, internal_it_systems: systems });
-                }}
-                rows={3}
-                className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.internal_it_systems)}
-                placeholder="ERP, CRM, Gestion RH, ..."
-              />
-              {editorForm.internal_it_systems.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {editorForm.internal_it_systems.map((system: string, index: number) => (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              {t('dataManagement.editor.technicalAssetsDesc', 'Liste des actifs techniques de l\'éditeur. Pour gérer les détails complets des actifs, utilisez l\'onglet "Actifs".')}
+            </p>
+            {editor?.assets && editor.assets.filter((asset: any) => 
+              asset.category === 'digital_and_data' || asset.type === 'it_hardware'
+            ).length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {editor.assets
+                  .filter((asset: any) => asset.category === 'digital_and_data' || asset.type === 'it_hardware')
+                  .map((asset: any) => (
                     <span
-                      key={index}
+                      key={asset.assetId}
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                     >
-                      {system}
+                      {asset.name}
                     </span>
                   ))}
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {t('dataManagement.editor.noTechnicalAssets', 'Aucun actif technique enregistré. Utilisez l\'onglet "Actifs" pour en ajouter.')}
+              </p>
+            )}
           </div>
 
           {/* Champs DD - Stratégies de sécurité IT */}
@@ -1146,6 +1206,238 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Champs AISA - Organisation et Gouvernance */}
+          <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              {t('dataManagement.editor.aisaFields', 'Champs AISA - Organisation et Gouvernance')}
+            </h4>
+            <div className="space-y-4">
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.informationSecurityPolicy"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.information_security_policy}
+                  onChange={(e) => setEditorForm({ ...editorForm, information_security_policy: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.information_security_policy)}
+                  placeholder="Politique de sécurité de l'information (AISA 1.1.1)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.informationSecurityRoles"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.information_security_roles}
+                  onChange={(e) => setEditorForm({ ...editorForm, information_security_roles: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.information_security_roles)}
+                  placeholder="Rôles et responsabilités en sécurité de l'information (AISA 1.2.2)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.informationSecurityInProjects"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.information_security_in_projects}
+                  onChange={(e) => setEditorForm({ ...editorForm, information_security_in_projects: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.information_security_in_projects)}
+                  placeholder="Considération des exigences de sécurité dans les projets (AISA 1.2.3)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.externalItServiceProviderResponsibilities"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.external_it_service_provider_responsibilities}
+                  onChange={(e) => setEditorForm({ ...editorForm, external_it_service_provider_responsibilities: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.external_it_service_provider_responsibilities)}
+                  placeholder="Responsabilités entre fournisseurs IT externes et l'organisation (AISA 1.2.4)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.externalItServiceEvaluation"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.external_it_service_evaluation}
+                  onChange={(e) => setEditorForm({ ...editorForm, external_it_service_evaluation: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.external_it_service_evaluation)}
+                  placeholder="Évaluation et approbation des services IT externes (AISA 1.3.3)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.informationSecurityRiskManagement"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.information_security_risk_management}
+                  onChange={(e) => setEditorForm({ ...editorForm, information_security_risk_management: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.information_security_risk_management)}
+                  placeholder="Gestion des risques de sécurité de l'information (AISA 1.4.1)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.informationSecurityComplianceProcedures"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.information_security_compliance_procedures}
+                  onChange={(e) => setEditorForm({ ...editorForm, information_security_compliance_procedures: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.information_security_compliance_procedures)}
+                  placeholder="Conformité avec la sécurité dans les procédures et processus (AISA 1.5.1)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.ismsReviewedByIndependentAuthority"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.isms_reviewed_by_independent_authority}
+                  onChange={(e) => setEditorForm({ ...editorForm, isms_reviewed_by_independent_authority: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.isms_reviewed_by_independent_authority)}
+                  placeholder="ISMS révisé par une autorité indépendante (AISA 1.5.2)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.securityIncidentManagement"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.security_incident_management}
+                  onChange={(e) => setEditorForm({ ...editorForm, security_incident_management: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.security_incident_management)}
+                  placeholder="Gestion des incidents de sécurité (AISA 1.6.1, 1.6.2, 1.6.3)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.employeeQualificationForSensitiveWork"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.employee_qualification_for_sensitive_work}
+                  onChange={(e) => setEditorForm({ ...editorForm, employee_qualification_for_sensitive_work: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.employee_qualification_for_sensitive_work)}
+                  placeholder="Qualification des employés pour travaux sensibles (AISA 2.1.1)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.staffContractuallyBoundToSecurityPolicies"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.staff_contractually_bound_to_security_policies}
+                  onChange={(e) => setEditorForm({ ...editorForm, staff_contractually_bound_to_security_policies: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.staff_contractually_bound_to_security_policies)}
+                  placeholder="Personnel contractuellement lié aux politiques de sécurité (AISA 2.1.2)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.securityAwarenessTraining"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.security_awareness_training}
+                  onChange={(e) => setEditorForm({ ...editorForm, security_awareness_training: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.security_awareness_training)}
+                  placeholder="Sensibilisation et formation à la sécurité (AISA 2.1.3)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.mobileWorkPolicy"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.mobile_work_policy}
+                  onChange={(e) => setEditorForm({ ...editorForm, mobile_work_policy: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.mobile_work_policy)}
+                  placeholder="Politique de télétravail (AISA 2.1.4)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.supplierSecurityManagement"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.supplier_security_management}
+                  onChange={(e) => setEditorForm({ ...editorForm, supplier_security_management: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.supplier_security_management)}
+                  placeholder="Gestion de la sécurité des fournisseurs (AISA 6.1.1, 6.1.2)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.complianceWithRegulatoryProvisions"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.compliance_with_regulatory_provisions}
+                  onChange={(e) => setEditorForm({ ...editorForm, compliance_with_regulatory_provisions: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.compliance_with_regulatory_provisions)}
+                  placeholder="Conformité aux dispositions réglementaires (AISA 7.1.1)..."
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  translationKey="dataManagement.editor.personalDataProtection"
+                  showFieldReference={showFieldReferences}
+                />
+                <textarea
+                  value={editorForm.personal_data_protection}
+                  onChange={(e) => setEditorForm({ ...editorForm, personal_data_protection: e.target.value })}
+                  rows={3}
+                  className={getFieldClasses("w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100", editorForm.personal_data_protection)}
+                  placeholder="Protection des données personnelles (AISA 7.1.2)..."
+                />
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 mt-6">
@@ -2020,6 +2312,17 @@ const DataManagementForm: React.FC<DataManagementFormProps> = ({
             {t('dataManagement.form.noSolutions')}
           </p>
         </div>
+      )}
+
+      {/* Section Assets */}
+      {activeSection === 'assets' && (
+        <AssetsSection
+          editorId={editorId}
+          assets={editor?.assets || []}
+          showArchived={showArchived}
+          showFieldReferences={showFieldReferences}
+          onDataUpdated={onDataUpdated}
+        />
       )}
     </div>
   );

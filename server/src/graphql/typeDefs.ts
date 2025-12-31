@@ -95,8 +95,26 @@ export const typeDefs = gql`
         
         # Champs DD (9.a, 4.c)
         internal_it_systems: [String] 
-        it_security_strategy: String 
+        it_security_strategy: [String] 
         contracts_for_review: [ContractForReview]
+        
+        # Champs AISA - Organisation et Gouvernance
+        information_security_policy: String # AISA 1.1.1
+        information_security_roles: String # AISA 1.2.2
+        information_security_in_projects: String # AISA 1.2.3
+        external_it_service_provider_responsibilities: String # AISA 1.2.4
+        external_it_service_evaluation: String # AISA 1.3.3
+        information_security_risk_management: String # AISA 1.4.1
+        information_security_compliance_procedures: String # AISA 1.5.1
+        isms_reviewed_by_independent_authority: String # AISA 1.5.2
+        security_incident_management: String # AISA 1.6.1, 1.6.2, 1.6.3
+        employee_qualification_for_sensitive_work: String # AISA 2.1.1
+        staff_contractually_bound_to_security_policies: String # AISA 2.1.2
+        security_awareness_training: String # AISA 2.1.3
+        mobile_work_policy: String # AISA 2.1.4
+        supplier_security_management: String # AISA 6.1.1, 6.1.2
+        compliance_with_regulatory_provisions: String # AISA 7.1.1
+        personal_data_protection: String # AISA 7.1.2
         
         # Relation 1:N
         solutions: [Solution!]
@@ -153,6 +171,10 @@ export const typeDefs = gql`
         network_security_mechanisms: [String]
         db_scaling_mechanism: String
         disaster_recovery_plan: String
+        security_zones_managed: String # AISA 3.1.1
+        network_services_requirements: String # AISA 5.3.2
+        information_assets_removal_policy: String # AISA 5.3.3
+        shared_external_it_services_protection: String # AISA 5.3.4
         sla_offered: String # P3 (5.b.1)
         
         # Champs d'archivage
@@ -199,6 +221,9 @@ export const typeDefs = gql`
         pentest_results_summary: String
         known_security_flaws: String
         incident_reporting_process: String
+        change_management: String # AISA 5.2.1
+        malware_protection: String # AISA 5.2.3
+        key_management: String # ISO 27001 A.10.2 / AISA 5.1.2
     }
     
     # Entité P2 : MonitoringObservability (Critique pour le scoring Observabilité 15%) (5.a.2)
@@ -399,5 +424,14 @@ export const typeDefs = gql`
         # Actions : Archivage/Désarchivage (Data Management)
         archiveSolution(input: ArchiveInput!): Solution
         archiveEnvironment(input: ArchiveInput!): Environment
+        
+        # Action : Génération de rapport AISA
+        generateAisaReport(editorId: ID!): AisaReportResponse
+    }
+    
+    # Type de réponse pour le rapport AISA
+    type AisaReportResponse {
+        csvContent: String!
+        filename: String!
     }
 `;
