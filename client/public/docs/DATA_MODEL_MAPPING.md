@@ -28,7 +28,7 @@ Pour chaque entité du modèle de données, un tableau présente :
 | country | string | P2 | Non | Pays | - | - | - |
 | size | enum | P2 | Non | Taille (Micro/SME/Mid/Enterprise) | - | - | - |
 | business_criticality | enum | P1 | Oui | Criticité métier (Low/Medium/High/Critical) | - | - | - |
-| internal_it_systems | string[] | DD | Non | Systèmes IT internes | 9.a.1 | - | 3.1, 3.2 |
+| assets | Asset[] | DD | Non | Actifs de l'éditeur (remplace internal_it_systems) | 9.a.1 | - | 1.3.1, 1.3.2, 3.1.1, 3.1.3, 3.1.4, 3.2, 3.3, 3.4 |
 | it_security_strategy | string | DD | Non | Stratégie de sécurité IT | 9.a.2 | - | 5.1, 5.2 |
 | contracts_for_review | object[] | DD | Non | Contrats à réviser | 4.c.1 | - | - |
 
@@ -251,7 +251,13 @@ Les contrôles AISA suivants ne sont pas encore représentés dans le modèle de
 - **2.3 - Confidentiality Agreements** : Accords de confidentialité
 
 ### Gestion des Actifs
-- **3.1 - Inventory of Assets** : Inventaire des actifs (partiellement couvert par `internal_it_systems`)
+- **1.3.1 - Information assets identified and recorded** : Actifs informationnels identifiés et enregistrés (couvert par l'entité `Asset` : `name`, `category`, `type`, `operational_purpose`, `information_owner`, `custodian`, `last_inventory_date`, `description`)
+- **1.3.2 - Information assets classified and managed** : Actifs classifiés et gérés selon leurs besoins de protection (couvert par `confidentiality_level`, `integrity_level`, `availability_level`, `criticality_status`, `mtd_hours`, `rpo_mtdl_hours`)
+- **1.3.3 - Only evaluated and approved external IT services are used** : Seuls des services IT externes évalués et approuvés sont utilisés (couvert par `Editor.external_it_service_evaluation`)
+- **1.3.4 - Only evaluated and approved software is used** : Seuls des logiciels évalués et approuvés sont utilisés (couvert par `Asset.approval_status` et `Solution.license_compliance_assured`)
+- **3.1.3 - Handling of supporting assets managed** : Gestion de la manipulation des actifs de support (couvert par `Asset.physical_location`, `Asset.disposal_method`, `Asset.version_firmware`)
+- **3.1.4 - Handling of mobile IT devices and mobile data storage devices managed** : Gestion de la manipulation des appareils IT mobiles (couvert par `Asset.encryption_status`, `Asset.sbom_reference`, `Asset.end_of_life_date`)
+- **3.1 - Inventory of Assets** : Inventaire des actifs (couvert par l'entité `Asset`)
 - **3.2 - Ownership of Assets** : Propriété des actifs
 - **3.3 - Acceptable Use of Assets** : Utilisation acceptable des actifs
 - **3.4 - Return of Assets** : Retour des actifs
