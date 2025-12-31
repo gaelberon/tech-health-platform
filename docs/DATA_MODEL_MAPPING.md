@@ -257,3 +257,59 @@ Les contrôles AISA suivants ne sont pas encore représentés dans le modèle de
 - **1.3.4 - Only evaluated and approved software is used** : Seuls des logiciels évalués et approuvés sont utilisés (couvert par `Asset.approval_status` et `Solution.license_compliance_assured`)
 - **3.1.3 - Handling of supporting assets managed** : Gestion de la manipulation des actifs de support (couvert par `Asset.physical_location`, `Asset.disposal_method`, `Asset.version_firmware`)
 - **3.1.4 - Handling of mobile IT devices and mobile data storage devices managed** : Gestion de la manipulation des appareils IT mobiles (couvert par `Asset.encryption_status`, `Asset.sbom_reference`, `Asset.end_of_life_date`)
+
+### Contrôle d'Accès
+- **4.1 - Access Control Policy** : Politique de contrôle d'accès (partiellement couvert par `access_control`)
+- **4.2 - User Access Management** : Gestion des accès utilisateurs
+- **4.3 - User Responsibilities** : Responsabilités utilisateurs
+- **4.4 - System and Application Access Control** : Contrôle d'accès système et application
+- **4.5 - Privileged Access Rights** : Droits d'accès privilégiés (partiellement couvert par `access_control`)
+
+### Cryptographie
+- **10.1 - Cryptographic Controls** : Contrôles cryptographiques (partiellement couvert par `encryption`)
+- **10.2 - Key Management** : Gestion des clés cryptographiques
+
+### Relations avec les Fournisseurs
+- **15.1 - Information Security in Supplier Relationships** : Sécurité dans les relations fournisseurs
+- **15.2 - Supplier Service Delivery Management** : Gestion de la livraison de services fournisseurs
+
+### Gestion des Incidents
+- **16.1 - Information Security Incident Management** : Gestion des incidents de sécurité (partiellement couvert par `incident_reporting_process`)
+- **16.2 - Information Security Incident Reporting** : Signalement des incidents
+- **16.3 - Information Security Incident Response** : Réponse aux incidents
+
+### Continuité d'Activité
+- **17.1 - Information Security Continuity** : Continuité de la sécurité de l'information (partiellement couvert par `disaster_recovery_plan`)
+- **17.2 - Redundancies** : Redondances (partiellement couvert par `redundancy`)
+
+### Conformité
+- **18.1 - Compliance with Legal and Contractual Requirements** : Conformité aux exigences légales et contractuelles (partiellement couvert par `certifications`)
+- **18.2 - Information Security Reviews** : Revues de sécurité de l'information (partiellement couvert par `internal_audits_recent`)
+
+---
+
+## Notes sur le Mapping AISA
+
+1. **Niveaux de Maturité** : AISA utilise un modèle de maturité à 5 niveaux (0-5) pour évaluer chaque contrôle. Le modèle de données actuel capture principalement l'existence/absence de contrôles, mais pas leur niveau de maturité.
+
+2. **Contrôles Organisationnels vs Techniques** : Certains contrôles AISA sont organisationnels (politiques, processus) et ne correspondent pas directement à des champs techniques dans le modèle.
+
+3. **Mapping Partiel** : Plusieurs champs du modèle couvrent partiellement plusieurs contrôles AISA. Par exemple, `SecurityProfile.encryption` couvre à la fois 10.1 (Cryptographic Controls) et 10.2 (Key Management).
+
+4. **Champs Manquants** : Les champs suivants pourraient être ajoutés pour une meilleure couverture AISA :
+   - Politique de sécurité de l'information (Editor ou Solution)
+   - Gestion des accès utilisateurs détaillée (SecurityProfile)
+   - Gestion des incidents structurée (nouvelle entité ou extension de SecurityProfile)
+   - Relations fournisseurs et sécurité (nouvelle entité ou extension de Editor)
+   - Continuité d'activité détaillée (extension de Environment ou nouvelle entité)
+
+---
+
+## Références
+
+- **DD Tech** : Référentiel Due Diligence Technique (clés uniformes : X.a, X.b.1, etc.) - "Tech_DD_chapters_template_changes - FR.pdf"
+- **CIEC** : Cadre d'Intervention pour l'Évaluation des Capacités - "Editeurs-Overview - Entities, CIEC & Dictionary.pdf"
+- **AISA** : Altamount Information Security Assessment v1.0 (09.05.2025) - Basé sur ISA Catalog VDA (non officiellement approuvé)
+
+
+
