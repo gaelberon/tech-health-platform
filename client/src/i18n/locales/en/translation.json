@@ -634,7 +634,11 @@
       "backupSchedule": "Schedule",
       "rto": "RTO (Recovery Time Objective)",
       "rpo": "RPO (Recovery Point Objective)",
-      "restorationTestFrequency": "Restoration test frequency"
+      "restorationTestFrequency": "Restoration test frequency",
+      "securityZonesManaged": "Security zones management",
+      "networkServicesRequirements": "Network services requirements",
+      "informationAssetsRemovalPolicy": "Information assets removal and secure deletion policy",
+      "sharedExternalItServicesProtection": "Information protection in shared external IT services"
     },
     "hosting": {
       "title": "Hosting Details",
@@ -661,7 +665,10 @@
       "centralizedMonitoring": "Centralized monitoring for security events",
       "pentestResults": "Penetration test results summary",
       "knownFlaws": "Known security flaws",
-      "incidentProcess": "Incident reporting process"
+      "incidentProcess": "Incident reporting process",
+      "keyManagement": "Key management",
+      "changeManagement": "Change management",
+      "malwareProtection": "Malware protection"
     },
     "monitoring": {
       "title": "Monitoring & Observability",
@@ -697,7 +704,23 @@
       "contractType": "Contract type",
       "contractTypePlaceholder": "Ex: Maintenance, Support, License...",
       "contractSummary": "Summary",
-      "contractSummaryPlaceholder": "Contract summary..."
+      "contractSummaryPlaceholder": "Contract summary...",
+      "informationSecurityPolicy": "Information security policy",
+      "informationSecurityRoles": "Information security roles and responsibilities",
+      "informationSecurityInProjects": "Information security requirements in projects",
+      "externalItServiceProviderResponsibilities": "Responsibilities between external IT service providers and organization",
+      "externalItServiceEvaluation": "Evaluation and approval of external IT services",
+      "informationSecurityRiskManagement": "Information security risk management",
+      "informationSecurityComplianceProcedures": "Information security compliance in procedures and processes",
+      "ismsReviewedByIndependentAuthority": "ISMS reviewed by independent authority",
+      "securityIncidentManagement": "Security incident management",
+      "employeeQualificationForSensitiveWork": "Employee qualification for sensitive work fields",
+      "staffContractuallyBoundToSecurityPolicies": "Staff contractually bound to comply with security policies",
+      "securityAwarenessTraining": "Security awareness and training",
+      "mobileWorkPolicy": "Mobile work policy",
+      "supplierSecurityManagement": "Supplier security management",
+      "complianceWithRegulatoryProvisions": "Compliance with regulatory and contractual provisions",
+      "personalDataProtection": "Protection of personally identifiable data"
     },
     "solution": {
       "apiAndDocumentation": "API & Documentation",

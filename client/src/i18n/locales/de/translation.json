@@ -535,7 +535,11 @@
       "backupSchedule": "Zeitplan",
       "rto": "RTO (Recovery Time Objective)",
       "rpo": "RPO (Recovery Point Objective)",
-      "restorationTestFrequency": "Häufigkeit der Wiederherstellungstests"
+      "restorationTestFrequency": "Häufigkeit der Wiederherstellungstests",
+      "securityZonesManaged": "Verwaltung von Sicherheitszonen",
+      "networkServicesRequirements": "Anforderungen an Netzwerkdienste",
+      "informationAssetsRemovalPolicy": "Richtlinie zur Entfernung und sicheren Löschung von Informationsassets",
+      "sharedExternalItServicesProtection": "Schutz von Informationen in gemeinsam genutzten externen IT-Diensten"
     },
     "hosting": {
       "title": "Hosting-Details",
@@ -562,7 +566,10 @@
       "centralizedMonitoring": "Zentralisiertes Monitoring für Sicherheitsereignisse",
       "pentestResults": "Zusammenfassung der Penetrationstestergebnisse",
       "knownFlaws": "Bekannte Sicherheitslücken",
-      "incidentProcess": "Prozess zur Meldung von Vorfällen"
+      "incidentProcess": "Prozess zur Meldung von Vorfällen",
+      "keyManagement": "Schlüsselverwaltung",
+      "changeManagement": "Änderungsverwaltung",
+      "malwareProtection": "Malware-Schutz"
     },
     "monitoring": {
       "title": "Monitoring & Beobachtbarkeit",
@@ -598,7 +605,23 @@
       "contractType": "Vertragstyp",
       "contractTypePlaceholder": "Z.B: Wartung, Support, Lizenz...",
       "contractSummary": "Zusammenfassung",
-      "contractSummaryPlaceholder": "Vertragszusammenfassung..."
+      "contractSummaryPlaceholder": "Vertragszusammenfassung...",
+      "informationSecurityPolicy": "Informationssicherheitsrichtlinie",
+      "informationSecurityRoles": "Rollen und Verantwortlichkeiten in der Sicherheit",
+      "informationSecurityInProjects": "Anforderungen an die Sicherheit in Projekten",
+      "externalItServiceProviderResponsibilities": "Verantwortlichkeiten zwischen externen IT-Dienstleistern und Organisation",
+      "externalItServiceEvaluation": "Bewertung und Genehmigung externer IT-Dienste",
+      "informationSecurityRiskManagement": "Informationssicherheitsrisikomanagement",
+      "informationSecurityComplianceProcedures": "Informationssicherheits-Compliance in Verfahren und Prozessen",
+      "ismsReviewedByIndependentAuthority": "ISMS von unabhängiger Behörde überprüft",
+      "securityIncidentManagement": "Sicherheitsvorfall-Management",
+      "employeeQualificationForSensitiveWork": "Qualifikation von Mitarbeitern für sensible Arbeitsbereiche",
+      "staffContractuallyBoundToSecurityPolicies": "Mitarbeiter vertraglich verpflichtet, Sicherheitsrichtlinien einzuhalten",
+      "securityAwarenessTraining": "Sicherheitsbewusstsein und Schulung",
+      "mobileWorkPolicy": "Mobile-Arbeits-Richtlinie",
+      "supplierSecurityManagement": "Lieferanten-Sicherheitsmanagement",
+      "complianceWithRegulatoryProvisions": "Compliance mit regulatorischen und vertraglichen Bestimmungen",
+      "personalDataProtection": "Schutz personenbezogener Daten"
     },
     "solution": {
       "apiAndDocumentation": "API & Dokumentation",

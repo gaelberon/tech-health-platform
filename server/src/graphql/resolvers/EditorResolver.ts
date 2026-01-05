@@ -204,6 +204,24 @@ const EditorResolver = {
                     updateData.contracts_for_review = [];
                 }
             }
+            
+            // Gérer les champs AISA - Organisation et Gouvernance
+            if (input.information_security_policy !== undefined) updateData.information_security_policy = input.information_security_policy;
+            if (input.information_security_roles !== undefined) updateData.information_security_roles = input.information_security_roles;
+            if (input.information_security_in_projects !== undefined) updateData.information_security_in_projects = input.information_security_in_projects;
+            if (input.external_it_service_provider_responsibilities !== undefined) updateData.external_it_service_provider_responsibilities = input.external_it_service_provider_responsibilities;
+            if (input.external_it_service_evaluation !== undefined) updateData.external_it_service_evaluation = input.external_it_service_evaluation;
+            if (input.information_security_risk_management !== undefined) updateData.information_security_risk_management = input.information_security_risk_management;
+            if (input.information_security_compliance_procedures !== undefined) updateData.information_security_compliance_procedures = input.information_security_compliance_procedures;
+            if (input.isms_reviewed_by_independent_authority !== undefined) updateData.isms_reviewed_by_independent_authority = input.isms_reviewed_by_independent_authority;
+            if (input.security_incident_management !== undefined) updateData.security_incident_management = input.security_incident_management;
+            if (input.employee_qualification_for_sensitive_work !== undefined) updateData.employee_qualification_for_sensitive_work = input.employee_qualification_for_sensitive_work;
+            if (input.staff_contractually_bound_to_security_policies !== undefined) updateData.staff_contractually_bound_to_security_policies = input.staff_contractually_bound_to_security_policies;
+            if (input.security_awareness_training !== undefined) updateData.security_awareness_training = input.security_awareness_training;
+            if (input.mobile_work_policy !== undefined) updateData.mobile_work_policy = input.mobile_work_policy;
+            if (input.supplier_security_management !== undefined) updateData.supplier_security_management = input.supplier_security_management;
+            if (input.compliance_with_regulatory_provisions !== undefined) updateData.compliance_with_regulatory_provisions = input.compliance_with_regulatory_provisions;
+            if (input.personal_data_protection !== undefined) updateData.personal_data_protection = input.personal_data_protection;
 
             // Si pas d'editorId, on est en mode création
             if (!input.editorId) {

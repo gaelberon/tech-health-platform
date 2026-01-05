@@ -664,6 +664,24 @@ const typeDefs = gql`
         business_criticality: Criticality
         it_security_strategy: [String]
         contracts_for_review: [ContractForReviewInput]
+        
+        # Champs AISA - Organisation et Gouvernance
+        information_security_policy: String # AISA 1.1.1
+        information_security_roles: String # AISA 1.2.2
+        information_security_in_projects: String # AISA 1.2.3
+        external_it_service_provider_responsibilities: String # AISA 1.2.4
+        external_it_service_evaluation: String # AISA 1.3.3
+        information_security_risk_management: String # AISA 1.4.1
+        information_security_compliance_procedures: String # AISA 1.5.1
+        isms_reviewed_by_independent_authority: String # AISA 1.5.2
+        security_incident_management: String # AISA 1.6.1, 1.6.2, 1.6.3
+        employee_qualification_for_sensitive_work: String # AISA 2.1.1
+        staff_contractually_bound_to_security_policies: String # AISA 2.1.2
+        security_awareness_training: String # AISA 2.1.3
+        mobile_work_policy: String # AISA 2.1.4
+        supplier_security_management: String # AISA 6.1.1, 6.1.2
+        compliance_with_regulatory_provisions: String # AISA 7.1.1
+        personal_data_protection: String # AISA 7.1.2
     }
     
     # Asset Inputs
